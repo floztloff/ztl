@@ -1,5 +1,5 @@
 // ZTL Service Worker
-const CACHE_NAME = "ztl-v1";
+const CACHE_NAME = "ztl-v2";
 const ASSETS = [
   "/",
   "/index.html",
@@ -7,8 +7,11 @@ const ASSETS = [
   "/storage.js",
   "/icons.js",
   "/app.jsx",
-  "/icon-192.png",
-  "/icon-512.png"
+  "/icon-192.svg",
+  "/icon-512.svg",
+  "/libs/react.production.min.js",
+  "/libs/react-dom.production.min.js",
+  "/libs/babel.min.js"
 ];
 
 // Installation
