@@ -47,6 +47,15 @@
   <script src="libs/react-dom.production.min.js"></script>
   <script src="storage.js"></script>
   <script src="icons.js"></script>
+  <script>
+    window.onerror = function(msg, url, line, col, err) {
+      document.getElementById('root').innerHTML = '<div style="color:#FF7A3D;padding:20px;font-family:monospace;white-space:pre-wrap;font-size:13px">' +
+        '<h2 style="color:#FF7A3D">Erreur ZTL</h2>' +
+        msg + '\n' + (url||'') + ':' + line + ':' + col +
+        (err && err.stack ? '\n\n' + err.stack : '') + '</div>';
+      return true;
+    };
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
