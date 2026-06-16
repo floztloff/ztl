@@ -1701,4 +1701,95 @@ function CoursesTab() {
     }
   ), /* @__PURE__ */ React.createElement("button", { onClick: saveEdit, style: { background: C.teal, color: C.bg, border: "none", borderRadius: 8, padding: "7px 10px", cursor: "pointer" } }, Icons.Check({ size: 15 }))) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("span", { style: { flex: 1, fontSize: 14, color: it.checked ? C.mut : C.text, textDecoration: it.checked ? "line-through" : "none" } }, it.text), /* @__PURE__ */ React.createElement("button", { onClick: () => startEdit(it), style: { background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 4 } }, Icons.Pencil({ size: 15 })), /* @__PURE__ */ React.createElement("button", { onClick: () => del(it.id), style: { background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 4 } }, Icons.Trash2({ size: 15 }))))))), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
 }
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(ZTLApp));
+
+/* ---------- Auth Root Wrapper ---------- */
+    function ZTLRoot() {
+      const [user, setUser] = React.useState(undefined); // undefined = loading, null = not logged in
+      const [syncing, setSyncing] = React.useState(false);
+
+      React.useEffect(() => {
+        // Check existing session
+        (async () => {
+          try {
+            const session = await window.ZTLAuth.getSession();
+            if (session && session.user) {
+              window._ztlUser = session.user;
+              setUser(session.user);
+              // Sync from cloud
+              setSyncing(true);
+              await store.syncFromCloud();
+              setSyncing(false);
+            } else {
+              setUser(null);
+            }
+          } catch (e) {
+            console.warn("Auth check error:", e);
+            setUser(null);
+          }
+        })();
+        // Listen for auth changes
+        const { data: { subscription } } = window.ZTLAuth.onAuthChange(async (event, session) => {
+          if (session && session.user) {
+            window._ztlUser = session.user;
+            setUser(session.user);
+          } else {
+            window._ztlUser = null;
+            setUser(null);
+          }
+        });
+        return () => subscription.unsubscribe();
+      }, []);
+
+      const handleLogin = async (u) => {
+        window._ztlUser = u;
+        setUser(u);
+        // Push existing local data to cloud on first login
+        setSyncing(true);
+        await store.pushToCloud();
+        await store.syncFromCloud();
+        setSyncing(false);
+      };
+
+      const handleLogout = async () => {
+        await window.ZTLAuth.signOut();
+        window._ztlUser = null;
+        setUser(null);
+      };
+
+      // Loading state
+      if (user === undefined) {
+        return React.createElement("div", {
+          style: { minHeight: "100vh", background: "#13151A", color: "#8B94A4", display: "flex",
+            flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, fontSize: 14 }
+        }, React.createElement("div", { className: "spinner", style: { width: 32, height: 32, border: "3px solid #2C323D", borderTopColor: "#FF7A3D", borderRadius: "50%", animation: "spin .8s linear infinite" } }),
+           "ZTL se prépare\u2026");
+      }
+
+      // Not logged in — show auth screen
+      if (!user) {
+        return React.createElement(window.AuthScreen, { onLogin: handleLogin });
+      }
+
+      // Syncing indicator
+      if (syncing) {
+        return React.createElement("div", {
+          style: { minHeight: "100vh", background: "#13151A", color: "#8B94A4", display: "flex",
+            flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, fontSize: 14 }
+        }, React.createElement("div", { className: "spinner", style: { width: 32, height: 32, border: "3px solid #2C323D", borderTopColor: "#56C7BE", borderRadius: "50%", animation: "spin .8s linear infinite" } }),
+           "Synchronisation\u2026");
+      }
+
+      // Logged in — render app with logout button
+      return React.createElement(React.Fragment, null,
+        React.createElement(ZTLApp, null),
+        React.createElement("div", { style: { maxWidth: 480, margin: "0 auto", padding: "12px 18px 24px", textAlign: "center" } },
+          React.createElement("button", {
+            onClick: handleLogout,
+            style: { background: "none", border: "1px solid #2C323D", color: "#8B94A4", borderRadius: 10,
+              padding: "10px 20px", fontSize: 13, cursor: "pointer" }
+          }, "D\u00E9connexion (" + user.email + ")")
+        )
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(ZTLRoot));

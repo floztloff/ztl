@@ -1,11 +1,13 @@
 // ZTL Service Worker
-const CACHE_NAME = "ztl-v3";
+const CACHE_NAME = "ztl-v4";
 const ASSETS = [
   "/",
   "/index.html",
   "/manifest.json",
   "/storage.js",
   "/icons.js",
+  "/supabase.js",
+  "/auth-ui.js",
   "/app.js",
   "/icon-192.svg",
   "/icon-512.svg",
