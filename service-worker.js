@@ -6,7 +6,7 @@ const ASSETS = [
   "/manifest.json",
   "/storage.js",
   "/icons.js",
-  "/app.jsx",
+  "/app.js",
   "/icon-192.svg",
   "/icon-512.svg",
   "/libs/react.production.min.js",
