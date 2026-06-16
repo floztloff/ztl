@@ -1,0 +1,17 @@
+{
+  "name": "ZTL — Ta Routine",
+  "short_name": "ZTL",
+  "description": "Ta routine quotidienne : séances, nutrition, sommeil, recettes et courses",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#13151A",
+  "theme_color": "#13151A",
+  "categories": ["health", "fitness", "lifestyle"],
+  "lang": "fr",
+  "scope": "/",
+  "icons": [
+    { "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
