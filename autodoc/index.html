@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUTODOC Analyser - DBS France</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="data-embed.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d28;
+  --surface2: #232737;
+  --border: #2a2e3e;
+  --text: #e8eaed;
+  --text2: #9aa0b0;
+  --accent: #00d4aa;
+  --accent-dim: rgba(0,212,170,0.15);
+  --red: #f87171;
+  --blue: #60a5fa;
+  --orange: #fb923c;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+/* Sidebar layout */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 240px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+  display: flex; flex-direction: column;
+}
+.sidebar .logo {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.sidebar .logo h1 { font-size: 18px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+.sidebar .logo small { font-size: 11px; color: var(--text2); display: block; margin-top: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 20px; cursor: pointer;
+  color: var(--text2); font-size: 13px; font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-dim); }
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+.main {
+  flex: 1; padding: 24px 32px;
+  overflow-y: auto; max-height: 100vh;
+}
+
+/* Header bar */
+.header-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.header-bar h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+.header-bar .subtitle { color: var(--text2); font-size: 13px; }
+.filters-row {
+  display: flex; gap: 10px; align-items: center;
+  flex-wrap: wrap;
+}
+.filters-row select, .filters-row input {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); padding: 7px 12px; border-radius: var(--radius-sm);
+  font-size: 12px; font-family: inherit;
+  outline: none; cursor: pointer;
+}
+.filters-row select:focus { border-color: var(--accent); }
+
+/* KPI Cards */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px; margin-bottom: 24px;
+}
+.kpi-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+}
+.kpi-card .label { font-size: 11px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-card .value { font-size: 26px; font-weight: 700; margin-top: 6px; letter-spacing: -0.5px; }
+.kpi-card .change { font-size: 12px; margin-top: 4px; }
+.kpi-card .change.up { color: var(--accent); }
+.kpi-card .change.down { color: var(--red); }
+
+/* Charts */
+.chart-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 24px;
+}
+.chart-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px;
+}
+.chart-card.full { grid-column: 1 / -1; }
+.chart-card h3 { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+.chart-card canvas { max-height: 320px; }
+
+/* Table */
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { background: var(--surface2); color: var(--text2); font-weight: 600; text-align: left; padding: 10px 12px; white-space: nowrap; border-bottom: 1px solid var(--border); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+tr:hover td { background: var(--accent-dim); }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.green { color: var(--accent); }
+.red { color: var(--red); }
+.orange { color: var(--orange); }
+
+/* Tab content */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Top refs row in detail view */
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.detail-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.detail-card h3 { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+/* Hide scrollbar for main */
+.main::-webkit-scrollbar { width: 6px; }
+.main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.main::-webkit-scrollbar-track { background: transparent; }
+
+@media (max-width: 1024px) {
+  .chart-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { padding: 16px; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="logo">
+    <h1>autodoc</h1><small>DBS France · Analytics</small>
+  </div>
+  <div class="nav-item active" data-tab="overview"><span class="icon">📊</span> Vue d'ensemble</div>
+  <div class="nav-item" data-tab="pays"><span class="icon">🌍</span> Par pays</div>
+  <div class="nav-item" data-tab="gamme"><span class="icon">📦</span> Par gamme</div>
+  <div class="nav-item" data-tab="mois"><span class="icon">📅</span> Mensuel</div>
+  <div class="nav-item" data-tab="refs"><span class="icon">🔍</span> Top références</div>
+  <div class="nav-item" data-tab="details"><span class="icon">📋</span> Détail lignes</div>
+</nav>
+
+<!-- Main content -->
+<div class="main" id="mainContent"></div>
+
+</div>
+
+<script>
+// ======================== DATA LOADING ========================
+const DATA_URL = 'https://sage-strudel-9ad4fd.netlify.app/autodoc_data_opt.json.gz';
+let DATA = null;
+
+async function loadData() {
+  try {
+    const binary = atob(AUTODOC_DATA_B64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const ds = new DecompressionStream('gzip');
+    const blob = new Blob([bytes]);
+    const decomp = blob.stream().pipeThrough(ds);
+    const text = await new Response(decomp).text();
+    DATA = JSON.parse(text);
+  } catch(e) {
+    // Fallback: try fetching
+    try {
+      const resp = await fetch('autodoc_data_opt.json.gz');
+      const blob = await resp.blob();
+      const ds = new DecompressionStream('gzip');
+      const decomp = blob.stream().pipeThrough(ds);
+      const text = await new Response(decomp).text();
+      DATA = JSON.parse(text);
+    } catch(e2) {
+      throw new Error('Cannot load data: ' + e2.message);
+    }
+  }
+  init();
+}
+
+// ======================== STATE ========================
+const state = { tab: 'overview', pays: 'TOUS', gamme: 'TOUTES', annee: '2026' };
+
+// ======================== UTILS ========================
+const moisNoms = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const shortMois = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'];
+
+function fmt(n) { return new Intl.NumberFormat('fr-FR', {maximumFractionDigits:2,minimumFractionDigits:2}).format(n); }
+function fmtInt(n) { return new Intl.NumberFormat('fr-FR', {maximumFractionDigits:0}).format(n); }
+function pct(a,b) { return b ? ((a-b)/b*100) : 0; }
+function pctStr(a,b) {
+  if (!b) return '<span class="green">Nouveau</span>';
+  const v = pct(a,b);
+  return v >= 0 ? `<span class="green">+${v.toFixed(1)}%</span>` : `<span class="red">${v.toFixed(1)}%</span>`;
+}
+function parseMoisKey(k) {
+  const [y,m] = k.split('-').map(Number);
+  return { annee: y, mois: m, label: `${moisNoms[m-1]} ${y}` };
+}
+function getMonthNumber(k) { return parseInt(k.split('-')[1]); }
+
+function filterRecords(recs) {
+  return recs.filter(r => {
+    if (state.pays !== 'TOUS' && r.p !== state.pays) return false;
+    if (state.gamme !== 'TOUTES' && r.g !== state.gamme) return false;
+    return true;
+  });
+}
+
+function filterMois(moisData) {
+  const out = {};
+  for (const [k,v] of Object.entries(moisData)) {
+    if (k.startsWith(state.annee)) out[k] = v;
+  }
+  return out;
+}
+
+// ======================== CHART HELPERS ========================
+let charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function renderBarChart(id, labels, datasets, opts={}) {
+  destroyChart(id);
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  charts[id] = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#9aa0b0', font: {size:10}, boxWidth:12 } } },
+      scales: {
+        x: { ticks: { color: '#9aa0b0', font: {size:9} }, grid: { color: '#2a2e3e' } },
+        y: { ticks: { color: '#9aa0b0', font: {size:9} }, grid: { color: '#2a2e3e' }, beginAtZero: true }
+      },
+      ...opts
+    }
+  });
+}
+
+function renderLineChart(id, labels, datasets, opts={}) {
+  destroyChart(id);
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  charts[id] = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#9aa0b0', font: {size:10}, boxWidth:12 } } },
+      scales: {
+        x: { ticks: { color: '#9aa0b0', font: {size:9} }, grid: { color: '#2a2e3e' } },
+        y: { ticks: { color: '#9aa0b0', font: {size:9} }, grid: { color: '#2a2e3e' }, beginAtZero: true }
+      },
+      ...opts
+    }
+  });
+}
+
+// ======================== SECTIONS ========================
+function renderOverview() {
+  const total = DATA.total_mois;
+  const s1_25 = ['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06'];
+  const s1_26 = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06'];
+  const ca25 = s1_25.reduce((s,m) => s + (total[m]?.ca||0), 0);
+  const ca26 = s1_26.reduce((s,m) => s + (total[m]?.ca||0), 0);
+  const q25 = s1_25.reduce((s,m) => s + (total[m]?.qte||0), 0);
+  const q26 = s1_26.reduce((s,m) => s + (total[m]?.qte||0), 0);
+  const ca2025_full = Object.entries(total).filter(([k])=>k.startsWith('2025')).reduce((s,[,v])=>s+v.ca,0);
+  const q2025_full = Object.entries(total).filter(([k])=>k.startsWith('2025')).reduce((s,[,v])=>s+v.qte,0);
+
+  const html = `
+    <div class="header-bar">
+      <div><h2>Vue d'ensemble</h2><span class="subtitle">Client AUTODOC · Données 12 mois glissants</span></div>
+      <div class="filters-row">
+        <label style="font-size:12px;color:var(--text2)">Année:</label>
+        <select onchange="state.annee=this.value;renderOverview();renderPays();renderGamme();renderMois();renderRefs();renderDetails();renderActive()">
+          <option value="2026" ${state.annee==='2026'?'selected':''}>2026</option>
+          <option value="2025" ${state.annee==='2025'?'selected':''}>2025</option>
+          <option value="2024" ${state.annee==='2024'?'selected':''}>2024</option>
+        </select>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="label">CA S1 ${state.annee}</div><div class="value">${fmt(state.annee==='2026'?ca26:state.annee==='2025'?ca25:0)} €</div></div>
+      <div class="kpi-card"><div class="label">CA ${state.annee==='2026'?'S1 2025':state.annee==='2025'?'2024':''}</div><div class="value">${fmt(state.annee==='2026'?ca25:state.annee==='2025'?fmt(ca2025_full):fmt(0))} €</div>
+        <div class="change ${pct(state.annee==='2026'?ca26:0,state.annee==='2026'?ca25:0) >= 0 ? 'up' : 'down'}">
+          ${state.annee==='2026'?pctStr(ca26,ca25):state.annee==='2025'?'':''}
+        </div>
+      </div>
+      <div class="kpi-card"><div class="label">Qtés S1 ${state.annee}</div><div class="value">${fmtInt(state.annee==='2026'?q26:state.annee==='2025'?q25:0)}</div></div>
+      <div class="kpi-card"><div class="label">Prix moyen</div><div class="value">${fmt(state.annee==='2026'?(ca26/q26):state.annee==='2025'?(ca25/q25):0)} €</div></div>
+      <div class="kpi-card"><div class="label">Pays actifs</div><div class="value">${DATA.pays_list.length}</div></div>
+      <div class="kpi-card"><div class="label">Références</div><div class="value">${DATA.top_refs.length}+</div></div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card full"><h3>CA Mensuel · Comparaison ${state.annee} vs ${state.annee==='2026'?'2025':state.annee==='2025'?'2024':'2023'}</h3>
+        <canvas id="chartOverview"></canvas></div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card"><h3>Répartition CA par Pays</h3><canvas id="chartPaysPie"></canvas></div>
+      <div class="chart-card"><h3>Répartition par Gamme</h3><canvas id="chartGammePie"></canvas></div>
+    </div>
+  `;
+  document.getElementById('mainContent').innerHTML = html;
+
+  // Overview line chart
+  const moisComp = state.annee === '2026' ? ['2025','2026'] : state.annee === '2025' ? ['2024','2025'] : ['2023','2024'];
+  const labelsMois = shortMois.slice(0,6);
+  const d1 = moisComp[0], d2 = moisComp[1];
+  const data1 = labelsMois.map((_,i) => total[`${d1}-${String(i+1).padStart(2,'0')}`]?.ca || 0);
+  const data2 = labelsMois.map((_,i) => total[`${d2}-${String(i+1).padStart(2,'0')}`]?.ca || 0);
+  renderLineChart('chartOverview', labelsMois, [
+    { label: d1, data: data1, borderColor: '#9aa0b0', backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 },
+    { label: d2, data: data2, borderColor: '#00d4aa', backgroundColor: 'transparent', tension: 0.3, fill: true, backgroundColor: 'rgba(0,212,170,0.08)', pointRadius: 3 }
+  ]);
+
+  // Pays pie
+  const paysCA = Object.entries(DATA.pays_mois)
+    .map(([p,mois]) => ({p, ca: Object.entries(mois).filter(([k])=>k.startsWith(state.annee)).reduce((s,[,v])=>s+v.ca,0)}))
+    .filter(x => x.ca > 0)
+    .sort((a,b) => b.ca - a.ca);
+  const pieLabels = paysCA.slice(0,8).map(x => x.p);
+  const pieData = paysCA.slice(0,8).map(x => x.ca);
+  if (paysCA.length > 8) { pieLabels.push('Autres'); pieData.push(paysCA.slice(8).reduce((s,x) => s + x.ca, 0)); }
+  const COLORS = ['#00d4aa','#60a5fa','#fb923c','#f87171','#a78bfa','#34d399','#f472b6','#fbbf24','#4b5563'];
+  renderBarChart('chartPaysPie', pieLabels, [{ data: pieData, backgroundColor: COLORS.slice(0, pieLabels.length), borderWidth: 0 }],
+    { plugins: { legend: { display: true, position: 'right', labels: { color:'#9aa0b0', font:{size:9}, boxWidth:12 } } }, scales: { x: { display: false }, y: { display: false } } });
+  charts['chartPaysPie'].config.type = 'doughnut';
+
+  // Gamme pie
+  const gamCA = Object.entries(DATA.gamme_mois)
+    .map(([g,mois]) => ({g, ca: Object.entries(mois).filter(([k])=>k.startsWith(state.annee)).reduce((s,[,v])=>s+v.ca,0)}))
+    .filter(x => x.ca > 0)
+    .sort((a,b) => b.ca - a.ca);
+  const gLabels = gamCA.slice(0,6).map(x => x.g.replace('01 ',''));
+  const gData = gamCA.slice(0,6).map(x => x.ca);
+  if (gamCA.length > 6) { gLabels.push('Autres'); gData.push(gamCA.slice(6).reduce((s,x) => s + x.ca, 0)); }
+  renderBarChart('chartGammePie', gLabels, [{ data: gData, backgroundColor: COLORS.slice(0, gLabels.length), borderWidth: 0 }],
+    { plugins: { legend: { display: true, position: 'right', labels: { color:'#9aa0b0', font:{size:9}, boxWidth:12 } } }, scales: { x: { display: false }, y: { display: false } } });
+  charts['chartGammePie'].config.type = 'doughnut';
+}
+
+function renderPays() {
+  const html = `
+    <div class="header-bar">
+      <div><h2>Analyse par pays</h2><span class="subtitle">Comparaison des performances par marché</span></div>
+      <div class="filters-row">
+        <label style="font-size:12px;color:var(--text2)">Pays:</label>
+        <select onchange="state.pays=this.value;renderPays();renderMois();renderRefs();renderDetails()">
+          <option value="TOUS">Tous les pays</option>
+          ${DATA.pays_list.map(p => `<option value="${p}" ${state.pays===p?'selected':''}>${p}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card full"><h3>CA par pays · ${state.annee}</h3><canvas id="chartPaysBar"></canvas></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card full"><h3>Évolution par pays (S1 ${state.annee} vs ${state.annee==='2026'?'2025':state.annee==='2025'?'2024':'2023'})</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Pays</th>
+              <th class="num">Qté ${state.annee==='2026'?'2025':'2024'}</th>
+              <th class="num">CA ${state.annee==='2026'?'2025':'2024'}</th>
+              <th class="num">Qté ${state.annee}</th>
+              <th class="num">CA ${state.annee}</th>
+              <th class="num">Évol. Qté</th>
+              <th class="num">Évol. CA</th>
+            </tr></thead>
+            <tbody id="paysTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('mainContent').innerHTML = html;
+  renderPaysData();
+}
+
+function renderPaysData() {
+  const prevAnnee = String(parseInt(state.annee)-1);
+  const paysList = state.pays === 'TOUS' ? DATA.pays_list : [state.pays];
+  const rows = paysList.map(p => {
+    const mois = DATA.pays_mois[p] || {};
+    const qCurr = Object.entries(mois).filter(([k])=>k.startsWith(state.annee)&&parseInt(k.split('-')[1])<=6).reduce((s,[,v])=>s+v.qte,0);
+    const caCurr = Object.entries(mois).filter(([k])=>k.startsWith(state.annee)&&parseInt(k.split('-')[1])<=6).reduce((s,[,v])=>s+v.ca,0);
+    const qPrev = Object.entries(mois).filter(([k])=>k.startsWith(prevAnnee)&&parseInt(k.split('-')[1])<=6).reduce((s,[,v])=>s+v.qte,0);
+    const caPrev = Object.entries(mois).filter(([k])=>k.startsWith(prevAnnee)&&parseInt(k.split('-')[1])<=6).reduce((s,[,v])=>s+v.ca,0);
+    return { p, qPrev, caPrev, qCurr, caCurr };
+  }).filter(r => r.caCurr > 0 || r.caPrev > 0)
+    .sort((a,b) => b.caCurr - a.caCurr);
+  const tbody = document.getElementById('paysTableBody');
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td><strong>${r.p}</strong></td>
+      <td class="num">${fmtInt(r.qPrev)}</td>
+      <td class="num">${fmt(r.caPrev)}</td>
+      <td class="num">${fmtInt(r.qCurr)}</td>
+      <td class="num">${fmt(r.caCurr)}</td>
+      <td class="num">${pctStr(r.qCurr, r.qPrev)}</td>
+      <td class="num">${pctStr(r.caCurr, r.caPrev)}</td>
+    </tr>
+  `).join('');
+
+  // Bar chart
+  const top10 = rows.slice(0,15);
+  renderBarChart('chartPaysBar', top10.map(r => r.p), [{
+    label: `CA ${state.annee}`,
+    data: top10.map(r => r.caCurr),
+    backgroundColor: '#00d4aa',
+    borderRadius: 4
+  }, {
+    label: `CA ${prevAnnee}`,
+    data: top10.map(r => r.caPrev),
+    backgroundColor: '#4b5563',
+    borderRadius: 4
+  }]);
+}
+
+function renderGamme() {
+  const html = `
+    <div class="header-bar">
+      <div><h2>Analyse par gamme</h2><span class="subtitle">Répartition des ventes par famille produit</span></div>
+      <div class="filters-row">
+        <label style="font-size:12px;color:var(--text2)">Gamme:</label>
+        <select onchange="state.gamme=this.value;renderGamme();renderRefs();renderDetails()">
+          <option value="TOUTES">Toutes les gammes</option>
+          ${DATA.gamme_list.map(g => `<option value="${g}" ${state.gamme===g?'selected':''}>${g.replace('01 ','')}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card full"><h3>CA par gamme · ${state.annee}</h3><canvas id="chartGammeBar"></canvas></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card full"><h3>Évolution mensuelle CA par gamme</h3><canvas id="chartGammeLines"></canvas></div>
+    </div>
+  `;
+  document.getElementById('mainContent').innerHTML = html;
+  renderGammeData();
+}
+
+function renderGammeData() {
+  const gammes = state.gamme === 'TOUTES' ? DATA.gamme_list : [state.gamme];
+  const gamCA = gammes.map(g => {
+    const mois = DATA.gamme_mois[g] || {};
+    const ca = Object.entries(mois).filter(([k])=>k.startsWith(state.annee)).reduce((s,[,v])=>s+v.ca,0);
+    const q = Object.entries(mois).filter(([k])=>k.startsWith(state.annee)).reduce((s,[,v])=>s+v.qte,0);
+    return { g, ca, q };
+  }).filter(x => x.ca > 0).sort((a,b) => b.ca - a.ca);
+
+  renderBarChart('chartGammeBar', gamCA.map(x => x.g.replace('01 ','')), [{
+    label: `CA ${state.annee}`,
+    data: gamCA.map(x => x.ca),
+    backgroundColor: '#60a5fa',
+    borderRadius: 4
+  }]);
+
+  // Line chart - top 5 gammes monthly
+  const top5 = gamCA.slice(0,5);
+  const moisKeys = DATA.mois_keys.filter(k => k.startsWith(state.annee));
+  const lineColors = ['#00d4aa','#60a5fa','#fb923c','#a78bfa','#f87171'];
+  renderLineChart('chartGammeLines', moisKeys.map(k => `${shortMois[parseInt(k.split('-')[1])-1]}`),
+    top5.map((x,i) => {
+      const md = DATA.gamme_mois[x.g] || {};
+      return { label: x.g.replace('01 ',''), data: moisKeys.map(mk => md[mk]?.ca || 0), borderColor: lineColors[i], backgroundColor: 'transparent', tension: 0.3, pointRadius: 2 };
+    })
+  );
+}
+
+function renderMois() {
+  const html = `
+    <div class="header-bar">
+      <div><h2>Analyse mensuelle</h2><span class="subtitle">Ventes mois par mois</span></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card full"><h3>CA mensuel · Comparaison ${state.annee} vs ${parseInt(state.annee)-1}</h3><canvas id="chartMoisBar"></canvas></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card"><h3>Quantités mensuelles</h3><canvas id="chartMoisQte"></canvas></div>
+      <div class="chart-card"><h3>Prix moyen mensuel</h3><canvas id="chartMoisPx"></canvas></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card full"><h3>Tableau mensuel détaillé</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Mois</th>
+              <th class="num">Qté ${parseInt(state.annee)-1}</th>
+              <th class="num">CA ${parseInt(state.annee)-1}</th>
+              <th class="num">Qté ${state.annee}</th>
+              <th class="num">CA ${state.annee}</th>
+              <th class="num">Évol. Qté</th>
+              <th class="num">Évol. CA</th>
+            </tr></thead>
+            <tbody id="moisTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('mainContent').innerHTML = html;
+  renderMoisData();
+}
+
+function renderMoisData() {
+  const prevA = parseInt(state.annee)-1;
+  const total = DATA.total_mois;
+  const moisKeys = DATA.mois_keys.filter(k => k.startsWith(state.annee) || k.startsWith(String(prevA)));
+  const labels = [];
+  const dataCurr = [], dataPrev = [];
+  const qCurr = [], qPrev = [];
+
+  for (let m = 1; m <= 12; m++) {
+    const mkCurr = `${state.annee}-${String(m).padStart(2,'0')}`;
+    const mkPrev = `${prevA}-${String(m).padStart(2,'0')}`;
+    const vCurr = total[mkCurr], vPrev = total[mkPrev];
+    if (vCurr || vPrev) {
+      labels.push(shortMois[m-1]);
+      dataCurr.push(vCurr?.ca || 0);
+      dataPrev.push(vPrev?.ca || 0);
+      qCurr.push(vCurr?.qte || 0);
+      qPrev.push(vPrev?.qte || 0);
+    }
+  }
+
+  renderBarChart('chartMoisBar', labels, [
+    { label: `${state.annee}`, data: dataCurr, backgroundColor: '#00d4aa', borderRadius: 4 },
+    { label: `${prevA}`, data: dataPrev, backgroundColor: '#4b5563', borderRadius: 4 }
+  ]);
+
+  renderLineChart('chartMoisQte', labels, [
+    { label: `${state.annee}`, data: qCurr, borderColor: '#00d4aa', backgroundColor: 'rgba(0,212,170,0.1)', fill: true, tension: 0.3 },
+    { label: `${prevA}`, data: qPrev, borderColor: '#4b5563', tension: 0.3 }
+  ]);
+
+  const avgCurr = dataCurr.map((ca,i) => qCurr[i] ? ca/qCurr[i] : 0);
+  const avgPrev = dataPrev.map((ca,i) => qPrev[i] ? ca/qPrev[i] : 0);
+  renderLineChart('chartMoisPx', labels, [
+    { label: `${state.annee}`, data: avgCurr, borderColor: '#fbbf24', tension: 0.3 },
+    { label: `${prevA}`, data: avgPrev, borderColor: '#4b5563', tension: 0.3 }
+  ]);
+
+  const tbody = document.getElementById('moisTableBody');
+  tbody.innerHTML = labels.map((l,i) => `
+    <tr>
+      <td><strong>${l}</strong></td>
+      <td class="num">${fmtInt(qPrev[i])}</td>
+      <td class="num">${fmt(dataPrev[i])}</td>
+      <td class="num">${fmtInt(qCurr[i])}</td>
+      <td class="num">${fmt(dataCurr[i])}</td>
+      <td class="num">${pctStr(qCurr[i], qPrev[i])}</td>
+      <td class="num">${pctStr(dataCurr[i], dataPrev[i])}</td>
+    </tr>
+  `).join('');
+}
+
+function renderRefs() {
+  const html = `
+    <div class="header-bar">
+      <div><h2>Top références</h2><span class="subtitle">Meilleures ventes par chiffre d'affaires</span></div>
+      <div class="filters-row">
+        <input type="text" placeholder="🔍 Rechercher..." style="width:200px" oninput="filterRefs(this.value)">
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th>
+          <th>Référence</th>
+          <th>Désignation</th>
+          <th>Gamme</th>
+          <th class="num">Qté totale</th>
+          <th class="num">CA total</th>
+        </tr></thead>
+        <tbody id="refsTableBody"></tbody>
+      </table>
+    </div>
+  `;
+  document.getElementById('mainContent').innerHTML = html;
+  renderRefsData('');
+}
+
+function renderRefsData(filter) {
+  const tbody = document.getElementById('refsTableBody');
+  if (!tbody) return;
+  const filtered = DATA.top_refs.filter(r => {
+    if (state.gamme !== 'TOUTES' && r.gamme !== state.gamme) return false;
+    if (filter && !r.designation.toLowerCase().includes(filter.toLowerCase()) && !r.gamme.toLowerCase().includes(filter.toLowerCase())) return false;
+    return true;
+  });
+  tbody.innerHTML = filtered.map((r,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td style="font-family:monospace;font-size:11px">${r.code_article || '—'}</td>
+      <td>${r.designation.substring(0,50)}</td>
+      <td>${(r.gamme||'').replace('01 ','')}</td>
+      <td class="num">${fmtInt(r.qte)}</td>
+      <td class="num">${fmt(r.ca)} €</td>
+    </tr>
+  `).join('');
+}
+
+function filterRefs(v) { renderRefsData(v); }
+
+function renderDetails() {
+  const recs = filterRecords(DATA.records);
+  const totalCA = recs.reduce((s,r) => s + r.c, 0);
+  const totalQte = recs.reduce((s,r) => s + r.q, 0);
+
+  const html = `
+    <div class="header-bar">
+      <div><h2>Détail des lignes</h2><span class="subtitle">${recs.length} lignes · ${fmtInt(totalQte)} unités · ${fmt(totalCA)} €</span></div>
+      <div class="filters-row">
+        <label style="font-size:12px;color:var(--text2)">Pays:</label>
+        <select onchange="state.pays=this.value;renderDetails()">
+          <option value="TOUS">Tous</option>
+          ${DATA.pays_list.map(p => `<option value="${p}" ${state.pays===p?'selected':''}>${p}</option>`).join('')}
+        </select>
+        <label style="font-size:12px;color:var(--text2)">Gamme:</label>
+        <select onchange="state.gamme=this.value;renderDetails()">
+          <option value="TOUTES">Toutes</option>
+          ${DATA.gamme_list.map(g => `<option value="${g}" ${state.gamme===g?'selected':''}>${g.replace('01 ','')}</option>`).join('')}
+        </select>
+        <input type="text" placeholder="🔍 Rechercher..." style="width:160px" oninput="detailSearch=this.value;renderDetails()">
+        <label style="font-size:12px;color:var(--text2)">Min CA:</label>
+        <input type="number" placeholder="0" style="width:80px" value="${detailMinCA||0}" onchange="detailMinCA=+this.value||0;renderDetails()">
+      </div>
+    </div>
+    <div class="table-wrap" style="max-height:70vh;overflow-y:auto">
+      <table>
+        <thead><tr>
+          <th>Pays</th>
+          <th>Référence</th>
+          <th>Désignation</th>
+          <th>Gamme</th>
+          <th class="num">Qté</th>
+          <th class="num">CA</th>
+        </tr></thead>
+        <tbody>${renderDetailsRows(recs)}</tbody>
+      </table>
+    </div>
+  `;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+let detailSearch = '';
+let detailMinCA = 0;
+
+function renderDetailsRows(recs) {
+  const filtered = recs.filter(r => {
+    if (detailMinCA > 0 && r.c < detailMinCA) return false;
+    if (detailSearch && !r.d.toLowerCase().includes(detailSearch.toLowerCase()) && !r.r.includes(detailSearch)) return false;
+    return true;
+  }).slice(0, 500);
+  return filtered.map(r => `
+    <tr>
+      <td>${r.p}</td>
+      <td style="font-family:monospace;font-size:11px">${r.r}</td>
+      <td>${r.d.substring(0,45)}</td>
+      <td>${(r.g||'').replace('01 ','')}</td>
+      <td class="num">${fmtInt(r.q)}</td>
+      <td class="num">${fmt(r.c)} €</td>
+    </tr>
+  `).join('');
+}
+
+// ======================== NAVIGATION ========================
+function switchTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
+  renderActive();
+}
+
+function renderActive() {
+  switch(state.tab) {
+    case 'overview': renderOverview(); break;
+    case 'pays': renderPays(); break;
+    case 'gamme': renderGamme(); break;
+    case 'mois': renderMois(); break;
+    case 'refs': renderRefs(); break;
+    case 'details': renderDetails(); break;
+  }
+}
+
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => switchTab(el.dataset.tab));
+});
+
+// ======================== INIT ========================
+function init() {
+  renderOverview();
+}
+
+// ======================== FALLBACK: SHOW LOCAL DATA IF AVAILABLE ========================
+// If the gzipped JSON is hosted alongside, use it.
+// Otherwise, the data below is embedded as a fallback.
+// We'll load the data and start.
+loadData().catch(err => {
+  document.getElementById('mainContent').innerHTML = `<div style="text-align:center;padding:100px 20px">
+    <h2 style="color:var(--text2)">⚠️ Impossible de charger les données</h2>
+    <p style="color:var(--text2);margin-top:12px">${err.message}</p>
+    <p style="color:var(--text2);margin-top:8px;font-size:13px">L'application doit être servie depuis un serveur HTTP.</p>
+  </div>`;
+});
+</script>
+</body>
+</html>
