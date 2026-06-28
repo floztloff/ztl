@@ -10,7 +10,7 @@ function AuthScreen({ onLogin }) {
   var _lo = React.useState(false), loading = _lo[0], setLoading = _lo[1];
   var _ok = React.useState(null), success = _ok[0], setSuccess = _ok[1];
 
-  var C = { bg: "#13151A", card: "#1E222B", line: "#2C323D", text: "#ECEEF2", mut: "#8B94A4", teal: "#56C7BE", ember: "#FF7A3D" };
+  var C = { bg: "#FBF4EC", card: "#FFFFFF", line: "#EFE6DB", text: "#241712", mut: "#9A8C7E", teal: "#0E9C78", ember: "#F2543D" };
 
   var submit = async function(e) {
     e.preventDefault();
