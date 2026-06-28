@@ -987,14 +987,14 @@ ${lines.join("\n")}`;
     const pillars = (workoutDone ? 1 : 0) + ((day.macros?.p || 0) >= TARGETS.protein ? 1 : 0) + (day.sleep ? 1 : 0);
     if (loading) return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: C.bg, color: C.mut, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui" } }, "Chargement de ton carnet\u2026");
     const TABS = [
-      { id: "train", icon: import_lucide_react.Dumbbell, label: "Sport" },
-      { id: "food", icon: import_lucide_react.UtensilsCrossed, label: "Nutrition" },
-      { id: "program", icon: import_lucide_react.Calendar, label: "Programme" },
-      { id: "courses", icon: import_lucide_react.ShoppingCart, label: "Courses" },
-      { id: "sleep", icon: import_lucide_react.Moon, label: "Sommeil" }
+      { id: "train", icon: "\u{1F3CB}\uFE0F", label: "Sport" },
+      { id: "food", icon: "\u{1F37D}\uFE0F", label: "Nutrition" },
+      { id: "program", icon: "\u{1F4C5}", label: "Programme" },
+      { id: "courses", icon: "\u{1F6D2}", label: "Courses" },
+      { id: "sleep", icon: "\u{1F319}", label: "Sommeil" }
     ];
     return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: C.bg, color: C.text, fontFamily: FONT_BODY, paddingBottom: 78 } }, /* @__PURE__ */ React.createElement("style", null, `@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Onest:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');`), offline && /* @__PURE__ */ React.createElement("div", { style: { background: "#FFF3CD", borderBottom: `1px solid #E0A33B`, color: C.text, padding: "8px 16px", fontSize: 12, lineHeight: 1.4, textAlign: "center" } }, "\u{1F4E1} ", /* @__PURE__ */ React.createElement("b", null, "Mode hors-ligne"), " \xB7 Tes donn\xE9es sont sauvegard\xE9es localement et synchronis\xE9es d\xE8s le retour de la connexion."), /* @__PURE__ */ React.createElement(ZTLHeader, { onHome: () => setTab("home") }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 480, margin: "0 auto", padding: "14px 18px 0" } }, tab === "home" && /* @__PURE__ */ React.createElement(HomeTab, { ...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList } }), tab === "train" && /* @__PURE__ */ React.createElement(TrainTab, { ...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions } }), tab === "food" && /* @__PURE__ */ React.createElement(FoodTab, { ...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew } }), tab === "program" && /* @__PURE__ */ React.createElement(ProgramTab, null), tab === "courses" && /* @__PURE__ */ React.createElement(CoursesTab, null), tab === "sleep" && /* @__PURE__ */ React.createElement(SleepTab, { ...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate } })), /* @__PURE__ */ React.createElement("nav", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", width: "100%", maxWidth: 520 } }, TABS.map((t) => {
-      const A = t.icon, on = tab === t.id;
+      const on = tab === t.id;
       return /* @__PURE__ */ React.createElement(
         "button",
         {
@@ -1002,7 +1002,7 @@ ${lines.join("\n")}`;
           onClick: () => setTab(t.id),
           style: { flex: 1, minWidth: 0, background: "none", border: "none", padding: "8px 0 10px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 3, color: on ? C.ember : C.mut }
         },
-        /* @__PURE__ */ React.createElement(A, { size: 19 }),
+        /* @__PURE__ */ React.createElement("span", { style: { fontSize: 19, lineHeight: 1 } }, t.icon),
         /* @__PURE__ */ React.createElement("span", { style: { fontSize: 8.5, fontWeight: on ? 700 : 500, whiteSpace: "nowrap" } }, t.label)
       );
     }))));

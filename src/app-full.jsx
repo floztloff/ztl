@@ -748,11 +748,11 @@ export default function App() {
   );
 
   const TABS = [
-    { id: "train", icon: Dumbbell, label: "Sport" },
-    { id: "food", icon: UtensilsCrossed, label: "Nutrition" },
-    { id: "program", icon: Calendar, label: "Programme" },
-    { id: "courses", icon: ShoppingCart, label: "Courses" },
-    { id: "sleep", icon: Moon, label: "Sommeil" },
+    { id: "train", icon: "🏋️", label: "Sport" },
+    { id: "food", icon: "🍽️", label: "Nutrition" },
+    { id: "program", icon: "📅", label: "Programme" },
+    { id: "courses", icon: "🛒", label: "Courses" },
+    { id: "sleep", icon: "🌙", label: "Sommeil" },
   ];
 
   return (
@@ -776,11 +776,11 @@ export default function App() {
       <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" }}>
         <div style={{ display: "flex", width: "100%", maxWidth: 520 }}>
           {TABS.map(t => {
-            const A = t.icon, on = tab === t.id;
+            const on = tab === t.id;
             return (
               <button key={t.id} onClick={() => setTab(t.id)}
                 style={{ flex: 1, minWidth: 0, background: "none", border: "none", padding: "8px 0 10px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 3, color: on ? C.ember : C.mut }}>
-                <A size={19} />
+                <span style={{ fontSize: 19, lineHeight: 1 }}>{t.icon}</span>
                 <span style={{ fontSize: 8.5, fontWeight: on ? 700 : 500, whiteSpace: "nowrap" }}>{t.label}</span>
               </button>
             );
