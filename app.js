@@ -559,15 +559,16 @@ var ZTL = (() => {
     }
     return { protein: Math.round(p), carbs: Math.round(c), fat: Math.round(f), satfat: Math.round(f * 0.4), sugar: null, unmatched, total };
   }
-  async function callModel(prompt) {
+  async function callModel(prompt2) {
+    const API_KEY2 = "sk-ant-api03-REPLACE_WITH_YOUR_KEY";
     const models = ["claude-sonnet-4-20250514", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"];
     let lastErr;
     for (const model of models) {
       try {
         const res = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt }] })
+          headers: { "content-type": "application/json", "x-api-key": API_KEY2, "anthropic-version": "2023-06-01" },
+          body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt2 }] })
         });
         if (!res.ok) {
           let t = "";
@@ -584,12 +585,21 @@ var ZTL = (() => {
         lastErr = new Error("r\xE9ponse vide");
       } catch (e) {
         lastErr = e;
+        return null;
       }
     }
+    const promptKey = () => {
+      if (typeof promptDeepSeekKey === "function") {
+        const k = promptDeepSeekKey();
+        if (k) return callModel(prompt2);
+      }
+      return null;
+    };
+    if (!getDeepSeekKey()) return promptKey();
     throw lastErr || new Error("indisponible");
   }
   async function aiMacros(ingText) {
-    const prompt = `Tu es nutritionniste. Calcule les valeurs nutritionnelles totales de cette recette pour UNE personne (les quantit\xE9s ci-dessous sont pour une personne).
+    const prompt2 = `Tu es nutritionniste. Calcule les valeurs nutritionnelles totales de cette recette pour UNE personne (les quantit\xE9s ci-dessous sont pour une personne).
 Ingr\xE9dients (un par ligne) :
 ${ingText}
 
@@ -600,19 +610,19 @@ R\xE8gles :
 - "satfat" = grammes de graisses satur\xE9es ; "sugar" = grammes de sucres.
 R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte autour ni backticks :
 {"protein": <entier>, "carbs": <entier>, "fat": <entier>, "satfat": <entier>, "sugar": <entier>}`;
-    const text = await callModel(prompt);
+    const text = await callModel(prompt2);
     const m = text && text.match(/\{[\s\S]*?\}/);
     if (!m) throw new Error("r\xE9ponse illisible");
     const j = JSON.parse(m[0]);
     return { protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0), satfat: Math.round(+j.satfat || 0), sugar: Math.round(+j.sugar || 0) };
   }
   async function aiMealFromPhoto(base64, mediaType) {
-    const prompt = `Analyse la photo de ce plat. Identifie le plat et estime ses valeurs nutritionnelles pour la portion visible sur la photo.
+    const prompt2 = `Analyse la photo de ce plat. Identifie le plat et estime ses valeurs nutritionnelles pour la portion visible sur la photo.
 R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte autour ni backticks :
 {"plat": "<nom court du plat>", "protein": <entier g>, "carbs": <entier g>, "fat": <entier g>}`;
     const content = [
       { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-      { type: "text", text: prompt }
+      { type: "text", text: prompt2 }
     ];
     const models = ["claude-sonnet-4-20250514", "claude-sonnet-4-6"];
     let lastErr;
@@ -620,7 +630,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       try {
         const res = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
-          headers: { "content-type": "application/json" },
+          headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
           body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content }] })
         });
         if (!res.ok) {
@@ -643,8 +653,17 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
         return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
       } catch (e) {
         lastErr = e;
+        return null;
       }
     }
+    const promptKey = () => {
+      if (typeof promptDeepSeekKey === "function") {
+        const k = promptDeepSeekKey();
+        if (k) return callModel(prompt2);
+      }
+      return null;
+    };
+    if (!getDeepSeekKey()) return promptKey();
     throw lastErr || new Error("indisponible");
   }
   var SHOP_UNITS = {
@@ -704,7 +723,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     });
   }
   async function aiShoppingList(lines) {
-    const prompt = `Voici des ingr\xE9dients issus de plusieurs recettes planifi\xE9es (avec doublons possibles).
+    const prompt2 = `Voici des ingr\xE9dients issus de plusieurs recettes planifi\xE9es (avec doublons possibles).
 Regroupe les ingr\xE9dients IDENTIQUES en additionnant leurs quantit\xE9s, et produis une liste de courses claire et compacte.
 - Additionne les quantit\xE9s de m\xEAme unit\xE9 (ex. 350 g + 200 g = 550 g).
 - Garde des unit\xE9s lisibles (g, kg, ml, pi\xE8ces, bo\xEEtes...).
@@ -714,7 +733,7 @@ R\xE9ponds STRICTEMENT par un tableau JSON sur une seule ligne, sans texte ni ba
 
 Ingr\xE9dients :
 ${lines.join("\n")}`;
-    const text = await callModel(prompt);
+    const text = await callModel(prompt2);
     const m = text && text.match(/\[[\s\S]*\]/);
     if (!m) throw new Error("r\xE9ponse illisible");
     const arr = JSON.parse(m[0]);
@@ -752,6 +771,32 @@ ${lines.join("\n")}`;
         return Object.keys(mem).filter((x) => x.startsWith(prefix));
       }
     }
+  };
+  var getDeepSeekKey = () => {
+    if (typeof window !== "undefined") {
+      if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
+      try {
+        const k = localStorage.getItem("_ztlDeepSeekKey");
+        if (k) {
+          window._ztlDeepSeekKey = k;
+          return k;
+        }
+      } catch {
+      }
+    }
+    return "";
+  };
+  var promptDeepSeekKey = () => {
+    const k = prompt("Cl\xE9 API DeepSeek\n\nPour utiliser l'IA (calcul macros, analyse photo), entre ta cl\xE9 API DeepSeek.\nCr\xE9e-la sur https://platform.deepseek.com/api_keys\n\nTa cl\xE9 est stock\xE9e uniquement dans ton navigateur.");
+    if (k && k.trim()) {
+      window._ztlDeepSeekKey = k.trim();
+      try {
+        localStorage.setItem("_ztlDeepSeekKey", k.trim());
+      } catch {
+      }
+      return k.trim();
+    }
+    return "";
   };
   var dateKey = (d = /* @__PURE__ */ new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   var fmtDay = (d = /* @__PURE__ */ new Date()) => d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
@@ -1694,7 +1739,7 @@ ${lines.join("\n")}`;
       const shown = editing.manual ? { protein: +editing.protein || 0, carbs: +editing.carbs || 0, fat: +editing.fat || 0 } : editing.aiVals || auto;
       const kc = kcal(shown);
       const src = editing.manual ? "manuel" : editing.aiVals ? "ia" : "local";
-      return /* @__PURE__ */ React.createElement(React.Fragment, null, toastEl, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, isEdit ? "Modifier" : "Nouvelle recette"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, editing.title || "Ta recette"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16, marginTop: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Titre"), /* @__PURE__ */ React.createElement("input", { value: editing.title, onChange: (e) => setEditing({ ...editing, title: e.target.value }), placeholder: "Ex. Wok de poulet", style: fld })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Style"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, styleOpts.map((s) => /* @__PURE__ */ React.createElement("button", { key: s, onClick: () => setEditing({ ...editing, style: s }), style: { padding: "7px 13px", borderRadius: 99, border: `1px solid ${editing.style === s ? C.ember : C.line}`, background: editing.style === s ? C.emberSoft : C.card, color: editing.style === s ? C.ember : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer" } }, s)))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Lien ", /* @__PURE__ */ React.createElement("span", { style: { textTransform: "none", fontWeight: 400 } }, "\xB7 optionnel")), /* @__PURE__ */ React.createElement("input", { value: editing.link || "", onChange: (e) => setEditing({ ...editing, link: e.target.value }), placeholder: "https://\u2026", style: fld })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Ingr\xE9dients ", /* @__PURE__ */ React.createElement("span", { style: { textTransform: "none", fontWeight: 400 } }, "\xB7 un par ligne, pour une personne")), /* @__PURE__ */ React.createElement("textarea", { value: editing.ingText, onChange: (e) => setEditing({ ...editing, ingText: e.target.value, aiVals: null }), rows: 6, placeholder: "350 g de steak hach\xE9\n1 pain \xE0 burger\n1 tranche de cheddar", style: { ...fld, resize: "vertical", lineHeight: 1.6 } })), /* @__PURE__ */ React.createElement("div", { style: { background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { ...lbl, margin: 0 } }, "Macros (par personne)")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } }, pill("prot\xE9ines", shown.protein + " g", C.ember), pill("glucides", shown.carbs + " g", C.teal), pill("lipides", shown.fat + " g", C.amber)), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, textAlign: "center", fontSize: 13, color: C.mut } }, "\u2248 ", /* @__PURE__ */ React.createElement("span", { style: { fontSize: 20, fontWeight: 800, color: C.ember } }, kc), " kcal / personne"), /* @__PURE__ */ React.createElement("button", { onClick: runAI, disabled: aiLoading, style: { width: "100%", marginTop: 12, background: aiLoading ? C.tealSoft : C.teal, color: aiLoading ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", aiLoading ? "Calcul en cours\u2026" : "Calculer avec l'IA"), /* @__PURE__ */ React.createElement("button", { onClick: () => setEditing({ ...editing, manual: !editing.manual, protein: String(shown.protein), carbs: String(shown.carbs), fat: String(shown.fat) }), style: { width: "100%", marginTop: 8, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 10, padding: "9px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" } }, "Corriger \xE0 la main")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Pr\xE9paration ", /* @__PURE__ */ React.createElement("span", { style: { textTransform: "none", fontWeight: 400 } }, "\xB7 une \xE9tape par ligne")), /* @__PURE__ */ React.createElement("textarea", { value: editing.stepsText, onChange: (e) => setEditing({ ...editing, stepsText: e.target.value }), rows: 5, placeholder: "Saisir le poulet 8 min\nAjouter la sauce\n...", style: { ...fld, resize: "vertical", lineHeight: 1.5 } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setEditing(null), style: { flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.text, borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 700, cursor: "pointer" } }, "Annuler"), /* @__PURE__ */ React.createElement("button", { onClick: saveEdit, disabled: aiLoading, style: { flex: 2, background: C.ember, border: "none", color: "#1b1205", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: "pointer", opacity: aiLoading ? 0.7 : 1 } }, "Enregistrer"))), /* @__PURE__ */ React.createElement("div", { style: { height: 16 } }));
+      return /* @__PURE__ */ React.createElement(React.Fragment, null, toastEl, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, isEdit ? "Modifier" : "Nouvelle recette"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, editing.title || "Ta recette"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16, marginTop: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Titre"), /* @__PURE__ */ React.createElement("input", { value: editing.title, onChange: (e) => setEditing({ ...editing, title: e.target.value }), placeholder: "Ex. Wok de poulet", style: fld })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Style"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, styleOpts.map((s) => /* @__PURE__ */ React.createElement("button", { key: s, onClick: () => setEditing({ ...editing, style: s }), style: { padding: "7px 13px", borderRadius: 99, border: `1px solid ${editing.style === s ? C.ember : C.line}`, background: editing.style === s ? C.emberSoft : C.card, color: editing.style === s ? C.ember : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer" } }, s)))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Lien ", /* @__PURE__ */ React.createElement("span", { style: { textTransform: "none", fontWeight: 400 } }, "\xB7 optionnel")), /* @__PURE__ */ React.createElement("input", { value: editing.link || "", onChange: (e) => setEditing({ ...editing, link: e.target.value }), placeholder: "https://\u2026", style: fld })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Ingr\xE9dients ", /* @__PURE__ */ React.createElement("span", { style: { textTransform: "none", fontWeight: 400 } }, "\xB7 un par ligne, pour une personne")), /* @__PURE__ */ React.createElement("textarea", { value: editing.ingText, onChange: (e) => setEditing({ ...editing, ingText: e.target.value, aiVals: null }), rows: 6, placeholder: "350 g de steak hach\xE9\n1 pain \xE0 burger\n1 tranche de cheddar", style: { ...fld, resize: "vertical", lineHeight: 1.6 } })), /* @__PURE__ */ React.createElement("div", { style: { background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { ...lbl, margin: 0 } }, "Macros (par personne)")), editing.manual ? /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } }, [["protein", "Prot\xE9ines"], ["carbs", "Glucides"], ["fat", "Lipides"]].map(([k, l]) => /* @__PURE__ */ React.createElement("div", { key: k, style: { flex: 1 } }, /* @__PURE__ */ React.createElement("input", { value: editing[k], onChange: (e) => setEditing({ ...editing, [k]: e.target.value.replace(/[^0-9.]/g, "") }), inputMode: "decimal", placeholder: "0", style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "8px", fontSize: 14, textAlign: "center" } }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.mut, textAlign: "center", marginTop: 4 } }, l, " (g)")))) : /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } }, pill("prot\xE9ines", shown.protein + " g", C.ember), pill("glucides", shown.carbs + " g", C.teal), pill("lipides", shown.fat + " g", C.amber)), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, textAlign: "center", fontSize: 13, color: C.mut } }, "\u2248 ", /* @__PURE__ */ React.createElement("span", { style: { fontSize: 20, fontWeight: 800, color: C.ember } }, kc), " kcal / personne"), /* @__PURE__ */ React.createElement("button", { onClick: runAI, disabled: aiLoading, style: { width: "100%", marginTop: 12, background: aiLoading ? C.tealSoft : C.teal, color: aiLoading ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", aiLoading ? "Calcul en cours\u2026" : "Calculer avec l'IA"), /* @__PURE__ */ React.createElement("button", { onClick: () => setEditing({ ...editing, manual: !editing.manual, protein: String(shown.protein), carbs: String(shown.carbs), fat: String(shown.fat) }), style: { width: "100%", marginTop: 8, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 10, padding: "9px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" } }, "Corriger \xE0 la main")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Pr\xE9paration ", /* @__PURE__ */ React.createElement("span", { style: { textTransform: "none", fontWeight: 400 } }, "\xB7 une \xE9tape par ligne")), /* @__PURE__ */ React.createElement("textarea", { value: editing.stepsText, onChange: (e) => setEditing({ ...editing, stepsText: e.target.value }), rows: 5, placeholder: "Saisir le poulet 8 min\nAjouter la sauce\n...", style: { ...fld, resize: "vertical", lineHeight: 1.5 } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setEditing(null), style: { flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.text, borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 700, cursor: "pointer" } }, "Annuler"), /* @__PURE__ */ React.createElement("button", { onClick: saveEdit, disabled: aiLoading, style: { flex: 2, background: C.ember, border: "none", color: "#1b1205", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: "pointer", opacity: aiLoading ? 0.7 : 1 } }, "Enregistrer"))), /* @__PURE__ */ React.createElement("div", { style: { height: 16 } }));
     }
     const styles = ["Tout", ...styleOpts];
     const list = recipes.filter((r) => f === "Tout" || r.style === f);

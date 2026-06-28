@@ -326,13 +326,14 @@ function recipeMacros(ingText) {
 
 /* macros calculées par l'IA — fiable sur n'importe quel ingrédient */
 async function callModel(prompt) {
+  const API_KEY = "sk-ant-api03-REPLACE_WITH_YOUR_KEY";
   const models = ["claude-sonnet-4-20250514", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"];
   let lastErr;
   for (const model of models) {
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
         body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt }] }),
       });
       if (!res.ok) { let t = ""; try { t = (await res.text()).slice(0, 80); } catch {} lastErr = new Error("HTTP " + res.status + " " + t); continue; }
@@ -340,8 +341,17 @@ async function callModel(prompt) {
       const text = (data.content || []).map(i => (i && i.type === "text" ? i.text : "")).join("");
       if (text) return text;
       lastErr = new Error("réponse vide");
-    } catch (e) { lastErr = e; }
+    } catch (e) { lastErr = e; return null; }
   }
+  // Pas de clé ? Demander
+  const promptKey = () => {
+    if (typeof promptDeepSeekKey === "function") {
+      const k = promptDeepSeekKey();
+      if (k) return callModel(prompt);
+    }
+    return null;
+  };
+  if (!getDeepSeekKey()) return promptKey();
   throw lastErr || new Error("indisponible");
 }
 async function aiMacros(ingText) {
@@ -377,7 +387,7 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
   for (const model of models) {
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST", headers: { "content-type": "application/json" },
+        method: "POST", headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
         body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content }] }),
       });
       if (!res.ok) { let t = ""; try { t = (await res.text()).slice(0, 80); } catch {} lastErr = new Error("HTTP " + res.status + " " + t); continue; }
@@ -387,8 +397,17 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
       if (!mt) { lastErr = new Error("réponse illisible"); continue; }
       const j = JSON.parse(mt[0]);
       return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
-    } catch (e) { lastErr = e; }
+    } catch (e) { lastErr = e; return null; }
   }
+  // Pas de clé ? Demander
+  const promptKey = () => {
+    if (typeof promptDeepSeekKey === "function") {
+      const k = promptDeepSeekKey();
+      if (k) return callModel(prompt);
+    }
+    return null;
+  };
+  if (!getDeepSeekKey()) return promptKey();
   throw lastErr || new Error("indisponible");
 }
 
@@ -480,6 +499,23 @@ const store = {
   },
 };
 
+
+const getDeepSeekKey = () => {
+  if (typeof window !== "undefined") {
+    if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
+    try { const k = localStorage.getItem("_ztlDeepSeekKey"); if (k) { window._ztlDeepSeekKey = k; return k; } } catch {}
+  }
+  return "";
+};
+const promptDeepSeekKey = () => {
+  const k = prompt("Clé API DeepSeek\n\nPour utiliser l'IA (calcul macros, analyse photo), entre ta clé API DeepSeek.\nCrée-la sur https://platform.deepseek.com/api_keys\n\nTa clé est stockée uniquement dans ton navigateur.");
+  if (k && k.trim()) {
+    window._ztlDeepSeekKey = k.trim();
+    try { localStorage.setItem("_ztlDeepSeekKey", k.trim()); } catch {}
+    return k.trim();
+  }
+  return "";
+};
 const dateKey = (d = new Date()) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const fmtDay = (d = new Date()) =>
@@ -1943,7 +1979,18 @@ function RecipesTab({ addMacros, openId, newSignal }) {
           <div><div style={lbl}>Ingrédients <span style={{ textTransform: "none", fontWeight: 400 }}>· un par ligne, pour une personne</span></div><textarea value={editing.ingText} onChange={e => setEditing({...editing, ingText: e.target.value, aiVals: null})} rows={6} placeholder={"350 g de steak haché\n1 pain à burger\n1 tranche de cheddar"} style={{ ...fld, resize: "vertical", lineHeight: 1.6 }} /></div>
           <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}><div style={{ ...lbl, margin: 0 }}>Macros (par personne)</div></div>
-            <div style={{ display: "flex", gap: 8 }}>{pill("protéines", shown.protein + " g", C.ember)}{pill("glucides", shown.carbs + " g", C.teal)}{pill("lipides", shown.fat + " g", C.amber)}</div>
+            {editing.manual ? (
+              <div style={{ display: "flex", gap: 8 }}>
+                {[["protein", "Protéines"], ["carbs", "Glucides"], ["fat", "Lipides"]].map(([k, l]) => (
+                  <div key={k} style={{ flex: 1 }}>
+                    <input value={editing[k]} onChange={e => setEditing({...editing, [k]: e.target.value.replace(/[^0-9.]/g, "")})} inputMode="decimal" placeholder="0" style={{ width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "8px", fontSize: 14, textAlign: "center" }} />
+                    <div style={{ fontSize: 10.5, color: C.mut, textAlign: "center", marginTop: 4 }}>{l} (g)</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 8 }}>{pill("protéines", shown.protein + " g", C.ember)}{pill("glucides", shown.carbs + " g", C.teal)}{pill("lipides", shown.fat + " g", C.amber)}</div>
+            )}
             <div style={{ marginTop: 12, textAlign: "center", fontSize: 13, color: C.mut }}>≈ <span style={{ fontSize: 20, fontWeight: 800, color: C.ember }}>{kc}</span> kcal / personne</div>
             <button onClick={runAI} disabled={aiLoading} style={{ width: "100%", marginTop: 12, background: aiLoading ? C.tealSoft : C.teal, color: aiLoading ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}><span style={{fontSize:16,lineHeight:1}}>✨</span> {aiLoading ? "Calcul en cours…" : "Calculer avec l'IA"}</button>
             <button onClick={() => setEditing({...editing, manual: !editing.manual, protein: String(shown.protein), carbs: String(shown.carbs), fat: String(shown.fat)})} style={{ width: "100%", marginTop: 8, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 10, padding: "9px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>Corriger à la main</button>
