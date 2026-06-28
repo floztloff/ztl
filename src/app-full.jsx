@@ -372,53 +372,33 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
 
 /* vision IA : estime le plat et ses macros à partir d'une photo */
 async function aiMealFromPhoto(base64, mediaType) {
-  let apiKey = window._ztlGroqKey;
+  let apiKey = window._ztlGeminiKey;
   if (!apiKey) {
-    try { apiKey = await store.get("_ztlGroqKey"); if (apiKey) { window._ztlGroqKey = apiKey; } } catch {}
+    try { apiKey = await store.get("_ztlGeminiKey"); if (apiKey) { window._ztlGeminiKey = apiKey; } } catch {}
   }
-  if (!apiKey) throw new Error("Aucune clé Groq. ⚙️ Clés API sur l'accueil (console.groq.com/keys).");
+  if (!apiKey) throw new Error("Clé Gemini requise. ⚙️ Clés API sur l'accueil (gratuit: aistudio.google.com/apikey).");
   
-  // Convertir base64 en blob et uploader sur 0x0.st (gratuit, anonyme)
-  const byteString = atob(base64);
-  const ab = new ArrayBuffer(byteString.length);
-  const ia = new Uint8Array(ab);
-  for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-  const blob = new Blob([ab], { type: mediaType });
-  
-  const form = new FormData();
-  form.append("file", blob, "photo." + (mediaType.split("/")[1] || "jpg"));
-  
-  let imageUrl;
-  try {
-    const uploadRes = await fetch("https://0x0.st", { method: "POST", body: form });
-    imageUrl = (await uploadRes.text()).trim();
-    if (!imageUrl.startsWith("http")) throw new Error("Upload échoué");
-  } catch (e) {
-    throw new Error("Upload image impossible. Réessaie.");
-  }
-  
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
-    body: JSON.stringify({
-      model: "llama-3.2-11b-vision-preview",
-      max_tokens: 300, temperature: 0,
-      messages: [{ role: "user", content: [
-        { type: "image_url", image_url: { url: imageUrl } },
-        { type: "text", text: "Analyse ce plat. Réponds UNIQUEMENT: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
-      ]}]
-    }),
-  });
-  if (!res.ok) { 
-    const t = await res.text().catch(()=>""); 
-    if (res.status === 401) throw new Error("Clé Groq invalide.");
-    throw new Error("Erreur Groq " + res.status);
+  const res = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+    { method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [
+        { inlineData: { mimeType: mediaType, data: base64 } },
+        { text: "Analyse ce plat. Réponds UNIQUEMENT: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
+      ]}]})
+    }
+  );
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    if (res.status === 403) throw new Error("Clé Gemini invalide ou API non activée.");
+    if (res.status === 429) throw new Error("Quota Gemini dépassé, réessaie dans 1 minute.");
+    throw new Error("Erreur Gemini " + res.status + ": " + t.slice(0, 100));
   }
   const data = await res.json();
-  const text = data.choices?.[0]?.message?.content || "";
-  const mt = text.replace(/```json\n?|```/g, "").match(/\{[^}]*\}/);
-  if (!mt) throw new Error("Réponse illisible");
-  const j = JSON.parse(mt[0]);
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  const clean = text.replace(/```(json)?\n?|```/g, "").trim();
+  const match = clean.match(/\{[^}]+\}/);
+  if (!match) throw new Error("Réponse illisible: " + text.slice(0, 80));
+  const j = JSON.parse(match[0]);
   return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
 }
 
@@ -925,10 +905,9 @@ function ApiKeyButton() {
       setDeepSeekKey(val.trim());
     } else {
       // Clé Groq ou Gemini (vision)
-      window._ztlGroqKey = val.trim();
       window._ztlGeminiKey = val.trim();
-      try { localStorage.setItem("_ztlGroqKey", val.trim()); } catch {}
-      try { store.set("_ztlGroqKey", val.trim()); } catch {}
+      try { localStorage.setItem("_ztlGeminiKey", val.trim()); } catch {}
+      try { store.set("_ztlGeminiKey", val.trim()); } catch {}
     }
     setHasKey(true);
     setShow(false);
