@@ -326,29 +326,17 @@ function recipeMacros(ingText) {
 
 /* macros calculées par l'IA — fiable sur n'importe quel ingrédient */
 async function callModel(prompt) {
-  let apiKey = await getDeepSeekKey();
-  if (!apiKey) {
-    try { const k = typeof prompt !== "undefined" ? prompt("Clé API DeepSeek") : null; if (k && k.trim()) setDeepSeekKey(k.trim()); } catch {}
-    apiKey = await getDeepSeekKey();
-    if (!apiKey) throw new Error("Clé API requise. Ouvre ⚙️ Clé API DeepSeek sur l'accueil.");
-  }
-  const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+  const res = await fetch("https://text.pollinations.ai/openai", {
     method: "POST",
-    headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
-    body: JSON.stringify({ model: "deepseek-chat", max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt }] }),
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ model: "", messages: [{ role: "user", content: prompt }] })
   });
-  if (!res.ok) { 
-    const t = await res.text().catch(() => "");
-    if (res.status === 401) throw new Error("Clé API DeepSeek invalide. Mets-la à jour dans ⚙️ Clé API.");
-    throw new Error("API DeepSeek erreur " + res.status + ": " + t.slice(0, 150));
-  }
+  if (!res.ok) throw new Error("Erreur " + res.status);
   const data = await res.json();
-  if (!data || !data.choices || !data.choices.length) throw new Error("Réponse DeepSeek vide");
-  const text = data.choices[0].message?.content || "";
-  if (!text) throw new Error("Réponse DeepSeek sans contenu");
+  const text = data.choices?.[0]?.message?.content || "";
+  if (!text) throw new Error("Réponse vide");
   return text;
 }
-
 
 async function aiMacros(ingText) {
   const prompt = `Tu es nutritionniste. Calcule les valeurs nutritionnelles totales de cette recette pour UNE personne (les quantités ci-dessous sont pour une personne).
@@ -373,12 +361,18 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
 /* vision IA : estime le plat et ses macros à partir d'une photo */
 async function aiMealFromPhoto(base64, mediaType) {
   let apiKey = window._ztlClaudeKey;
-  if (!apiKey) { try { apiKey = await store.get("_ztlClaudeKey"); if (apiKey) { window._ztlClaudeKey = apiKey; } } catch {} }
-  if (!apiKey) throw new Error("Analyse photo temporairement indisponible.");
-  const prompt = "Analyse ce plat. RÃ©ponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}";
+  if (!apiKey) { try { apiKey = localStorage.getItem("_ztlClaudeKey"); } catch {} }
+  if (!apiKey) { try { const v = await store.get("_ztlClaudeKey"); if (v) apiKey = v; } catch {} }
+  if (!apiKey) throw new Error("Analyse photo indisponible (clé manquante).");
+  
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
-    headers: { "content-type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
     body: JSON.stringify({
       model: "claude-sonnet-4-20250514",
       max_tokens: 512,
@@ -386,18 +380,22 @@ async function aiMealFromPhoto(base64, mediaType) {
         role: "user",
         content: [
           { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-          { type: "text", text: prompt }
+          { type: "text", text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON sans backticks: {\"plat\":\"nom du plat\",\"protein\":nombre_grammes,\"carbs\":nombre_grammes,\"fat\":nombre_grammes}" }
         ]
       }]
     }),
   });
-  if (!res.ok) { const t = await res.text().catch(()=>""); throw new Error("Erreur Claude " + res.status); }
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error("Erreur Claude " + res.status + ": " + t.slice(0, 120));
+  }
   const data = await res.json();
-  const text = data.content?.filter(c=>c.type==="text").map(c=>c.text).join("") || "";
-  const match = text.replace(/```(json)?\n?|```/g,"").match(/\{[^}]+\}/);
-  if (!match) throw new Error("RÃ©ponse illisible");
+  const text = (data.content || []).filter(c => c.type === "text").map(c => c.text).join("");
+  const clean = text.replace(/```(json)?\n?|```/g, "").trim();
+  const match = clean.match(/\{[^}]+\}/);
+  if (!match) throw new Error("Réponse illisible: " + text.slice(0, 80));
   const j = JSON.parse(match[0]);
-  return { plat: j.plat || "Plat", protein: Math.round(+j.protein||0), carbs: Math.round(+j.carbs||0), fat: Math.round(+j.fat||0) };
+  return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
 }
 
 
@@ -505,16 +503,7 @@ const setDeepSeekKey = (k) => {
   try { localStorage.setItem("_ztlDeepSeekKey", k.trim()); } catch {}
   try { store.set("_ztlDeepSeekKey", k.trim()); } catch {}
 };
-const promptDeepSeekKey = () => {
-  const k = prompt("Clé API DeepSeek\n\nEntre ta clé API (https://platform.deepseek.com/api_keys).\nElle sera sauvegardée dans ton compte ZTL et synchronisée sur tous tes appareils.");
-  if (k && k.trim()) {
-    window._ztlDeepSeekKey = k.trim();
-    try { localStorage.setItem("_ztlDeepSeekKey", k.trim()); } catch {}
-    try { store.set("_ztlDeepSeekKey", k.trim()); } catch {} // sync Supabase
-    return k.trim();
-  }
-  return "";
-};
+
 const dateKey = (d = new Date()) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const fmtDay = (d = new Date()) =>

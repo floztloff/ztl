@@ -559,35 +559,20 @@ var ZTL = (() => {
     }
     return { protein: Math.round(p), carbs: Math.round(c), fat: Math.round(f), satfat: Math.round(f * 0.4), sugar: null, unmatched, total };
   }
-  async function callModel(prompt2) {
-    let apiKey = await getDeepSeekKey();
-    if (!apiKey) {
-      try {
-        const k = typeof prompt2 !== "undefined" ? prompt2("Cl\xE9 API DeepSeek") : null;
-        if (k && k.trim()) setDeepSeekKey(k.trim());
-      } catch {
-      }
-      apiKey = await getDeepSeekKey();
-      if (!apiKey) throw new Error("Cl\xE9 API requise. Ouvre \u2699\uFE0F Cl\xE9 API DeepSeek sur l'accueil.");
-    }
-    const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+  async function callModel(prompt) {
+    const res = await fetch("https://text.pollinations.ai/openai", {
       method: "POST",
-      headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
-      body: JSON.stringify({ model: "deepseek-chat", max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt2 }] })
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ model: "", messages: [{ role: "user", content: prompt }] })
     });
-    if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      if (res.status === 401) throw new Error("Cl\xE9 API DeepSeek invalide. Mets-la \xE0 jour dans \u2699\uFE0F Cl\xE9 API.");
-      throw new Error("API DeepSeek erreur " + res.status + ": " + t.slice(0, 150));
-    }
+    if (!res.ok) throw new Error("Erreur " + res.status);
     const data = await res.json();
-    if (!data || !data.choices || !data.choices.length) throw new Error("R\xE9ponse DeepSeek vide");
-    const text = data.choices[0].message?.content || "";
-    if (!text) throw new Error("R\xE9ponse DeepSeek sans contenu");
+    const text = data.choices?.[0]?.message?.content || "";
+    if (!text) throw new Error("R\xE9ponse vide");
     return text;
   }
   async function aiMacros(ingText) {
-    const prompt2 = `Tu es nutritionniste. Calcule les valeurs nutritionnelles totales de cette recette pour UNE personne (les quantit\xE9s ci-dessous sont pour une personne).
+    const prompt = `Tu es nutritionniste. Calcule les valeurs nutritionnelles totales de cette recette pour UNE personne (les quantit\xE9s ci-dessous sont pour une personne).
 Ingr\xE9dients (un par ligne) :
 ${ingText}
 
@@ -598,7 +583,7 @@ R\xE8gles :
 - "satfat" = grammes de graisses satur\xE9es ; "sugar" = grammes de sucres.
 R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte autour ni backticks :
 {"protein": <entier>, "carbs": <entier>, "fat": <entier>, "satfat": <entier>, "sugar": <entier>}`;
-    const text = await callModel(prompt2);
+    const text = await callModel(prompt);
     const matches = text.match(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g);
     if (!matches || !matches.length) throw new Error("r\xE9ponse illisible: " + text.slice(0, 100));
     const j = JSON.parse(matches[matches.length - 1]);
@@ -608,18 +593,26 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     let apiKey = window._ztlClaudeKey;
     if (!apiKey) {
       try {
-        apiKey = await store.get("_ztlClaudeKey");
-        if (apiKey) {
-          window._ztlClaudeKey = apiKey;
-        }
+        apiKey = localStorage.getItem("_ztlClaudeKey");
       } catch {
       }
     }
-    if (!apiKey) throw new Error("Analyse photo temporairement indisponible.");
-    const prompt2 = 'Analyse ce plat. R\xC3\xA9ponds UNIQUEMENT par un objet JSON: {"plat":"nom","protein":g,"carbs":g,"fat":g}';
+    if (!apiKey) {
+      try {
+        const v = await store.get("_ztlClaudeKey");
+        if (v) apiKey = v;
+      } catch {
+      }
+    }
+    if (!apiKey) throw new Error("Analyse photo indisponible (cl\xE9 manquante).");
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 512,
@@ -627,19 +620,20 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
           role: "user",
           content: [
             { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-            { type: "text", text: prompt2 }
+            { type: "text", text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT par un objet JSON sans backticks: {"plat":"nom du plat","protein":nombre_grammes,"carbs":nombre_grammes,"fat":nombre_grammes}' }
           ]
         }]
       })
     });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      throw new Error("Erreur Claude " + res.status);
+      throw new Error("Erreur Claude " + res.status + ": " + t.slice(0, 120));
     }
     const data = await res.json();
-    const text = data.content?.filter((c) => c.type === "text").map((c) => c.text).join("") || "";
-    const match = text.replace(/```(json)?\n?|```/g, "").match(/\{[^}]+\}/);
-    if (!match) throw new Error("R\xC3\xA9ponse illisible");
+    const text = (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("");
+    const clean = text.replace(/```(json)?\n?|```/g, "").trim();
+    const match = clean.match(/\{[^}]+\}/);
+    if (!match) throw new Error("R\xE9ponse illisible: " + text.slice(0, 80));
     const j = JSON.parse(match[0]);
     return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
   }
@@ -700,7 +694,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     });
   }
   async function aiShoppingList(lines) {
-    const prompt2 = `Voici des ingr\xE9dients issus de plusieurs recettes planifi\xE9es (avec doublons possibles).
+    const prompt = `Voici des ingr\xE9dients issus de plusieurs recettes planifi\xE9es (avec doublons possibles).
 Regroupe les ingr\xE9dients IDENTIQUES en additionnant leurs quantit\xE9s, et produis une liste de courses claire et compacte.
 - Additionne les quantit\xE9s de m\xEAme unit\xE9 (ex. 350 g + 200 g = 550 g).
 - Garde des unit\xE9s lisibles (g, kg, ml, pi\xE8ces, bo\xEEtes...).
@@ -710,7 +704,7 @@ R\xE9ponds STRICTEMENT par un tableau JSON sur une seule ligne, sans texte ni ba
 
 Ingr\xE9dients :
 ${lines.join("\n")}`;
-    const text = await callModel(prompt2);
+    const text = await callModel(prompt);
     const matches = text.match(/\[[\s\S]*\]/g);
     if (!matches || !matches.length) throw new Error("r\xE9ponse illisible");
     const arr = JSON.parse(matches[matches.length - 1]);
