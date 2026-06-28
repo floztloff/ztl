@@ -43,7 +43,7 @@
 <body>
   <div id="root"><div id="loader"><div class="spinner"></div><div>ZTL se prépare…</div></div></div>
 
-  <!-- Gestionnaire d'erreurs global (V1 style) -->
+  <!-- Gestionnaire d'erreurs global -->
   <script>
     window.onerror = function(msg, url, line, col, err) {
       var stack = (err && err.stack) ? '\n\n' + err.stack : '';
@@ -55,14 +55,24 @@
     };
   </script>
 
-  <!-- React UMD -->
+  <!-- Dépendances (ordre strict) -->
+  <!-- 1. React -->
   <script src="libs/react.production.min.js"></script>
   <script src="libs/react-dom.production.min.js"></script>
 
-  <!-- Couche de stockage -->
+  <!-- 2. Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- 3. Couche Supabase (auth + DB) -->
+  <script src="supabase.js"></script>
+
+  <!-- 4. Couche de stockage (localStorage + cloud sync) -->
   <script src="storage.js"></script>
 
-  <!-- Polyfill require() pour le bundle esbuild -->
+  <!-- 5. UI Auth -->
+  <script src="auth-ui.js"></script>
+
+  <!-- 6. Polyfill require() pour le bundle esbuild -->
   <script>
     (function() {
       var r = window.React;
@@ -70,7 +80,7 @@
       if (!r || !rd) {
         document.getElementById('root').innerHTML =
           '<div style="color:#F2543D;padding:30px;font-family:monospace;font-size:13px;text-align:center">' +
-          'Erreur : React ou ReactDOM introuvable.<br>Vérifie que libs/react.production.min.js et libs/react-dom.production.min.js sont bien uploadés.</div>';
+          'Erreur : React ou ReactDOM introuvable.</div>';
         return;
       }
       window.require = function(name) {
@@ -81,28 +91,10 @@
     })();
   </script>
 
-  <!-- L'application compilée -->
+  <!-- 7. App ZTL compilée -->
   <script src="app.js"></script>
 
-  <!-- Montage React -->
-  <script>
-    try {
-      var mount = function() {
-        var rootEl = document.getElementById('root');
-        if (rootEl && window.ZTL && window.ZTL.default && window.ReactDOM && window.React) {
-          window.ReactDOM.createRoot(rootEl).render(window.React.createElement(window.ZTL.default));
-        }
-      };
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', mount);
-      } else {
-        mount();
-      }
-    } catch (e) {
-      document.getElementById('root').innerHTML =
-        '<div style="color:#F2543D;padding:30px;font-family:monospace;white-space:pre-wrap;font-size:13px">' +
-        'Erreur au montage : ' + (e.message || e) + '\n' + (e.stack || '') + '</div>';
-    }
-  </script>
+  <!-- 8. Wrapper auth → app -->
+  <script src="auth-wrapper.js"></script>
 </body>
 </html>
