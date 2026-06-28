@@ -372,41 +372,38 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
 
 /* vision IA : estime le plat et ses macros à partir d'une photo */
 async function aiMealFromPhoto(base64, mediaType) {
-  const prompt = `Analyse la photo de ce plat. Identifie le plat et estime ses valeurs nutritionnelles pour la portion visible sur la photo.
-Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte autour ni backticks :
-{"plat": "<nom court du plat>", "protein": <entier g>, "carbs": <entier g>, "fat": <entier g>}`;
-  const content = [
-    { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-    { type: "text", text: prompt },
-  ];
-  const models = ["deepseek-chat"];
-  let lastErr;
-  for (const model of models) {
-    try {
-      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-        method: "POST", headers: { "content-type": "application/json", "x-api-key": API_KEY,  },
-        body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content }] }),
-      });
-      if (!res.ok) { let t = ""; try { t = (await res.text()).slice(0, 80); } catch {} lastErr = new Error("HTTP " + res.status + " " + t); continue; }
-      const data = await res.json();
-      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "";
-      const mt = text.match(/\{[\s\S]*\}/);
-      if (!mt) { lastErr = new Error("réponse illisible"); continue; }
-      const j = JSON.parse(mt[0]);
-      return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
-    } catch (e) { lastErr = e; return null; }
+  const apiKey = await getDeepSeekKey();
+  if (!apiKey) throw new Error("Clé API requise. Ouvre ⚙️ Clé API DeepSeek sur l'accueil.");
+  const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
+    body: JSON.stringify({
+      model: "deepseek-chat",
+      max_tokens: 512,
+      temperature: 0,
+      messages: [{
+        role: "user",
+        content: [
+          { type: "image_url", image_url: { url: "data:" + mediaType + ";base64," + base64 } },
+          { type: "text", text: "Analyse la photo de ce plat. Identifie le plat et estime ses valeurs nutritionnelles. Réponds STRICTEMENT par un objet JSON sur une seule ligne : {\"plat\":\"<nom>\",\"protein\":<entier g>,\"carbs\":<entier g>,\"fat\":<entier g>}" }
+        ]
+      }]
+    }),
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    if (res.status === 401) throw new Error("Clé API DeepSeek invalide");
+    throw new Error("API DeepSeek erreur " + res.status + ": " + t.slice(0,150));
   }
-  // Pas de clé ? Demander
-  const promptKey = () => {
-    if (typeof promptDeepSeekKey === "function") {
-      const k = promptDeepSeekKey();
-      if (k) return callModel(prompt);
-    }
-    return null;
-  };
-  if (!getDeepSeekKey()) return promptKey();
-  throw lastErr || new Error("indisponible");
+  const data = await res.json();
+  const text = data.choices?.[0]?.message?.content || "";
+  const mt = text.match(/\{[^}]*\}/);
+  if (!mt) throw new Error("Analyse photo: réponse illisible");
+  const j = JSON.parse(mt[0]);
+  return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
 }
+
+
 
 /* unités reconnues pour additionner les quantités localement */
 const SHOP_UNITS = {

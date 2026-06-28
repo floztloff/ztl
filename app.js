@@ -605,54 +605,35 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     return { protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0), satfat: Math.round(+j.satfat || 0), sugar: Math.round(+j.sugar || 0) };
   }
   async function aiMealFromPhoto(base64, mediaType) {
-    const prompt2 = `Analyse la photo de ce plat. Identifie le plat et estime ses valeurs nutritionnelles pour la portion visible sur la photo.
-R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte autour ni backticks :
-{"plat": "<nom court du plat>", "protein": <entier g>, "carbs": <entier g>, "fat": <entier g>}`;
-    const content = [
-      { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-      { type: "text", text: prompt2 }
-    ];
-    const models = ["deepseek-chat"];
-    let lastErr;
-    for (const model of models) {
-      try {
-        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "content-type": "application/json", "x-api-key": API_KEY },
-          body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content }] })
-        });
-        if (!res.ok) {
-          let t = "";
-          try {
-            t = (await res.text()).slice(0, 80);
-          } catch {
-          }
-          lastErr = new Error("HTTP " + res.status + " " + t);
-          continue;
-        }
-        const data = await res.json();
-        const text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "";
-        const mt = text.match(/\{[\s\S]*\}/);
-        if (!mt) {
-          lastErr = new Error("r\xE9ponse illisible");
-          continue;
-        }
-        const j = JSON.parse(mt[0]);
-        return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
-      } catch (e) {
-        lastErr = e;
-        return null;
-      }
+    const apiKey = await getDeepSeekKey();
+    if (!apiKey) throw new Error("Cl\xE9 API requise. Ouvre \u2699\uFE0F Cl\xE9 API DeepSeek sur l'accueil.");
+    const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        max_tokens: 512,
+        temperature: 0,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image_url", image_url: { url: "data:" + mediaType + ";base64," + base64 } },
+            { type: "text", text: 'Analyse la photo de ce plat. Identifie le plat et estime ses valeurs nutritionnelles. R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne : {"plat":"<nom>","protein":<entier g>,"carbs":<entier g>,"fat":<entier g>}' }
+          ]
+        }]
+      })
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      if (res.status === 401) throw new Error("Cl\xE9 API DeepSeek invalide");
+      throw new Error("API DeepSeek erreur " + res.status + ": " + t.slice(0, 150));
     }
-    const promptKey = () => {
-      if (typeof promptDeepSeekKey === "function") {
-        const k = promptDeepSeekKey();
-        if (k) return callModel(prompt2);
-      }
-      return null;
-    };
-    if (!getDeepSeekKey()) return promptKey();
-    throw lastErr || new Error("indisponible");
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || "";
+    const mt = text.match(/\{[^}]*\}/);
+    if (!mt) throw new Error("Analyse photo: r\xE9ponse illisible");
+    const j = JSON.parse(mt[0]);
+    return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
   }
   var SHOP_UNITS = {
     g: { cls: "mass", f: 1 },
@@ -794,22 +775,6 @@ ${lines.join("\n")}`;
       store.set("_ztlDeepSeekKey", k.trim());
     } catch {
     }
-  };
-  var promptDeepSeekKey = () => {
-    const k = prompt("Cl\xE9 API DeepSeek\n\nEntre ta cl\xE9 API (https://platform.deepseek.com/api_keys).\nElle sera sauvegard\xE9e dans ton compte ZTL et synchronis\xE9e sur tous tes appareils.");
-    if (k && k.trim()) {
-      window._ztlDeepSeekKey = k.trim();
-      try {
-        localStorage.setItem("_ztlDeepSeekKey", k.trim());
-      } catch {
-      }
-      try {
-        store.set("_ztlDeepSeekKey", k.trim());
-      } catch {
-      }
-      return k.trim();
-    }
-    return "";
   };
   var dateKey = (d = /* @__PURE__ */ new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   var fmtDay = (d = /* @__PURE__ */ new Date()) => d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
