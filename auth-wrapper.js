@@ -19,10 +19,12 @@
             setUser(u);
             if (window.store && window.store.syncFromCloud) {
               window.store.syncFromCloud().then(function() {
-                // Charger la clé DeepSeek depuis le cloud
-                if (window.store) {
-                  window.store.get("_ztlDeepSeekKey").then(function(v) {
-                    if (v) { window._ztlDeepSeekKey = v; try { localStorage.setItem("_ztlDeepSeekKey", v); } catch {} }
+                // Charger les clés API depuis Supabase directement
+                if (window.ZTLDb) {
+                  window.ZTLDb.getUserData(window._ztlUser.id, "_ztlDeepSeekKey").then(function(v) {
+                    if (v && !localStorage.getItem("_ztlDeepSeekKey")) {
+                      try { window._ztlDeepSeekKey = v; localStorage.setItem("_ztlDeepSeekKey", v); } catch {}
+                    }
                   }).catch(function(){});
                 }
               });
@@ -38,6 +40,14 @@
       setUser(u);
       if (window.store && window.store.syncFromCloud) {
         window.store.syncFromCloud().then(function() {
+          // Recharger la clé DeepSeek depuis Supabase
+          if (window.ZTLDb) {
+            window.ZTLDb.getUserData(window._ztlUser.id, "_ztlDeepSeekKey").then(function(v) {
+              if (v && !localStorage.getItem("_ztlDeepSeekKey")) {
+                try { window._ztlDeepSeekKey = v; localStorage.setItem("_ztlDeepSeekKey", v); } catch {}
+              }
+            }).catch(function(){});
+          }
           if (window.store && window.store.pushToCloud) window.store.pushToCloud();
         });
       }
