@@ -39,9 +39,9 @@ var ZTL = (() => {
   // src/lucide-react.cjs
   var require_lucide_react = __commonJS({
     "src/lucide-react.cjs"(exports, module) {
-      var React = typeof window !== "undefined" && window.React || typeof global !== "undefined" && global.React || __require("react");
+      var React2 = typeof window !== "undefined" && window.React || typeof global !== "undefined" && global.React || __require("react");
       function Svg(props, children) {
-        return React.createElement("svg", Object.assign({
+        return React2.createElement("svg", Object.assign({
           width: 24,
           height: 24,
           viewBox: "0 0 24 24",
@@ -53,19 +53,19 @@ var ZTL = (() => {
         }, props), ...children);
       }
       function P(d) {
-        return React.createElement("path", { d });
+        return React2.createElement("path", { d });
       }
       function L(x1, y1, x2, y2) {
-        return React.createElement("line", { x1, y1, x2, y2 });
+        return React2.createElement("line", { x1, y1, x2, y2 });
       }
       function C2(cx, cy, r) {
-        return React.createElement("circle", { cx, cy, r });
+        return React2.createElement("circle", { cx, cy, r });
       }
       function Poly(p) {
-        return React.createElement("polyline", { points: p });
+        return React2.createElement("polyline", { points: p });
       }
       function Rect(x, y, w, h, rx) {
-        return React.createElement("rect", { x, y, width: w, height: h, rx });
+        return React2.createElement("rect", { x, y, width: w, height: h, rx });
       }
       module.exports = {
         Home: (p) => Svg(p, P("M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"), Poly("9 22 9 12 15 12 15 22")),
@@ -112,7 +112,6 @@ var ZTL = (() => {
   });
   var import_react = __require("react");
   var import_lucide_react = __toESM(require_lucide_react());
-  var import_jsx_runtime = __require("react/jsx-runtime");
   var C = {
     bg: "#FBF4EC",
     bg2: "#FFFFFF",
@@ -717,33 +716,30 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
   function Ring({ value, max, size = 150, stroke = 13, color, track = C.line }) {
     const r = (size - stroke) / 2, c = 2 * Math.PI * r;
     const pct = max ? Math.min(value / max, 1) : 0;
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { width: size, height: size, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: size / 2, cy: size / 2, r, fill: "none", stroke: track, strokeWidth: stroke }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-        "circle",
-        {
-          cx: size / 2,
-          cy: size / 2,
-          r,
-          fill: "none",
-          stroke: color,
-          strokeWidth: stroke,
-          strokeLinecap: "round",
-          strokeDasharray: c,
-          strokeDashoffset: c * (1 - pct),
-          transform: `rotate(-90 ${size / 2} ${size / 2})`,
-          style: { transition: "stroke-dashoffset .6s ease" }
-        }
-      )
-    ] });
+    return /* @__PURE__ */ React.createElement("svg", { width: size, height: size }, /* @__PURE__ */ React.createElement("circle", { cx: size / 2, cy: size / 2, r, fill: "none", stroke: track, strokeWidth: stroke }), /* @__PURE__ */ React.createElement(
+      "circle",
+      {
+        cx: size / 2,
+        cy: size / 2,
+        r,
+        fill: "none",
+        stroke: color,
+        strokeWidth: stroke,
+        strokeLinecap: "round",
+        strokeDasharray: c,
+        strokeDashoffset: c * (1 - pct),
+        transform: `rotate(-90 ${size / 2} ${size / 2})`,
+        style: { transition: "stroke-dashoffset .6s ease" }
+      }
+    ));
   }
   function Eyebrow({ children, color = C.mut }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color, fontWeight: 700 }, children });
+    return /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color, fontWeight: 700 } }, children);
   }
   function TagBadge({ tag }) {
     if (!tag) return null;
     const ok = tag === "good";
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: {
+    return /* @__PURE__ */ React.createElement("span", { style: {
       fontSize: 10.5,
       fontWeight: 700,
       padding: "2px 7px",
@@ -751,98 +747,25 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       color: ok ? C.teal : C.ember,
       background: ok ? C.tealSoft : C.emberSoft,
       whiteSpace: "nowrap"
-    }, children: ok ? "Bon pour l'\xE9paule" : "Prudence \xE9paule" });
+    } }, ok ? "Bon pour l'\xE9paule" : "Prudence \xE9paule");
   }
   function ExerciseArt({ art }) {
     const G = C.mut, A = C.ember, L = C.line;
     const S = { stroke: G, strokeWidth: 4, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" };
     const AR = { stroke: A, strokeWidth: 2.6, fill: "none", strokeLinecap: "round", markerEnd: `url(#ah-${art})` };
     const poses = {
-      squat: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "24", y1: "120", x2: "176", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "92", cy: "36", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M89,46 L78,78", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M78,78 L104,92 L74,118", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M88,50 L122,52", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M152,54 L152,92", ...AR })
-      ] }),
-      incline: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "20", y1: "120", x2: "116", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "140", y: "74", width: "38", height: "46", fill: "none", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M40,116 L86,100 L124,84", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M124,84 L152,76", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "138", cy: "78", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M150,52 L150,70", ...AR })
-      ] }),
-      row: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "22", y1: "40", x2: "22", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "118", cy: "40", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M118,48 L118,92", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M118,92 L108,118 M118,92 L128,118", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M118,55 L138,62 L110,66", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M24,60 C60,62 90,64 110,66", stroke: A, strokeWidth: "2.6", fill: "none" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M150,58 L134,62", ...AR })
-      ] }),
-      extrot: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "24", y1: "120", x2: "176", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "100", cy: "34", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M100,42 L100,92", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M100,92 L88,118 M100,92 L112,118", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M100,54 L86,74", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M86,74 L122,74", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M104,90 a30,30 0 0 1 24,-14", ...AR })
-      ] }),
-      plank: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "20", y1: "120", x2: "184", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M50,120 L74,120", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M74,120 L74,98", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M74,98 L132,108 L176,118", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "64", cy: "94", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "78", y1: "98", x2: "172", y2: "116", stroke: A, strokeWidth: "2", strokeDasharray: "4 4", strokeLinecap: "round" })
-      ] }),
-      lunge: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "104", cy: "34", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M104,42 L100,80", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M100,80 L124,98 L124,120", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M100,80 L70,110 L54,120", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M102,52 L96,78", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M150,68 L150,100", ...AR })
-      ] }),
-      bridge: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "38", cy: "112", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M48,116 L108,80 L140,100 L156,120", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M52,116 L84,118", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M108,78 L108,60", ...AR })
-      ] }),
-      facepull: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "178", y1: "28", x2: "178", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "82", cy: "36", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M84,44 L86,92", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M86,92 L76,118 M86,92 L96,118", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M86,52 L108,48 L96,56", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M96,56 C130,50 158,42 176,40", stroke: A, strokeWidth: "2.6", fill: "none" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M116,60 L98,56", ...AR })
-      ] }),
-      pallof: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "22", y1: "40", x2: "22", y2: "120", stroke: L, strokeWidth: "3" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "112", cy: "34", r: "8", fill: G }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M112,42 L112,90", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M112,90 L102,118 M112,90 L122,118", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M112,54 L152,58", ...S }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M24,60 C70,58 120,58 152,58", stroke: A, strokeWidth: "2.6", fill: "none" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M74,74 L54,74", ...AR })
-      ] })
+      squat: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "24", y1: "120", x2: "176", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("circle", { cx: "92", cy: "36", r: "8", fill: G }), /* @__PURE__ */ React.createElement("path", { d: "M89,46 L78,78", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M78,78 L104,92 L74,118", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M88,50 L122,52", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M152,54 L152,92", ...AR })),
+      incline: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "20", y1: "120", x2: "116", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("rect", { x: "140", y: "74", width: "38", height: "46", fill: "none", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("path", { d: "M40,116 L86,100 L124,84", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M124,84 L152,76", ...S }), /* @__PURE__ */ React.createElement("circle", { cx: "138", cy: "78", r: "8", fill: G }), /* @__PURE__ */ React.createElement("path", { d: "M150,52 L150,70", ...AR })),
+      row: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("line", { x1: "22", y1: "40", x2: "22", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("circle", { cx: "118", cy: "40", r: "8", fill: G }), /* @__PURE__ */ React.createElement("path", { d: "M118,48 L118,92", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M118,92 L108,118 M118,92 L128,118", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M118,55 L138,62 L110,66", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M24,60 C60,62 90,64 110,66", stroke: A, strokeWidth: "2.6", fill: "none" }), /* @__PURE__ */ React.createElement("path", { d: "M150,58 L134,62", ...AR })),
+      extrot: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "24", y1: "120", x2: "176", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("circle", { cx: "100", cy: "34", r: "8", fill: G }), /* @__PURE__ */ React.createElement("path", { d: "M100,42 L100,92", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M100,92 L88,118 M100,92 L112,118", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M100,54 L86,74", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M86,74 L122,74", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M104,90 a30,30 0 0 1 24,-14", ...AR })),
+      plank: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "20", y1: "120", x2: "184", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("path", { d: "M50,120 L74,120", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M74,120 L74,98", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M74,98 L132,108 L176,118", ...S }), /* @__PURE__ */ React.createElement("circle", { cx: "64", cy: "94", r: "8", fill: G }), /* @__PURE__ */ React.createElement("line", { x1: "78", y1: "98", x2: "172", y2: "116", stroke: A, strokeWidth: "2", strokeDasharray: "4 4", strokeLinecap: "round" })),
+      lunge: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("circle", { cx: "104", cy: "34", r: "8", fill: G }), /* @__PURE__ */ React.createElement("path", { d: "M104,42 L100,80", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M100,80 L124,98 L124,120", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M100,80 L70,110 L54,120", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M102,52 L96,78", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M150,68 L150,100", ...AR })),
+      bridge: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("circle", { cx: "38", cy: "112", r: "8", fill: G }), /* @__PURE__ */ React.createElement("path", { d: "M48,116 L108,80 L140,100 L156,120", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M52,116 L84,118", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M108,78 L108,60", ...AR })),
+      facepull: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("line", { x1: "178", y1: "28", x2: "178", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("circle", { cx: "82", cy: "36", r: "8", fill: G }), /* @__PURE__ */ React.createElement("path", { d: "M84,44 L86,92", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M86,92 L76,118 M86,92 L96,118", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M86,52 L108,48 L96,56", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M96,56 C130,50 158,42 176,40", stroke: A, strokeWidth: "2.6", fill: "none" }), /* @__PURE__ */ React.createElement("path", { d: "M116,60 L98,56", ...AR })),
+      pallof: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("line", { x1: "20", y1: "120", x2: "180", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("line", { x1: "22", y1: "40", x2: "22", y2: "120", stroke: L, strokeWidth: "3" }), /* @__PURE__ */ React.createElement("circle", { cx: "112", cy: "34", r: "8", fill: G }), /* @__PURE__ */ React.createElement("path", { d: "M112,42 L112,90", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M112,90 L102,118 M112,90 L122,118", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M112,54 L152,58", ...S }), /* @__PURE__ */ React.createElement("path", { d: "M24,60 C70,58 120,58 152,58", stroke: A, strokeWidth: "2.6", fill: "none" }), /* @__PURE__ */ React.createElement("path", { d: "M74,74 L54,74", ...AR }))
     };
     if (!poses[art]) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, padding: "6px 10px" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { viewBox: "0 0 200 132", width: "100%", style: { display: "block", maxHeight: 150 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("marker", { id: `ah-${art}`, markerWidth: "7", markerHeight: "7", refX: "3.5", refY: "3.5", orient: "auto", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M0,0 L7,3.5 L0,7 Z", fill: A }) }) }),
-      poses[art]
-    ] }) });
+    return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, padding: "6px 10px" } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 200 132", width: "100%", style: { display: "block", maxHeight: 150 } }, /* @__PURE__ */ React.createElement("defs", null, /* @__PURE__ */ React.createElement("marker", { id: `ah-${art}`, markerWidth: "7", markerHeight: "7", refX: "3.5", refY: "3.5", orient: "auto" }, /* @__PURE__ */ React.createElement("path", { d: "M0,0 L7,3.5 L0,7 Z", fill: A }))), poses[art]));
   }
   function App() {
     const [tab, setTab] = (0, import_react.useState)("home");
@@ -977,7 +900,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     const exDone = sess.ex.filter((e) => day.workout[e.id]?.done).length;
     const workoutDone = sess.ex.length > 0 && exDone === sess.ex.length;
     const pillars = (workoutDone ? 1 : 0) + ((day.macros?.p || 0) >= TARGETS.protein ? 1 : 0) + (day.sleep ? 1 : 0);
-    if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { minHeight: "100vh", background: C.bg, color: C.mut, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui" }, children: "Chargement de ton carnet\u2026" });
+    if (loading) return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: C.bg, color: C.mut, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui" } }, "Chargement de ton carnet\u2026");
     const TABS = [
       { id: "train", icon: import_lucide_react.Dumbbell, label: "Sport" },
       { id: "food", icon: import_lucide_react.UtensilsCrossed, label: "Nutrition" },
@@ -985,55 +908,22 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       { id: "courses", icon: import_lucide_react.ShoppingCart, label: "Courses" },
       { id: "sleep", icon: import_lucide_react.Moon, label: "Sommeil" }
     ];
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { minHeight: "100vh", background: C.bg, color: C.text, fontFamily: FONT_BODY, paddingBottom: 78 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("style", { children: `@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Onest:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');` }),
-      !storageOk && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: C.emberSoft, borderBottom: `1px solid ${C.ember}`, color: C.text, padding: "10px 16px", fontSize: 12.5, lineHeight: 1.5 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { style: { color: C.ember }, children: "Sauvegarde inactive." }),
-        " Tes donn\xE9es ne seront pas conserv\xE9es tant que le carnet n'est pas ",
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "publi\xE9" }),
-        ". Publie-le (bouton en haut de l'artefact) puis ouvre la version publi\xE9e \u2014 de pr\xE9f\xE9rence sur Claude web/desktop \u2014 pour garder tes donn\xE9es."
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ZTLHeader, { onHome: () => setTab("home") }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 480, margin: "0 auto", padding: "14px 18px 0" }, children: [
-        tab === "home" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HomeTab, { ...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList } }),
-        tab === "train" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TrainTab, { ...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions } }),
-        tab === "food" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FoodTab, { ...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew } }),
-        tab === "program" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProgramTab, {}),
-        tab === "courses" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CoursesTab, {}),
-        tab === "sleep" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SleepTab, { ...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate } })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", width: "100%", maxWidth: 520 }, children: TABS.map((t) => {
-        const A = t.icon, on = tab === t.id;
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-          "button",
-          {
-            onClick: () => setTab(t.id),
-            style: { flex: 1, minWidth: 0, background: "none", border: "none", padding: "8px 0 10px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 3, color: on ? C.ember : C.mut },
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(A, { size: 19 }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 8.5, fontWeight: on ? 700 : 500, whiteSpace: "nowrap" }, children: t.label })
-            ]
-          },
-          t.id
-        );
-      }) }) })
-    ] });
+    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: C.bg, color: C.text, fontFamily: FONT_BODY, paddingBottom: 78 } }, /* @__PURE__ */ React.createElement("style", null, `@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Onest:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');`), !storageOk && /* @__PURE__ */ React.createElement("div", { style: { background: C.emberSoft, borderBottom: `1px solid ${C.ember}`, color: C.text, padding: "10px 16px", fontSize: 12.5, lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", { style: { color: C.ember } }, "Sauvegarde inactive."), " Tes donn\xE9es ne seront pas conserv\xE9es tant que le carnet n'est pas ", /* @__PURE__ */ React.createElement("b", null, "publi\xE9"), ". Publie-le (bouton en haut de l'artefact) puis ouvre la version publi\xE9e \u2014 de pr\xE9f\xE9rence sur Claude web/desktop \u2014 pour garder tes donn\xE9es."), /* @__PURE__ */ React.createElement(ZTLHeader, { onHome: () => setTab("home") }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 480, margin: "0 auto", padding: "14px 18px 0" } }, tab === "home" && /* @__PURE__ */ React.createElement(HomeTab, { ...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList } }), tab === "train" && /* @__PURE__ */ React.createElement(TrainTab, { ...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions } }), tab === "food" && /* @__PURE__ */ React.createElement(FoodTab, { ...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew } }), tab === "program" && /* @__PURE__ */ React.createElement(ProgramTab, null), tab === "courses" && /* @__PURE__ */ React.createElement(CoursesTab, null), tab === "sleep" && /* @__PURE__ */ React.createElement(SleepTab, { ...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate } })), /* @__PURE__ */ React.createElement("nav", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", width: "100%", maxWidth: 520 } }, TABS.map((t) => {
+      const A = t.icon, on = tab === t.id;
+      return /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          key: t.id,
+          onClick: () => setTab(t.id),
+          style: { flex: 1, minWidth: 0, background: "none", border: "none", padding: "8px 0 10px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 3, color: on ? C.ember : C.mut }
+        },
+        /* @__PURE__ */ React.createElement(A, { size: 19 }),
+        /* @__PURE__ */ React.createElement("span", { style: { fontSize: 8.5, fontWeight: on ? 700 : 500, whiteSpace: "nowrap" } }, t.label)
+      );
+    }))));
   }
   function ZTLHeader({ onHome }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "sticky", top: 0, zIndex: 50, background: C.bg }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: "env(safe-area-inset-top, 0px)" } }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "relative", background: C.bg2, borderBottom: `1px solid ${C.line}`, padding: "12px 14px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 56 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: onHome, "aria-label": "Accueil", style: { position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", width: 36, height: 36, borderRadius: 11, background: C.cardHi, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Home, { size: 18, color: C.ink, strokeWidth: 2.1 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: onHome, "aria-label": "Accueil", style: { background: "none", border: "none", padding: 0, cursor: "pointer", display: "inline-flex", flexDirection: "column", alignItems: "center" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { display: "inline-flex", alignItems: "baseline", fontFamily: '"Helvetica Neue", Arial, system-ui, sans-serif', fontWeight: 900, color: C.ink, fontSize: 23, lineHeight: 0.78, transform: "scaleY(0.9)" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { letterSpacing: "-0.02em" }, children: "Z" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { marginLeft: "-0.05em" }, children: "T" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { marginLeft: "-0.16em" }, children: "L" })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { marginTop: 4, color: C.mut, fontWeight: 800, fontSize: 6.5, letterSpacing: "0.3em", whiteSpace: "nowrap" }, children: "LIFE IS YOURS" })
-        ] })
-      ] })
-    ] });
+    return /* @__PURE__ */ React.createElement("div", { style: { position: "sticky", top: 0, zIndex: 50, background: C.bg } }, /* @__PURE__ */ React.createElement("div", { style: { height: "env(safe-area-inset-top, 0px)" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", background: C.bg2, borderBottom: `1px solid ${C.line}`, padding: "12px 14px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 56 } }, /* @__PURE__ */ React.createElement("button", { onClick: onHome, "aria-label": "Accueil", style: { position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", width: 36, height: 36, borderRadius: 11, background: C.cardHi, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Home, { size: 18, color: C.ink, strokeWidth: 2.1 })), /* @__PURE__ */ React.createElement("button", { onClick: onHome, "aria-label": "Accueil", style: { background: "none", border: "none", padding: 0, cursor: "pointer", display: "inline-flex", flexDirection: "column", alignItems: "center" } }, /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "baseline", fontFamily: '"Helvetica Neue", Arial, system-ui, sans-serif', fontWeight: 900, color: C.ink, fontSize: 23, lineHeight: 0.78, transform: "scaleY(0.9)" } }, /* @__PURE__ */ React.createElement("span", { style: { letterSpacing: "-0.02em" } }, "Z"), /* @__PURE__ */ React.createElement("span", { style: { marginLeft: "-0.05em" } }, "T"), /* @__PURE__ */ React.createElement("span", { style: { marginLeft: "-0.16em" } }, "L")), /* @__PURE__ */ React.createElement("span", { style: { marginTop: 4, color: C.mut, fontWeight: 800, fontSize: 6.5, letterSpacing: "0.3em", whiteSpace: "nowrap" } }, "LIFE IS YOURS"))));
   }
   function wmoInfo(code) {
     if (code === 0) return { Icon: import_lucide_react.Sun, label: "Ensoleill\xE9", color: C.amber };
@@ -1077,14 +967,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     }, []);
     if (!w || w === "err") return null;
     const { Icon, label, color } = wmoInfo(w.code);
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 1, flexShrink: 0, paddingTop: 2 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 24, color, strokeWidth: 2 }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 19, fontWeight: 800, fontFamily: FONT_MONO, lineHeight: 1.1, color: C.ink }, children: [
-        w.temp,
-        "\xB0"
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 9.5, color: C.mut, fontWeight: 600 }, children: label })
-    ] });
+    return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 1, flexShrink: 0, paddingTop: 2 } }, /* @__PURE__ */ React.createElement(Icon, { size: 24, color, strokeWidth: 2 }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, fontFamily: FONT_MONO, lineHeight: 1.1, color: C.ink } }, w.temp, "\xB0"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9.5, color: C.mut, fontWeight: 600 } }, label));
   }
   function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions }) {
     const [w, setW] = (0, import_react.useState)(day.weight ?? "");
@@ -1136,171 +1019,28 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     const macroBar = (label, val, target, unit) => {
       const z = zone(val, target);
       const pct = Math.min(100, target ? val / target * 100 : 0);
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11.5, color: C.mut }, children: label }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color }, children: [
-            val,
-            " / ",
-            target,
-            " ",
-            unit
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 6, borderRadius: 99, background: C.line, overflow: "hidden" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99 } }) })
-      ] });
+      return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut } }, label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color } }, val, " / ", target, " ", unit)), /* @__PURE__ */ React.createElement("div", { style: { height: 6, borderRadius: 99, background: C.line, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99 } })));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 14 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { minWidth: 0 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Eyebrow, { color: C.coral, children: fmtDay() }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: { fontSize: 22, fontWeight: 800, fontFamily: FONT_DISPLAY, margin: "3px 0 0", letterSpacing: -0.4 }, children: "Ta journ\xE9e" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Weather, {})
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => setTab("food"), style: { width: "100%", textAlign: "left", background: C.peach, border: "none", borderRadius: 22, padding: 18, cursor: "pointer", color: C.text }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 12.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: C.mut }, children: "Macros du jour" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 12, color: C.teal, display: "flex", alignItems: "center", gap: 2 }, children: [
-            "Nutrition ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ChevronRight, { size: 14 })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 18 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "relative", width: 104, height: 104, flexShrink: 0 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ring, { value: Math.min(kcal, TARGETS.kcal), max: TARGETS.kcal, size: 104, stroke: 11, color: kz.color, track: C.peachLine }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 22, fontWeight: 800, lineHeight: 1, fontFamily: FONT_MONO }, children: kcal }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 10, color: C.mut, marginTop: 2 }, children: [
-                "/ ",
-                TARGETS.kcal,
-                " kcal"
-              ] })
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, minWidth: 0 }, children: [
-            macroBar("Prot\xE9ines", Math.round(m.p), TARGETS.protein, "g"),
-            macroBar("Glucides", Math.round(m.c), TARGETS.carbs, "g"),
-            macroBar("Lipides", Math.round(m.f), TARGETS.fat, "g")
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6, marginTop: 4, paddingTop: 12, borderTop: `1px solid ${C.peachLine}` }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { width: 8, height: 8, borderRadius: 99, background: satZ.color, flexShrink: 0 } }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11.5, color: C.mut, flex: 1 }, children: "Gras satur\xE9s (estim\xE9)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11.5, fontWeight: 700, color: satZ.color }, children: [
-            satDay,
-            " / ",
-            SATFAT_MAX,
-            " g \xB7 ",
-            satZ.label
-          ] })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => setTab("food"), style: { width: "100%", marginTop: 12, background: C.coral, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.UtensilsCrossed, { size: 18 }),
-        " Ajouter un repas"
-      ] }),
-      sleepActive ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: endNight, style: { width: "100%", marginTop: 10, background: C.greenVivid, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Sunrise, { size: 17 }),
-        " Terminer la nuit \xB7 couch\xE9 \xE0 ",
-        hhmm(sleepActive.startedAt)
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: startNight, disabled: sleepActive === void 0, style: { width: "100%", marginTop: 10, background: C.greenVivid, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Moon, { size: 16 }),
-        " D\xE9marrer la nuit"
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Au programme aujourd'hui" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: C.mint, border: "none", borderRadius: 16, overflow: "hidden" }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => {
-          if (planSession) saveDay({ ...day, session: planSession.id });
-          setTab("train");
-        }, style: { width: "100%", background: "none", border: "none", borderBottom: `1px solid rgba(0,0,0,0.06)`, padding: "13px 15px", display: "flex", alignItems: "center", gap: 11, cursor: "pointer", textAlign: "left" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Dumbbell, { size: 17, color: C.ember, style: { flexShrink: 0 } }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, minWidth: 0 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, color: C.mut }, children: "S\xE9ance" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 14, fontWeight: 700, color: planSession ? C.text : C.mut }, children: planSession ? `${planSession.group} \xB7 ${planSession.name}` : "Repos / aucune s\xE9ance pr\xE9vue" })
-          ] }),
-          planSession ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { display: "flex", alignItems: "center", gap: 4, background: C.coral, color: "#fff", borderRadius: 99, padding: "7px 12px", fontSize: 12.5, fontWeight: 800, flexShrink: 0 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Play, { size: 13 }),
-            " Ouvrir"
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ChevronRight, { size: 17, color: C.mut })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "13px 15px" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: planMeals.length ? 9 : 0 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ChefHat, { size: 16, color: C.teal }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: C.mut, flex: 1 }, children: "Repas pr\xE9vus" }),
-            planMeals.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11.5, color: C.mut }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { style: { color: C.ember }, children: planKcal }),
-              " kcal"
-            ] })
-          ] }),
-          planMeals.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 13, color: C.mut }, children: "Aucun repas pr\xE9vu aujourd'hui." }) : planMeals.map((r, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => openRecipe(r.id), style: { width: "100%", textAlign: "left", background: "none", border: "none", display: "flex", alignItems: "center", gap: 8, padding: "7px 0", cursor: "pointer", color: C.text }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { width: 5, height: 5, borderRadius: 99, background: C.teal, flexShrink: 0 } }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 13.5, flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: r.title }),
-            r.link && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: safeUrl(r.link), target: "_blank", rel: "noopener noreferrer", onClick: (e) => e.stopPropagation(), style: { display: "flex", color: C.ember }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ExternalLink, { size: 14 }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11, color: C.mut }, children: [
-              Math.round((r.protein + r.carbs) * 4 + r.fat * 9),
-              " kcal"
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ChevronRight, { size: 15, color: C.mut, style: { flexShrink: 0 } })
-          ] }, i)),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setTab("program"), style: { marginTop: 10, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 9, padding: "8px", fontSize: 12, fontWeight: 700, cursor: "pointer", width: "100%" }, children: "Ouvrir le programme" })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => setTab("sleep"), style: { width: "100%", textAlign: "left", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", color: C.text, marginTop: 18 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Moon, { size: 18, color: C.teal, style: { flexShrink: 0 } }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, color: C.mut }, children: "Derni\xE8re nuit" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 15, fontWeight: 700 }, children: [
-            lastNight ? hToHM(lastNight.sleepH) : "\u2014",
-            lastNight && lastNight.quality ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 12, color: C.mut, fontWeight: 600 }, children: [
-              " \xB7 ",
-              lastNight.quality,
-              "/5"
-            ] }) : null
-          ] })
-        ] }),
-        avg7 != null && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "right" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 10.5, color: C.mut }, children: "Moy. 7j" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 14, fontWeight: 800, color: C.teal }, children: hToHM(avg7) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ChevronRight, { size: 17, color: C.mut })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Poids" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16, display: "flex", alignItems: "center", gap: 12 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Scale, { size: 18, color: C.teal }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 13.5, flex: 1 }, children: [
-          "Poids du jour",
-          lastWeight != null ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { color: C.mut }, children: [
-            " \xB7 dernier ",
-            lastWeight,
-            " kg"
-          ] }) : ""
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-          "input",
-          {
-            value: w,
-            onChange: (e) => setW(e.target.value.replace(",", ".")),
-            inputMode: "decimal",
-            placeholder: "kg",
-            style: { width: 64, background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "7px 9px", fontSize: 14, textAlign: "center" }
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-          "button",
-          {
-            onClick: () => saveDay({ ...day, weight: parseFloat(w) || null }),
-            style: { background: C.greenVivid, color: "#fff", border: "none", borderRadius: 10, padding: "8px 13px", fontSize: 13, fontWeight: 800, cursor: "pointer" },
-            children: "OK"
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: addRecipe, style: { width: "100%", marginTop: 22, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ChefHat, { size: 17 }),
-        " Ajouter une recette"
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 16 } })
-    ] });
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { minWidth: 0 } }, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.coral }, fmtDay()), /* @__PURE__ */ React.createElement("h1", { style: { fontSize: 22, fontWeight: 800, fontFamily: FONT_DISPLAY, margin: "3px 0 0", letterSpacing: -0.4 } }, "Ta journ\xE9e")), /* @__PURE__ */ React.createElement(Weather, null)), /* @__PURE__ */ React.createElement("button", { onClick: () => setTab("food"), style: { width: "100%", textAlign: "left", background: C.peach, border: "none", borderRadius: 22, padding: 18, cursor: "pointer", color: C.text } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: C.mut } }, "Macros du jour"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: C.teal, display: "flex", alignItems: "center", gap: 2 } }, "Nutrition ", /* @__PURE__ */ React.createElement(import_lucide_react.ChevronRight, { size: 14 }))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", width: 104, height: 104, flexShrink: 0 } }, /* @__PURE__ */ React.createElement(Ring, { value: Math.min(kcal, TARGETS.kcal), max: TARGETS.kcal, size: 104, stroke: 11, color: kz.color, track: C.peachLine }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 22, fontWeight: 800, lineHeight: 1, fontFamily: FONT_MONO } }, kcal), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: C.mut, marginTop: 2 } }, "/ ", TARGETS.kcal, " kcal"))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, macroBar("Prot\xE9ines", Math.round(m.p), TARGETS.protein, "g"), macroBar("Glucides", Math.round(m.c), TARGETS.carbs, "g"), macroBar("Lipides", Math.round(m.f), TARGETS.fat, "g"))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6, marginTop: 4, paddingTop: 12, borderTop: `1px solid ${C.peachLine}` } }, /* @__PURE__ */ React.createElement("span", { style: { width: 8, height: 8, borderRadius: 99, background: satZ.color, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut, flex: 1 } }, "Gras satur\xE9s (estim\xE9)"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: satZ.color } }, satDay, " / ", SATFAT_MAX, " g \xB7 ", satZ.label))), /* @__PURE__ */ React.createElement("button", { onClick: () => setTab("food"), style: { width: "100%", marginTop: 12, background: C.coral, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement(import_lucide_react.UtensilsCrossed, { size: 18 }), " Ajouter un repas"), sleepActive ? /* @__PURE__ */ React.createElement("button", { onClick: endNight, style: { width: "100%", marginTop: 10, background: C.greenVivid, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Sunrise, { size: 17 }), " Terminer la nuit \xB7 couch\xE9 \xE0 ", hhmm(sleepActive.startedAt)) : /* @__PURE__ */ React.createElement("button", { onClick: startNight, disabled: sleepActive === void 0, style: { width: "100%", marginTop: 10, background: C.greenVivid, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Moon, { size: 16 }), " D\xE9marrer la nuit"), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Au programme aujourd'hui"), /* @__PURE__ */ React.createElement("div", { style: { background: C.mint, border: "none", borderRadius: 16, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => {
+      if (planSession) saveDay({ ...day, session: planSession.id });
+      setTab("train");
+    }, style: { width: "100%", background: "none", border: "none", borderBottom: `1px solid rgba(0,0,0,0.06)`, padding: "13px 15px", display: "flex", alignItems: "center", gap: 11, cursor: "pointer", textAlign: "left" } }, /* @__PURE__ */ React.createElement(import_lucide_react.Dumbbell, { size: 17, color: C.ember, style: { flexShrink: 0 } }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut } }, "S\xE9ance"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 700, color: planSession ? C.text : C.mut } }, planSession ? `${planSession.group} \xB7 ${planSession.name}` : "Repos / aucune s\xE9ance pr\xE9vue")), planSession ? /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 4, background: C.coral, color: "#fff", borderRadius: 99, padding: "7px 12px", fontSize: 12.5, fontWeight: 800, flexShrink: 0 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Play, { size: 13 }), " Ouvrir") : /* @__PURE__ */ React.createElement(import_lucide_react.ChevronRight, { size: 17, color: C.mut })), /* @__PURE__ */ React.createElement("div", { style: { padding: "13px 15px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: planMeals.length ? 9 : 0 } }, /* @__PURE__ */ React.createElement(import_lucide_react.ChefHat, { size: 16, color: C.teal }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.mut, flex: 1 } }, "Repas pr\xE9vus"), planMeals.length > 0 && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut } }, /* @__PURE__ */ React.createElement("b", { style: { color: C.ember } }, planKcal), " kcal")), planMeals.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: C.mut } }, "Aucun repas pr\xE9vu aujourd'hui.") : planMeals.map((r, i) => /* @__PURE__ */ React.createElement("button", { key: i, onClick: () => openRecipe(r.id), style: { width: "100%", textAlign: "left", background: "none", border: "none", display: "flex", alignItems: "center", gap: 8, padding: "7px 0", cursor: "pointer", color: C.text } }, /* @__PURE__ */ React.createElement("span", { style: { width: 5, height: 5, borderRadius: 99, background: C.teal, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, r.title), r.link && /* @__PURE__ */ React.createElement("a", { href: safeUrl(r.link), target: "_blank", rel: "noopener noreferrer", onClick: (e) => e.stopPropagation(), style: { display: "flex", color: C.ember } }, /* @__PURE__ */ React.createElement(import_lucide_react.ExternalLink, { size: 14 })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.mut } }, Math.round((r.protein + r.carbs) * 4 + r.fat * 9), " kcal"), /* @__PURE__ */ React.createElement(import_lucide_react.ChevronRight, { size: 15, color: C.mut, style: { flexShrink: 0 } }))), /* @__PURE__ */ React.createElement("button", { onClick: () => setTab("program"), style: { marginTop: 10, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 9, padding: "8px", fontSize: 12, fontWeight: 700, cursor: "pointer", width: "100%" } }, "Ouvrir le programme"))), /* @__PURE__ */ React.createElement("button", { onClick: () => setTab("sleep"), style: { width: "100%", textAlign: "left", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", color: C.text, marginTop: 18 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Moon, { size: 18, color: C.teal, style: { flexShrink: 0 } }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut } }, "Derni\xE8re nuit"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, fontWeight: 700 } }, lastNight ? hToHM(lastNight.sleepH) : "\u2014", lastNight && lastNight.quality ? /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: C.mut, fontWeight: 600 } }, " \xB7 ", lastNight.quality, "/5") : null)), avg7 != null && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "right" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.mut } }, "Moy. 7j"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 800, color: C.teal } }, hToHM(avg7))), /* @__PURE__ */ React.createElement(import_lucide_react.ChevronRight, { size: 17, color: C.mut })), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Poids"), /* @__PURE__ */ React.createElement("div", { style: { background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16, display: "flex", alignItems: "center", gap: 12 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Scale, { size: 18, color: C.teal }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, flex: 1 } }, "Poids du jour", lastWeight != null ? /* @__PURE__ */ React.createElement("span", { style: { color: C.mut } }, " \xB7 dernier ", lastWeight, " kg") : ""), /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        value: w,
+        onChange: (e) => setW(e.target.value.replace(",", ".")),
+        inputMode: "decimal",
+        placeholder: "kg",
+        style: { width: 64, background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "7px 9px", fontSize: 14, textAlign: "center" }
+      }
+    ), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => saveDay({ ...day, weight: parseFloat(w) || null }),
+        style: { background: C.greenVivid, color: "#fff", border: "none", borderRadius: 10, padding: "8px 13px", fontSize: 13, fontWeight: 800, cursor: "pointer" }
+      },
+      "OK"
+    )), /* @__PURE__ */ React.createElement("button", { onClick: addRecipe, style: { width: "100%", marginTop: 22, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement(import_lucide_react.ChefHat, { size: 17 }), " Ajouter une recette"), /* @__PURE__ */ React.createElement("div", { style: { height: 16 } }));
   }
   function ExercisePicker({ exercises, onAdd, onClose }) {
     const [f, setF] = (0, import_react.useState)("Tout");
@@ -1308,67 +1048,11 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     const [openEx, setOpenEx] = (0, import_react.useState)(null);
     const cats = ["Tout", ...EX_CATS];
     const list = exercises.filter((e) => (f === "Tout" || e.cat === f) && (!q.trim() || e.name.toLowerCase().includes(q.trim().toLowerCase())));
-    const chip = (s) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setF(s), style: { padding: "8px 14px", borderRadius: 99, border: `1px solid ${f === s ? C.coral : C.line}`, background: f === s ? C.coral : C.bg2, color: f === s ? "#fff" : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }, children: s }, s);
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { onClick: onClose, style: { position: "fixed", inset: 0, zIndex: 100, background: "rgba(20,12,8,.38)", display: "flex", flexDirection: "column", justifyContent: "flex-end" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { onClick: (e) => e.stopPropagation(), style: { background: C.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "86vh", display: "flex", flexDirection: "column", boxShadow: "0 -12px 40px rgba(0,0,0,.18)" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { padding: "10px 0 2px", display: "flex", justifyContent: "center" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 40, height: 4, borderRadius: 99, background: C.line } }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "8px 18px", display: "flex", alignItems: "flex-start", gap: 10 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: C.coral, fontWeight: 800 }, children: "Exercices" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 19, fontWeight: 800, fontFamily: FONT_DISPLAY }, children: "Ajouter un exercice" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: onClose, style: { background: C.cardHi, border: `1px solid ${C.line}`, borderRadius: 10, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: C.text, flexShrink: 0 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.X, { size: 17 }) })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 7, padding: "2px 18px 10px", overflowX: "auto" }, children: cats.map(chip) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { padding: "0 18px 10px" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: q, onChange: (e) => setQ(e.target.value), placeholder: "Rechercher un exercice...", style: { width: "100%", boxSizing: "border-box", background: C.bg2, border: `1px solid ${C.line}`, color: C.text, borderRadius: 12, padding: "11px 13px", fontSize: 14, fontFamily: "inherit" } }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { overflowY: "auto", padding: "0 12px 22px" }, children: [
-        list.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { textAlign: "center", color: C.mut, fontSize: 13, padding: "24px 0" }, children: "Aucun exercice." }),
-        list.map((e) => {
-          const op = openEx === e.exKey;
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { borderRadius: 14, background: op ? C.card : "none", marginBottom: op ? 6 : 0 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 12, padding: "8px 10px" }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: C.mint, display: "flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Dumbbell, { size: 20, color: C.teal }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => setOpenEx(op ? null : e.exKey), style: { flex: 1, minWidth: 0, background: "none", border: "none", textAlign: "left", cursor: "pointer", padding: 0 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 14, fontWeight: 700, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: e.name }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 11.5, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
-                    e.cat,
-                    " \xB7 ",
-                    e.scheme,
-                    " \xB7 ~",
-                    e.dur,
-                    " min"
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { color: C.teal, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 2 }, children: [
-                    "\xB7 d\xE9tails ",
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ChevronDown, { size: 12, style: { transform: op ? "rotate(180deg)" : "none", transition: "transform .25s" } })
-                  ] })
-                ] })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => onAdd(e), title: "Ajouter", style: { flexShrink: 0, width: 30, height: 30, borderRadius: 99, background: C.coral, color: "#fff", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Plus, { size: 16 }) })
-            ] }),
-            op && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "0 12px 14px 66px" }, children: [
-              e.cue && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 12.5, color: C.mut, margin: "0 0 10px", lineHeight: 1.5 }, children: e.cue }),
-              e.art && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExerciseArt, { art: e.art }),
-              e.do && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginTop: e.art ? 12 : 0 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.teal, marginBottom: 6 }, children: "\xC0 faire" }),
-                e.do.map((x, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 7, marginBottom: 5 }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Check, { size: 14, color: C.teal, strokeWidth: 3, style: { flexShrink: 0, marginTop: 2 } }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 12.5, lineHeight: 1.45 }, children: x })
-                ] }, i))
-              ] }),
-              e.avoid && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginTop: 10 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.coral, marginBottom: 6 }, children: "\xC0 \xE9viter" }),
-                e.avoid.map((x, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 7, marginBottom: 5 }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.X, { size: 14, color: C.coral, strokeWidth: 3, style: { flexShrink: 0, marginTop: 2 } }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 12.5, lineHeight: 1.45, color: C.mut }, children: x })
-                ] }, i))
-              ] }),
-              !e.do && !e.cue && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 12, color: C.mut }, children: "Pas de d\xE9tails pour cet exercice." })
-            ] })
-          ] }, e.exKey);
-        })
-      ] })
-    ] }) });
+    const chip = (s) => /* @__PURE__ */ React.createElement("button", { key: s, onClick: () => setF(s), style: { padding: "8px 14px", borderRadius: 99, border: `1px solid ${f === s ? C.coral : C.line}`, background: f === s ? C.coral : C.bg2, color: f === s ? "#fff" : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 } }, s);
+    return /* @__PURE__ */ React.createElement("div", { onClick: onClose, style: { position: "fixed", inset: 0, zIndex: 100, background: "rgba(20,12,8,.38)", display: "flex", flexDirection: "column", justifyContent: "flex-end" } }, /* @__PURE__ */ React.createElement("div", { onClick: (e) => e.stopPropagation(), style: { background: C.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "86vh", display: "flex", flexDirection: "column", boxShadow: "0 -12px 40px rgba(0,0,0,.18)" } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "10px 0 2px", display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 40, height: 4, borderRadius: 99, background: C.line } })), /* @__PURE__ */ React.createElement("div", { style: { padding: "8px 18px", display: "flex", alignItems: "flex-start", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: C.coral, fontWeight: 800 } }, "Exercices"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, fontFamily: FONT_DISPLAY } }, "Ajouter un exercice")), /* @__PURE__ */ React.createElement("button", { onClick: onClose, style: { background: C.cardHi, border: `1px solid ${C.line}`, borderRadius: 10, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: C.text, flexShrink: 0 } }, /* @__PURE__ */ React.createElement(import_lucide_react.X, { size: 17 }))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 7, padding: "2px 18px 10px", overflowX: "auto" } }, cats.map(chip)), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 18px 10px" } }, /* @__PURE__ */ React.createElement("input", { value: q, onChange: (e) => setQ(e.target.value), placeholder: "Rechercher un exercice...", style: { width: "100%", boxSizing: "border-box", background: C.bg2, border: `1px solid ${C.line}`, color: C.text, borderRadius: 12, padding: "11px 13px", fontSize: 14, fontFamily: "inherit" } })), /* @__PURE__ */ React.createElement("div", { style: { overflowY: "auto", padding: "0 12px 22px" } }, list.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: C.mut, fontSize: 13, padding: "24px 0" } }, "Aucun exercice."), list.map((e) => {
+      const op = openEx === e.exKey;
+      return /* @__PURE__ */ React.createElement("div", { key: e.exKey, style: { borderRadius: 14, background: op ? C.card : "none", marginBottom: op ? 6 : 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, padding: "8px 10px" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: C.mint, display: "flex", alignItems: "center", justifyContent: "center" } }, /* @__PURE__ */ React.createElement(import_lucide_react.Dumbbell, { size: 20, color: C.teal })), /* @__PURE__ */ React.createElement("button", { onClick: () => setOpenEx(op ? null : e.exKey), style: { flex: 1, minWidth: 0, background: "none", border: "none", textAlign: "left", cursor: "pointer", padding: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 700, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, e.name), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 5 } }, /* @__PURE__ */ React.createElement("span", null, e.cat, " \xB7 ", e.scheme, " \xB7 ~", e.dur, " min"), /* @__PURE__ */ React.createElement("span", { style: { color: C.teal, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 2 } }, "\xB7 d\xE9tails ", /* @__PURE__ */ React.createElement(import_lucide_react.ChevronDown, { size: 12, style: { transform: op ? "rotate(180deg)" : "none", transition: "transform .25s" } })))), /* @__PURE__ */ React.createElement("button", { onClick: () => onAdd(e), title: "Ajouter", style: { flexShrink: 0, width: 30, height: 30, borderRadius: 99, background: C.coral, color: "#fff", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" } }, /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 16 }))), op && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 12px 14px 66px" } }, e.cue && /* @__PURE__ */ React.createElement("p", { style: { fontSize: 12.5, color: C.mut, margin: "0 0 10px", lineHeight: 1.5 } }, e.cue), e.art && /* @__PURE__ */ React.createElement(ExerciseArt, { art: e.art }), e.do && /* @__PURE__ */ React.createElement("div", { style: { marginTop: e.art ? 12 : 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.teal, marginBottom: 6 } }, "\xC0 faire"), e.do.map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", gap: 7, marginBottom: 5 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Check, { size: 14, color: C.teal, strokeWidth: 3, style: { flexShrink: 0, marginTop: 2 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, lineHeight: 1.45 } }, x)))), e.avoid && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.coral, marginBottom: 6 } }, "\xC0 \xE9viter"), e.avoid.map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", gap: 7, marginBottom: 5 } }, /* @__PURE__ */ React.createElement(import_lucide_react.X, { size: 14, color: C.coral, strokeWidth: 3, style: { flexShrink: 0, marginTop: 2 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, lineHeight: 1.45, color: C.mut } }, x)))), !e.do && !e.cue && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: C.mut } }, "Pas de d\xE9tails pour cet exercice.")));
+    }))));
   }
   function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSessions }) {
     const groups = [...new Set(sessions.map((s) => s.group))];
@@ -1395,133 +1079,48 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       saveDay({ ...day, session: rest[0] && rest[0].id || "" });
       setEdit(false);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Eyebrow, { color: C.coral, children: "Sport" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: h1, children: "Tes s\xE9ances" }),
-      groups.map((g) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 12 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11.5, color: C.mut, fontWeight: 700, margin: "0 0 7px" }, children: g }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" }, children: sessions.filter((s) => s.group === g).map((s) => {
-          const on = s.id === day.session;
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            "button",
-            {
-              onClick: () => {
-                saveDay({ ...day, session: s.id });
-                setEdit(false);
-              },
-              style: { padding: "8px 13px", borderRadius: 99, border: `1px solid ${on ? C.coral : C.line}`, background: on ? C.emberSoft : C.card, color: on ? C.coral : C.text, fontSize: 13, fontWeight: 700, cursor: "pointer" },
-              children: s.name
-            },
-            s.id
-          );
-        }) })
-      ] }, g)),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: createSession, style: { background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 99, padding: "8px 14px", fontSize: 12.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 16 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Plus, { size: 15 }),
-        " Nouvelle s\xE9ance"
-      ] }),
-      sess && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, margin: "0 0 14px" }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, minWidth: 0 }, children: [
-          edit ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: sess.name, onChange: (e) => renameSess(e.target.value), placeholder: "Nom de la s\xE9ance", style: { width: "100%", boxSizing: "border-box", background: C.bg2, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "9px 11px", fontSize: 15, fontWeight: 700, fontFamily: "inherit" } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 16, fontWeight: 800, fontFamily: FONT_DISPLAY }, children: sess.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 12, color: C.mut, display: "flex", alignItems: "center", gap: 5, marginTop: 3 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Clock, { size: 13 }),
-            " ~",
-            sessionDur(sess),
-            " min \xB7 ",
-            sess.ex.length,
-            " exo",
-            sess.ex.length > 1 ? "s" : ""
-          ] })
-        ] }),
-        edit && sess.custom && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: deleteSession, title: "Supprimer la s\xE9ance", style: { background: "none", border: `1px solid ${C.line}`, color: C.coral, borderRadius: 10, width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Trash2, { size: 16 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setEdit((v) => !v), style: { background: edit ? C.coral : C.cardHi, border: `1px solid ${edit ? C.coral : C.line}`, color: edit ? "#fff" : C.text, borderRadius: 99, padding: "9px 15px", fontSize: 13, fontWeight: 800, cursor: "pointer", flexShrink: 0 }, children: edit ? "Terminer" : "\xC9diter" })
-      ] }),
-      sess && edit && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 16 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, fontWeight: 700, color: C.mut, textTransform: "uppercase", letterSpacing: 1, marginBottom: 7 }, children: "Groupe" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 8 }, children: GROUP_OPTIONS.map((g) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setGroup(g), style: { flex: 1, padding: "10px", borderRadius: 10, border: `1px solid ${sess.group === g ? C.teal : C.line}`, background: sess.group === g ? C.tealSoft : C.bg2, color: sess.group === g ? C.teal : C.text, fontSize: 13, fontWeight: 700, cursor: "pointer" }, children: g }, g)) })
-      ] }),
-      sess.ex.map((e) => {
-        const st = day.workout[e.id] || {};
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: C.card, border: `1px solid ${st.done ? C.good : C.line}`, borderRadius: 16, padding: 15, marginBottom: 11 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: 12 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            "button",
-            {
-              onClick: () => toggleEx(e.id),
-              style: { width: 26, height: 26, marginTop: 1, borderRadius: 8, border: `2px solid ${st.done ? C.good : C.line}`, background: st.done ? C.good : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 },
-              children: st.done && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Check, { size: 15, color: C.bg, strokeWidth: 3 })
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 15, fontWeight: 700 }, children: e.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 13, color: C.coral, fontWeight: 700, whiteSpace: "nowrap" }, children: e.scheme }),
-                edit && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => removeExercise(e.id), title: "Retirer", style: { background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 0, display: "flex" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.X, { size: 16 }) })
-              ] })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 11, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Clock, { size: 11 }),
-              " ~",
-              e.dur != null ? e.dur : exDur(e),
-              " min"
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { margin: "5px 0 8px" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TagBadge, { tag: e.tag }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 12.5, color: C.mut, margin: "0 0 10px", lineHeight: 1.5 }, children: e.cue }),
-            e.do && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-                "button",
-                {
-                  onClick: () => setTech((t) => ({ ...t, [e.id]: !t[e.id] })),
-                  style: { background: "none", border: `1px solid ${C.line}`, color: tech[e.id] ? C.ember : C.mut, borderRadius: 9, padding: "6px 11px", fontSize: 12, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, marginBottom: 10 },
-                  children: [
-                    tech[e.id] ? "Masquer la technique" : "Voir la technique",
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.ChevronDown, { size: 14, style: { transform: tech[e.id] ? "rotate(180deg)" : "none", transition: "transform .25s" } })
-                  ]
-                }
-              ),
-              tech[e.id] && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 12 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExerciseArt, { art: e.art }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginTop: 12 }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.teal, marginBottom: 6 }, children: "\xC0 faire" }),
-                  e.do.map((x, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 7, marginBottom: 5 }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Check, { size: 14, color: C.teal, strokeWidth: 3, style: { flexShrink: 0, marginTop: 2 } }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 12.5, lineHeight: 1.45 }, children: x })
-                  ] }, i))
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginTop: 10 }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.ember, marginBottom: 6 }, children: "\xC0 \xE9viter" }),
-                  e.avoid.map((x, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 7, marginBottom: 5 }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.X, { size: 14, color: C.ember, strokeWidth: 3, style: { flexShrink: 0, marginTop: 2 } }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 12.5, lineHeight: 1.45, color: C.mut }, children: x })
-                  ] }, i))
-                ] })
-              ] })
-            ] }),
-            exlast[e.exKey] && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 11.5, color: C.teal, fontWeight: 700, marginBottom: 6 }, children: [
-              "Dernier : ",
-              exlast[e.exKey]
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "input",
-              {
-                defaultValue: st.val || "",
-                onBlur: (ev) => setExVal(e.id, e.exKey, ev.target.value),
-                placeholder: "charge / reps du jour",
-                style: { flex: 1, background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 9, padding: "8px 10px", fontSize: 13, fontFamily: FONT_MONO }
-              },
-              e.exKey + "|" + (exlast[e.exKey] || "")
-            ) })
-          ] })
-        ] }) }, e.id);
-      }),
-      edit && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => setPicker(true), style: { width: "100%", background: C.tealSoft, border: `1px solid ${C.teal}`, color: C.teal, borderRadius: 12, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, marginBottom: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Plus, { size: 17 }),
-        " Ajouter un exercice"
-      ] }),
-      sess && sess.ex.length === 0 && !edit && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: C.card, border: `1px dashed ${C.line}`, borderRadius: 14, padding: 20, textAlign: "center", color: C.mut, fontSize: 13 }, children: "S\xE9ance vide. Touche \xAB \xC9diter \xBB pour ajouter des exercices." }),
-      picker && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExercisePicker, { exercises: EXERCISES, onAdd: addExercise, onClose: () => setPicker(false) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 8 } })
-    ] });
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.coral }, "Sport"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Tes s\xE9ances"), groups.map((g) => /* @__PURE__ */ React.createElement("div", { key: g, style: { marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, fontWeight: 700, margin: "0 0 7px" } }, g), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, sessions.filter((s) => s.group === g).map((s) => {
+      const on = s.id === day.session;
+      return /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          key: s.id,
+          onClick: () => {
+            saveDay({ ...day, session: s.id });
+            setEdit(false);
+          },
+          style: { padding: "8px 13px", borderRadius: 99, border: `1px solid ${on ? C.coral : C.line}`, background: on ? C.emberSoft : C.card, color: on ? C.coral : C.text, fontSize: 13, fontWeight: 700, cursor: "pointer" }
+        },
+        s.name
+      );
+    })))), /* @__PURE__ */ React.createElement("button", { onClick: createSession, style: { background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 99, padding: "8px 14px", fontSize: 12.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 16 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 15 }), " Nouvelle s\xE9ance"), sess && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, margin: "0 0 14px" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, edit ? /* @__PURE__ */ React.createElement("input", { value: sess.name, onChange: (e) => renameSess(e.target.value), placeholder: "Nom de la s\xE9ance", style: { width: "100%", boxSizing: "border-box", background: C.bg2, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "9px 11px", fontSize: 15, fontWeight: 700, fontFamily: "inherit" } }) : /* @__PURE__ */ React.createElement("div", { style: { fontSize: 16, fontWeight: 800, fontFamily: FONT_DISPLAY } }, sess.name), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: C.mut, display: "flex", alignItems: "center", gap: 5, marginTop: 3 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Clock, { size: 13 }), " ~", sessionDur(sess), " min \xB7 ", sess.ex.length, " exo", sess.ex.length > 1 ? "s" : "")), edit && sess.custom && /* @__PURE__ */ React.createElement("button", { onClick: deleteSession, title: "Supprimer la s\xE9ance", style: { background: "none", border: `1px solid ${C.line}`, color: C.coral, borderRadius: 10, width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Trash2, { size: 16 })), /* @__PURE__ */ React.createElement("button", { onClick: () => setEdit((v) => !v), style: { background: edit ? C.coral : C.cardHi, border: `1px solid ${edit ? C.coral : C.line}`, color: edit ? "#fff" : C.text, borderRadius: 99, padding: "9px 15px", fontSize: 13, fontWeight: 800, cursor: "pointer", flexShrink: 0 } }, edit ? "Terminer" : "\xC9diter")), sess && edit && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: C.mut, textTransform: "uppercase", letterSpacing: 1, marginBottom: 7 } }, "Groupe"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } }, GROUP_OPTIONS.map((g) => /* @__PURE__ */ React.createElement("button", { key: g, onClick: () => setGroup(g), style: { flex: 1, padding: "10px", borderRadius: 10, border: `1px solid ${sess.group === g ? C.teal : C.line}`, background: sess.group === g ? C.tealSoft : C.bg2, color: sess.group === g ? C.teal : C.text, fontSize: 13, fontWeight: 700, cursor: "pointer" } }, g)))), sess.ex.map((e) => {
+      const st = day.workout[e.id] || {};
+      return /* @__PURE__ */ React.createElement("div", { key: e.id, style: { background: C.card, border: `1px solid ${st.done ? C.good : C.line}`, borderRadius: 16, padding: 15, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "flex-start", gap: 12 } }, /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          onClick: () => toggleEx(e.id),
+          style: { width: 26, height: 26, marginTop: 1, borderRadius: 8, border: `2px solid ${st.done ? C.good : C.line}`, background: st.done ? C.good : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }
+        },
+        st.done && /* @__PURE__ */ React.createElement(import_lucide_react.Check, { size: 15, color: C.bg, strokeWidth: 3 })
+      ), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, fontWeight: 700 } }, e.name), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 8, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: C.coral, fontWeight: 700, whiteSpace: "nowrap" } }, e.scheme), edit && /* @__PURE__ */ React.createElement("button", { onClick: () => removeExercise(e.id), title: "Retirer", style: { background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 0, display: "flex" } }, /* @__PURE__ */ React.createElement(import_lucide_react.X, { size: 16 })))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 4 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Clock, { size: 11 }), " ~", e.dur != null ? e.dur : exDur(e), " min"), /* @__PURE__ */ React.createElement("div", { style: { margin: "5px 0 8px" } }, /* @__PURE__ */ React.createElement(TagBadge, { tag: e.tag })), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 12.5, color: C.mut, margin: "0 0 10px", lineHeight: 1.5 } }, e.cue), e.do && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          onClick: () => setTech((t) => ({ ...t, [e.id]: !t[e.id] })),
+          style: { background: "none", border: `1px solid ${C.line}`, color: tech[e.id] ? C.ember : C.mut, borderRadius: 9, padding: "6px 11px", fontSize: 12, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }
+        },
+        tech[e.id] ? "Masquer la technique" : "Voir la technique",
+        /* @__PURE__ */ React.createElement(import_lucide_react.ChevronDown, { size: 14, style: { transform: tech[e.id] ? "rotate(180deg)" : "none", transition: "transform .25s" } })
+      ), tech[e.id] && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 12 } }, /* @__PURE__ */ React.createElement(ExerciseArt, { art: e.art }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.teal, marginBottom: 6 } }, "\xC0 faire"), e.do.map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", gap: 7, marginBottom: 5 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Check, { size: 14, color: C.teal, strokeWidth: 3, style: { flexShrink: 0, marginTop: 2 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, lineHeight: 1.45 } }, x)))), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.ember, marginBottom: 6 } }, "\xC0 \xE9viter"), e.avoid.map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", gap: 7, marginBottom: 5 } }, /* @__PURE__ */ React.createElement(import_lucide_react.X, { size: 14, color: C.ember, strokeWidth: 3, style: { flexShrink: 0, marginTop: 2 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, lineHeight: 1.45, color: C.mut } }, x)))))), exlast[e.exKey] && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.teal, fontWeight: 700, marginBottom: 6 } }, "Dernier : ", exlast[e.exKey]), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement(
+        "input",
+        {
+          key: e.exKey + "|" + (exlast[e.exKey] || ""),
+          defaultValue: st.val || "",
+          onBlur: (ev) => setExVal(e.id, e.exKey, ev.target.value),
+          placeholder: "charge / reps du jour",
+          style: { flex: 1, background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 9, padding: "8px 10px", fontSize: 13, fontFamily: FONT_MONO }
+        }
+      )))));
+    }), edit && /* @__PURE__ */ React.createElement("button", { onClick: () => setPicker(true), style: { width: "100%", background: C.tealSoft, border: `1px solid ${C.teal}`, color: C.teal, borderRadius: 12, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, marginBottom: 8 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 17 }), " Ajouter un exercice"), sess && sess.ex.length === 0 && !edit && /* @__PURE__ */ React.createElement("div", { style: { background: C.card, border: `1px dashed ${C.line}`, borderRadius: 14, padding: 20, textAlign: "center", color: C.mut, fontSize: 13 } }, "S\xE9ance vide. Touche \xAB \xC9diter \xBB pour ajouter des exercices."), picker && /* @__PURE__ */ React.createElement(ExercisePicker, { exercises: EXERCISES, onAdd: addExercise, onClose: () => setPicker(false) }), /* @__PURE__ */ React.createElement("div", { style: { height: 8 } }));
   }
   function FoodTab({ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew }) {
     const m = day.macros || { p: 0, c: 0, f: 0 };
@@ -1690,357 +1289,147 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       setPhotoPreview(null);
       setPhotoErr("");
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-      toast && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { position: "fixed", left: 0, right: 0, bottom: 90, display: "flex", justifyContent: "center", zIndex: 50, pointerEvents: "none" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: C.cardHi, border: `1px solid ${C.line}`, color: C.text, fontSize: 13, fontWeight: 600, padding: "10px 16px", borderRadius: 99, boxShadow: "0 6px 20px rgba(0,0,0,.4)" }, children: toast }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Eyebrow, { color: C.ember, children: "Nutrition" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: h1, children: "Ta journ\xE9e" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { color: C.mut, margin: "0 0 16px", fontSize: 14, lineHeight: 1.5 }, children: "Suis tes calories et tes macros. On vise la cible, sans se priver." }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 12 }, children: rows.map((r) => {
-        const z = zone(r.val, r.target);
-        const pct = Math.min(100, (r.target ? r.val / r.target : 0) * 100);
-        const over = r.val > r.target;
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: card, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 14, fontWeight: 700 }, children: r.label }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 14, fontWeight: 800, color: z.color }, children: [
-              r.val,
-              " ",
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { color: C.mut, fontWeight: 600, fontSize: 12.5 }, children: [
-                "/ ",
-                r.target,
-                " ",
-                r.unit
-              ] })
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 10, borderRadius: 99, background: C.line, overflow: "hidden" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99, transition: "width .4s ease" } }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", marginTop: 7 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color }, children: z.label }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11.5, color: C.mut }, children: over ? `+${r.val - r.target} ${r.unit} au-dessus` : `reste ${r.target - r.val} ${r.unit}` })
-          ] })
-        ] }, r.key);
-      }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexWrap: "wrap", gap: 10, margin: "12px 2px 0" }, children: [["\xE0 compl\xE9ter", C.mut], ["en bonne voie", C.teal], ["dans la cible", C.good], ["un peu trop", C.amber], ["d\xE9passement", C.ember]].map(([l, col]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 10.5, color: C.mut, display: "flex", alignItems: "center", gap: 5 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { width: 9, height: 9, borderRadius: 99, background: col } }),
-        " ",
-        l
-      ] }, l)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { ...card, marginTop: 14 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IndulgenceGauge, { satfat: Math.round((m.f || 0) * 0.4), sugar: null, daily: true, title: "Gras satur\xE9s du jour (estim\xE9 ~40% des lipides)" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Repas pr\xE9vus aujourd'hui" }),
-      plannedMeals.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { ...card, borderStyle: "dashed", textAlign: "center", color: C.mut, fontSize: 13, lineHeight: 1.5 }, children: "Aucun repas pr\xE9vu aujourd'hui. Planifie-les dans l'onglet Programme pour les ajouter en un tap." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: card, children: [
-        plannedMeals.map((r, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "9px 0", borderBottom: i < plannedMeals.length - 1 ? `1px solid ${C.line}` : "none" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, minWidth: 0 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 14, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: r.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 11.5, color: C.mut }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { style: { color: C.ember }, children: kcalOf(r) }),
-              " kcal \xB7 P",
-              r.protein,
-              " G",
-              r.carbs,
-              " L",
-              r.fat
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => eatRecipe(r), style: { background: C.tealSoft, color: C.teal, border: `1px solid ${C.teal}`, borderRadius: 10, padding: "8px 12px", fontSize: 13, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Plus, { size: 14 }),
-            " Ajouter"
-          ] })
-        ] }, i)),
-        plannedMeals.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: addAllPlanned, style: { marginTop: 12, width: "100%", background: C.ember, color: "#1b1205", border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Plus, { size: 16 }),
-          " Tout ajouter \xE0 ma journ\xE9e"
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Analyser une photo" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: card, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { ref: fileRef, type: "file", accept: "image/*", onChange: onFile, style: { display: "none" } }),
-        photoState === "idle" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-            "button",
-            {
-              onClick: () => fileRef.current && fileRef.current.click(),
-              style: { width: "100%", background: C.coral, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Camera, { size: 18 }),
-                " Photo du plat"
-              ]
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 11.5, color: C.mut, textAlign: "center", marginTop: 8, lineHeight: 1.45 }, children: "L'IA identifie le plat et estime ses macros. Tu pourras ajuster avant d'ajouter." })
-        ] }),
-        photoState === "loading" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "center", padding: "4px 0" }, children: [
-          photoPreview && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: photoPreview, alt: "", style: { width: 96, height: 96, objectFit: "cover", borderRadius: 12, marginBottom: 10 } }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { color: C.teal, fontSize: 14, fontWeight: 700 }, children: "Analyse du plat en cours..." })
-        ] }),
-        photoState === "error" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "center" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { color: C.ember, fontSize: 13, marginBottom: 12, lineHeight: 1.45 }, children: [
-            "Analyse impossible : ",
-            photoErr
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: resetPhoto, style: { background: C.cardHi, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 700, cursor: "pointer" }, children: "R\xE9essayer" })
-        ] }),
-        photoState === "result" && photoResult && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }, children: [
-            photoPreview && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: photoPreview, alt: "", style: { width: 64, height: 64, objectFit: "cover", borderRadius: 12, flexShrink: 0 } }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { minWidth: 0 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 10.5, color: C.teal, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }, children: "D\xE9tect\xE9" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 15, fontWeight: 700 }, children: photoResult.plat }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 11.5, color: C.mut }, children: [
-                "\u2248 ",
-                kcalVals(photoResult),
-                " kcal \xB7 ajuste si besoin"
-              ] })
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 8, alignItems: "flex-start" }, children: [["p", "Prot"], ["c", "Gluc"], ["f", "Lip"]].map(([k, l]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "input",
-              {
-                value: photoResult[k],
-                onChange: (e) => setPhotoResult({ ...photoResult, [k]: e.target.value.replace(/[^0-9.]/g, "") }),
-                inputMode: "decimal",
-                style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, textAlign: "center" }
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 10.5, color: C.mut, textAlign: "center", marginTop: 4 }, children: [
-              l,
-              " (g)"
-            ] })
-          ] }, k)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 10, marginTop: 12 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: resetPhoto, style: { flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.text, borderRadius: 11, padding: "12px", fontSize: 13, fontWeight: 700, cursor: "pointer" }, children: "Annuler" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: addPhotoMeal, style: { flex: 2, background: C.ember, border: "none", color: "#1b1205", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer" }, children: "Ajouter \xE0 ma journ\xE9e" })
-          ] })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Ajout rapide" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexWrap: "wrap", gap: 8 }, children: QUICK_FOODS.map((f) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => addMacros({ p: f.p, c: f.c, f: f.f }), style: chip, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Plus, { size: 13, color: C.ember }),
-        " ",
-        f.n
-      ] }, f.n)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Ajouter \xE0 la main" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: card, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 8, alignItems: "flex-start" }, children: [
-        [["p", "Prot"], ["c", "Gluc"], ["f", "Lip"]].map(([k, l]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            "input",
-            {
-              value: manual[k],
-              onChange: (e) => setManual({ ...manual, [k]: e.target.value.replace(/[^0-9.]/g, "") }),
-              inputMode: "decimal",
-              placeholder: "0",
-              style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, textAlign: "center" }
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 10.5, color: C.mut, textAlign: "center", marginTop: 4 }, children: [
-            l,
-            " (g)"
-          ] })
-        ] }, k)),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: addManual, style: { background: C.ember, color: "#1b1205", border: "none", borderRadius: 10, padding: "10px 15px", fontSize: 18, fontWeight: 800, cursor: "pointer", lineHeight: 1 }, children: "+" })
-      ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-        "button",
-        {
-          onClick: () => setMacros({ p: 0, c: 0, f: 0 }),
-          style: { marginTop: 14, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 10, padding: "11px", fontSize: 13, fontWeight: 700, cursor: "pointer", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 },
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Minus, { size: 14 }),
-            " Remettre la journ\xE9e \xE0 z\xE9ro"
-          ]
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Historique 7 jours" }),
-      macroHist === null ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { color: C.mut, fontSize: 13 }, children: "Chargement..." }) : (() => {
-        const logged = macroHist.filter((d) => d.kcal > 0);
-        const n = logged.length;
-        const avg = (sel) => n ? logged.reduce((s, d) => s + sel(d), 0) / n : 0;
-        const maxK = Math.max(TARGETS.kcal, ...macroHist.map((x) => x.kcal));
-        const rows2 = [
-          ["Calories", Math.round(avg((d) => d.kcal)), TARGETS.kcal, "kcal"],
-          ["Prot\xE9ines", Math.round(avg((d) => d.p)), TARGETS.protein, "g"],
-          ["Glucides", Math.round(avg((d) => d.c)), TARGETS.carbs, "g"],
-          ["Lipides", Math.round(avg((d) => d.f)), TARGETS.fat, "g"]
-        ];
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: card, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 11, color: C.mut, marginBottom: 11 }, children: [
-            "Moyenne sur ",
-            n,
-            " jour",
-            n > 1 ? "s" : "",
-            " avec donn\xE9es",
-            n ? " \xB7 vs ta cible" : ""
-          ] }),
-          n === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 13, color: C.mut, textAlign: "center", padding: "8px 0" }, children: "Aucune donn\xE9e cette semaine. Tes repas du jour alimenteront cet historique." }) : rows2.map(([label, val, target, unit]) => {
-            const z = zone(val, target);
-            const pct = Math.min(100, target ? val / target * 100 : 0);
-            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 9 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11.5, color: C.mut }, children: label }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color }, children: [
-                  val,
-                  " / ",
-                  target,
-                  " ",
-                  unit,
-                  " \xB7 ",
-                  z.label
-                ] })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 6, borderRadius: 99, background: C.line, overflow: "hidden" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99, transition: "width .4s" } }) })
-            ] }, label);
-          }),
-          n > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { marginTop: 4, paddingTop: 12, borderTop: `1px solid ${C.line}` }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IndulgenceGauge, { satfat: Math.round(avg((d) => d.f) * 0.4), sugar: null, daily: true, title: "Gras satur\xE9s \xB7 moyenne estim\xE9e (~40% des lipides)" }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 4, alignItems: "flex-end", height: 56, marginTop: 14 }, children: macroHist.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { flex: 1, height: `${d.kcal > 0 ? Math.max(4, d.kcal / maxK * 100) : 0}%`, minHeight: d.kcal > 0 ? 4 : 0, background: d.kcal > 0 ? zone(d.kcal, TARGETS.kcal).color : C.line, borderRadius: "4px 4px 0 0" } }, i)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 4, marginTop: 5 }, children: macroHist.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { flex: 1, textAlign: "center", fontSize: 8.5, color: d.date === dateKey() ? C.ember : C.mut }, children: [
-            d.date.slice(8),
-            "/",
-            d.date.slice(5, 7)
-          ] }, i)) })
-        ] });
-      })(),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Ajouter un repas pass\xE9" }),
-      !pastOpen ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-        "button",
-        {
-          onClick: () => {
-            setPastOpen(true);
-            setPastResult(null);
-            setPastErr("");
-          },
-          style: { width: "100%", background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 },
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Plus, { size: 16 }),
-            " Ajouter un repas pass\xE9"
-          ]
-        }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: card, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, color: C.mut, marginBottom: 6 }, children: "Date du repas" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-          "input",
-          {
-            type: "date",
-            value: pastDate,
-            max: dateKey(),
-            onChange: (e) => setPastDate(e.target.value),
-            style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, textAlign: "center", marginBottom: 12 }
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, color: C.mut, marginBottom: 6 }, children: "D\xE9cris ton repas" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-          "textarea",
-          {
-            value: pastText,
-            onChange: (e) => {
-              setPastText(e.target.value);
-              setPastResult(null);
-            },
-            rows: 3,
-            placeholder: "Ex. poulet curry + riz basmati + 1 bi\xE8re",
-            style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, lineHeight: 1.5, resize: "vertical" }
-          }
-        ),
-        !pastResult ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-          "button",
-          {
-            onClick: calcPast,
-            disabled: pastBusy,
-            style: { width: "100%", marginTop: 12, background: pastBusy ? C.tealSoft : C.teal, color: pastBusy ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: pastBusy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 },
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_lucide_react.Sparkles, { size: 16 }),
-              " ",
-              pastBusy ? "Calcul des macros..." : "Calculer les macros avec l'IA"
-            ]
-          }
-        ) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 8, alignItems: "flex-start", marginTop: 12 }, children: [["p", "Prot"], ["c", "Gluc"], ["f", "Lip"]].map(([k, l]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "input",
-              {
-                value: pastResult[k],
-                onChange: (e) => setPastResult({ ...pastResult, [k]: e.target.value.replace(/[^0-9.]/g, "") }),
-                inputMode: "decimal",
-                style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, textAlign: "center" }
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: 10.5, color: C.mut, textAlign: "center", marginTop: 4 }, children: [
-              l,
-              " (g)"
-            ] })
-          ] }, k)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "center", fontSize: 12, color: C.mut, marginTop: 10 }, children: [
-            "\u2248 ",
-            Math.round(((+pastResult.p || 0) + (+pastResult.c || 0)) * 4 + (+pastResult.f || 0) * 9),
-            " kcal"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-            "button",
-            {
-              onClick: addPast,
-              style: { width: "100%", marginTop: 12, background: C.ember, color: "#1b1205", border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer" },
-              children: [
-                "Ajouter au ",
-                fmtShort(pastDate)
-              ]
-            }
-          )
-        ] }),
-        pastErr && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11.5, color: C.mut, marginTop: 10, lineHeight: 1.45 }, children: pastErr }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-          "button",
-          {
-            onClick: () => {
-              setPastOpen(false);
-              setPastResult(null);
-              setPastErr("");
-            },
-            style: { width: "100%", marginTop: 8, background: "none", border: "none", color: C.mut, fontSize: 12.5, fontWeight: 700, cursor: "pointer" },
-            children: "Annuler"
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: sectionH, children: "Poids \xB7 14 jours" }),
-      weightHist === null ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { color: C.mut, fontSize: 13 }, children: "Chargement..." }) : (() => {
-        const pts = weightHist.map((d, i) => ({ ...d, i })).filter((d) => d.weight != null);
-        const lastW = pts.length ? pts[pts.length - 1].weight : null;
-        if (pts.length === 0) {
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { ...card, borderStyle: "dashed", textAlign: "center", color: C.mut, fontSize: 13, lineHeight: 1.5 }, children: "Renseigne ton poids du jour (depuis l'accueil) pour suivre ton \xE9volution ici." });
-        }
-        const W = 320, H = 150, padT = 28, padB = 24, padL = 10, padR = 10;
-        const ws = pts.map((p) => p.weight);
-        let lo = Math.min(...ws), hi = Math.max(...ws);
-        const pad = Math.max(0.5, (hi - lo) * 0.2);
-        lo -= pad;
-        hi += pad;
-        const x = (i) => padL + i * (W - padL - padR) / 13;
-        const y = (v) => padT + (1 - (v - lo) / (hi - lo)) * (H - padT - padB);
-        const line = pts.map((p, k) => `${k === 0 ? "M" : "L"} ${x(p.i).toFixed(1)} ${y(p.weight).toFixed(1)}`).join(" ");
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: card, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11.5, color: C.mut }, children: "\xC9volution sur 2 semaines" }),
-            lastW != null && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 13, fontWeight: 800, color: C.teal }, children: [
-              "dernier : ",
-              lastW,
-              " kg"
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { viewBox: `0 0 ${W} ${H}`, style: { width: "100%", height: "auto", display: "block" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: line, fill: "none", stroke: C.teal, strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round" }),
-            pts.map((p, k) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("g", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: x(p.i), cy: y(p.weight), r: "3.5", fill: C.teal }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("text", { x: x(p.i), y: y(p.weight) - 9, fill: C.text, fontSize: "10", fontWeight: "700", textAnchor: "middle", children: p.weight }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("text", { x: x(p.i), y: H - 8, fill: p.date === dateKey() ? C.ember : C.mut, fontSize: "8", textAnchor: "middle", children: [
-                p.date.slice(8),
-                "/",
-                p.date.slice(5, 7)
-              ] })
-            ] }, k))
-          ] })
-        ] });
-      })(),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { ref: recipesRef, style: { marginTop: 28, paddingTop: 8, borderTop: `2px solid ${C.line}` }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RecipesTab, { addMacros, openId: openRecipeId, newSignal: recipeNew }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 12 } })
-    ] });
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, toast && /* @__PURE__ */ React.createElement("div", { style: { position: "fixed", left: 0, right: 0, bottom: 90, display: "flex", justifyContent: "center", zIndex: 50, pointerEvents: "none" } }, /* @__PURE__ */ React.createElement("div", { style: { background: C.cardHi, border: `1px solid ${C.line}`, color: C.text, fontSize: 13, fontWeight: 600, padding: "10px 16px", borderRadius: 99, boxShadow: "0 6px 20px rgba(0,0,0,.4)" } }, toast)), /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Nutrition"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta journ\xE9e"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 16px", fontSize: 14, lineHeight: 1.5 } }, "Suis tes calories et tes macros. On vise la cible, sans se priver."), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 12 } }, rows.map((r) => {
+      const z = zone(r.val, r.target);
+      const pct = Math.min(100, (r.target ? r.val / r.target : 0) * 100);
+      const over = r.val > r.target;
+      return /* @__PURE__ */ React.createElement("div", { key: r.key, style: card }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 700 } }, r.label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 800, color: z.color } }, r.val, " ", /* @__PURE__ */ React.createElement("span", { style: { color: C.mut, fontWeight: 600, fontSize: 12.5 } }, "/ ", r.target, " ", r.unit))), /* @__PURE__ */ React.createElement("div", { style: { height: 10, borderRadius: 99, background: C.line, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99, transition: "width .4s ease" } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginTop: 7 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color } }, z.label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut } }, over ? `+${r.val - r.target} ${r.unit} au-dessus` : `reste ${r.target - r.val} ${r.unit}`)));
+    })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 10, margin: "12px 2px 0" } }, [["\xE0 compl\xE9ter", C.mut], ["en bonne voie", C.teal], ["dans la cible", C.good], ["un peu trop", C.amber], ["d\xE9passement", C.ember]].map(([l, col]) => /* @__PURE__ */ React.createElement("span", { key: l, style: { fontSize: 10.5, color: C.mut, display: "flex", alignItems: "center", gap: 5 } }, /* @__PURE__ */ React.createElement("span", { style: { width: 9, height: 9, borderRadius: 99, background: col } }), " ", l))), /* @__PURE__ */ React.createElement("div", { style: { ...card, marginTop: 14 } }, /* @__PURE__ */ React.createElement(IndulgenceGauge, { satfat: Math.round((m.f || 0) * 0.4), sugar: null, daily: true, title: "Gras satur\xE9s du jour (estim\xE9 ~40% des lipides)" })), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Repas pr\xE9vus aujourd'hui"), plannedMeals.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { ...card, borderStyle: "dashed", textAlign: "center", color: C.mut, fontSize: 13, lineHeight: 1.5 } }, "Aucun repas pr\xE9vu aujourd'hui. Planifie-les dans l'onglet Programme pour les ajouter en un tap.") : /* @__PURE__ */ React.createElement("div", { style: card }, plannedMeals.map((r, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 10, padding: "9px 0", borderBottom: i < plannedMeals.length - 1 ? `1px solid ${C.line}` : "none" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, r.title), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut } }, /* @__PURE__ */ React.createElement("b", { style: { color: C.ember } }, kcalOf(r)), " kcal \xB7 P", r.protein, " G", r.carbs, " L", r.fat)), /* @__PURE__ */ React.createElement("button", { onClick: () => eatRecipe(r), style: { background: C.tealSoft, color: C.teal, border: `1px solid ${C.teal}`, borderRadius: 10, padding: "8px 12px", fontSize: 13, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, flexShrink: 0 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 14 }), " Ajouter"))), plannedMeals.length > 1 && /* @__PURE__ */ React.createElement("button", { onClick: addAllPlanned, style: { marginTop: 12, width: "100%", background: C.ember, color: "#1b1205", border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 16 }), " Tout ajouter \xE0 ma journ\xE9e")), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Analyser une photo"), /* @__PURE__ */ React.createElement("div", { style: card }, /* @__PURE__ */ React.createElement("input", { ref: fileRef, type: "file", accept: "image/*", onChange: onFile, style: { display: "none" } }), photoState === "idle" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => fileRef.current && fileRef.current.click(),
+        style: { width: "100%", background: C.coral, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }
+      },
+      /* @__PURE__ */ React.createElement(import_lucide_react.Camera, { size: 18 }),
+      " Photo du plat"
+    ), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 11.5, color: C.mut, textAlign: "center", marginTop: 8, lineHeight: 1.45 } }, "L'IA identifie le plat et estime ses macros. Tu pourras ajuster avant d'ajouter.")), photoState === "loading" && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "4px 0" } }, photoPreview && /* @__PURE__ */ React.createElement("img", { src: photoPreview, alt: "", style: { width: 96, height: 96, objectFit: "cover", borderRadius: 12, marginBottom: 10 } }), /* @__PURE__ */ React.createElement("div", { style: { color: C.teal, fontSize: 14, fontWeight: 700 } }, "Analyse du plat en cours...")), photoState === "error" && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { color: C.ember, fontSize: 13, marginBottom: 12, lineHeight: 1.45 } }, "Analyse impossible : ", photoErr), /* @__PURE__ */ React.createElement("button", { onClick: resetPhoto, style: { background: C.cardHi, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 700, cursor: "pointer" } }, "R\xE9essayer")), photoState === "result" && photoResult && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center", marginBottom: 12 } }, photoPreview && /* @__PURE__ */ React.createElement("img", { src: photoPreview, alt: "", style: { width: 64, height: 64, objectFit: "cover", borderRadius: 12, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("div", { style: { minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.teal, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 } }, "D\xE9tect\xE9"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, fontWeight: 700 } }, photoResult.plat), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut } }, "\u2248 ", kcalVals(photoResult), " kcal \xB7 ajuste si besoin"))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "flex-start" } }, [["p", "Prot"], ["c", "Gluc"], ["f", "Lip"]].map(([k, l]) => /* @__PURE__ */ React.createElement("div", { key: k, style: { flex: 1 } }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        value: photoResult[k],
+        onChange: (e) => setPhotoResult({ ...photoResult, [k]: e.target.value.replace(/[^0-9.]/g, "") }),
+        inputMode: "decimal",
+        style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, textAlign: "center" }
+      }
+    ), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.mut, textAlign: "center", marginTop: 4 } }, l, " (g)")))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, marginTop: 12 } }, /* @__PURE__ */ React.createElement("button", { onClick: resetPhoto, style: { flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.text, borderRadius: 11, padding: "12px", fontSize: 13, fontWeight: 700, cursor: "pointer" } }, "Annuler"), /* @__PURE__ */ React.createElement("button", { onClick: addPhotoMeal, style: { flex: 2, background: C.ember, border: "none", color: "#1b1205", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer" } }, "Ajouter \xE0 ma journ\xE9e")))), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Ajout rapide"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 8 } }, QUICK_FOODS.map((f) => /* @__PURE__ */ React.createElement("button", { key: f.n, onClick: () => addMacros({ p: f.p, c: f.c, f: f.f }), style: chip }, /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 13, color: C.ember }), " ", f.n))), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Ajouter \xE0 la main"), /* @__PURE__ */ React.createElement("div", { style: card }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "flex-start" } }, [["p", "Prot"], ["c", "Gluc"], ["f", "Lip"]].map(([k, l]) => /* @__PURE__ */ React.createElement("div", { key: k, style: { flex: 1 } }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        value: manual[k],
+        onChange: (e) => setManual({ ...manual, [k]: e.target.value.replace(/[^0-9.]/g, "") }),
+        inputMode: "decimal",
+        placeholder: "0",
+        style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, textAlign: "center" }
+      }
+    ), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.mut, textAlign: "center", marginTop: 4 } }, l, " (g)"))), /* @__PURE__ */ React.createElement("button", { onClick: addManual, style: { background: C.ember, color: "#1b1205", border: "none", borderRadius: 10, padding: "10px 15px", fontSize: 18, fontWeight: 800, cursor: "pointer", lineHeight: 1 } }, "+"))), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => setMacros({ p: 0, c: 0, f: 0 }),
+        style: { marginTop: 14, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 10, padding: "11px", fontSize: 13, fontWeight: 700, cursor: "pointer", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }
+      },
+      /* @__PURE__ */ React.createElement(import_lucide_react.Minus, { size: 14 }),
+      " Remettre la journ\xE9e \xE0 z\xE9ro"
+    ), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Historique 7 jours"), macroHist === null ? /* @__PURE__ */ React.createElement("div", { style: { color: C.mut, fontSize: 13 } }, "Chargement...") : (() => {
+      const logged = macroHist.filter((d) => d.kcal > 0);
+      const n = logged.length;
+      const avg = (sel) => n ? logged.reduce((s, d) => s + sel(d), 0) / n : 0;
+      const maxK = Math.max(TARGETS.kcal, ...macroHist.map((x) => x.kcal));
+      const rows2 = [
+        ["Calories", Math.round(avg((d) => d.kcal)), TARGETS.kcal, "kcal"],
+        ["Prot\xE9ines", Math.round(avg((d) => d.p)), TARGETS.protein, "g"],
+        ["Glucides", Math.round(avg((d) => d.c)), TARGETS.carbs, "g"],
+        ["Lipides", Math.round(avg((d) => d.f)), TARGETS.fat, "g"]
+      ];
+      return /* @__PURE__ */ React.createElement("div", { style: card }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 11 } }, "Moyenne sur ", n, " jour", n > 1 ? "s" : "", " avec donn\xE9es", n ? " \xB7 vs ta cible" : ""), n === 0 ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: C.mut, textAlign: "center", padding: "8px 0" } }, "Aucune donn\xE9e cette semaine. Tes repas du jour alimenteront cet historique.") : rows2.map(([label, val, target, unit]) => {
+        const z = zone(val, target);
+        const pct = Math.min(100, target ? val / target * 100 : 0);
+        return /* @__PURE__ */ React.createElement("div", { key: label, style: { marginBottom: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut } }, label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color } }, val, " / ", target, " ", unit, " \xB7 ", z.label)), /* @__PURE__ */ React.createElement("div", { style: { height: 6, borderRadius: 99, background: C.line, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99, transition: "width .4s" } })));
+      }), n > 0 && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 4, paddingTop: 12, borderTop: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement(IndulgenceGauge, { satfat: Math.round(avg((d) => d.f) * 0.4), sugar: null, daily: true, title: "Gras satur\xE9s \xB7 moyenne estim\xE9e (~40% des lipides)" })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 4, alignItems: "flex-end", height: 56, marginTop: 14 } }, macroHist.map((d, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { flex: 1, height: `${d.kcal > 0 ? Math.max(4, d.kcal / maxK * 100) : 0}%`, minHeight: d.kcal > 0 ? 4 : 0, background: d.kcal > 0 ? zone(d.kcal, TARGETS.kcal).color : C.line, borderRadius: "4px 4px 0 0" } }))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 4, marginTop: 5 } }, macroHist.map((d, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { flex: 1, textAlign: "center", fontSize: 8.5, color: d.date === dateKey() ? C.ember : C.mut } }, d.date.slice(8), "/", d.date.slice(5, 7)))));
+    })(), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Ajouter un repas pass\xE9"), !pastOpen ? /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => {
+          setPastOpen(true);
+          setPastResult(null);
+          setPastErr("");
+        },
+        style: { width: "100%", background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }
+      },
+      /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 16 }),
+      " Ajouter un repas pass\xE9"
+    ) : /* @__PURE__ */ React.createElement("div", { style: card }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 6 } }, "Date du repas"), /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        type: "date",
+        value: pastDate,
+        max: dateKey(),
+        onChange: (e) => setPastDate(e.target.value),
+        style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, textAlign: "center", marginBottom: 12 }
+      }
+    ), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 6 } }, "D\xE9cris ton repas"), /* @__PURE__ */ React.createElement(
+      "textarea",
+      {
+        value: pastText,
+        onChange: (e) => {
+          setPastText(e.target.value);
+          setPastResult(null);
+        },
+        rows: 3,
+        placeholder: "Ex. poulet curry + riz basmati + 1 bi\xE8re",
+        style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, lineHeight: 1.5, resize: "vertical" }
+      }
+    ), !pastResult ? /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: calcPast,
+        disabled: pastBusy,
+        style: { width: "100%", marginTop: 12, background: pastBusy ? C.tealSoft : C.teal, color: pastBusy ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: pastBusy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }
+      },
+      /* @__PURE__ */ React.createElement(import_lucide_react.Sparkles, { size: 16 }),
+      " ",
+      pastBusy ? "Calcul des macros..." : "Calculer les macros avec l'IA"
+    ) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "flex-start", marginTop: 12 } }, [["p", "Prot"], ["c", "Gluc"], ["f", "Lip"]].map(([k, l]) => /* @__PURE__ */ React.createElement("div", { key: k, style: { flex: 1 } }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        value: pastResult[k],
+        onChange: (e) => setPastResult({ ...pastResult, [k]: e.target.value.replace(/[^0-9.]/g, "") }),
+        inputMode: "decimal",
+        style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px", fontSize: 14, textAlign: "center" }
+      }
+    ), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.mut, textAlign: "center", marginTop: 4 } }, l, " (g)")))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", fontSize: 12, color: C.mut, marginTop: 10 } }, "\u2248 ", Math.round(((+pastResult.p || 0) + (+pastResult.c || 0)) * 4 + (+pastResult.f || 0) * 9), " kcal"), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: addPast,
+        style: { width: "100%", marginTop: 12, background: C.ember, color: "#1b1205", border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer" }
+      },
+      "Ajouter au ",
+      fmtShort(pastDate)
+    )), pastErr && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginTop: 10, lineHeight: 1.45 } }, pastErr), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => {
+          setPastOpen(false);
+          setPastResult(null);
+          setPastErr("");
+        },
+        style: { width: "100%", marginTop: 8, background: "none", border: "none", color: C.mut, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }
+      },
+      "Annuler"
+    )), /* @__PURE__ */ React.createElement("h3", { style: sectionH }, "Poids \xB7 14 jours"), weightHist === null ? /* @__PURE__ */ React.createElement("div", { style: { color: C.mut, fontSize: 13 } }, "Chargement...") : (() => {
+      const pts = weightHist.map((d, i) => ({ ...d, i })).filter((d) => d.weight != null);
+      const lastW = pts.length ? pts[pts.length - 1].weight : null;
+      if (pts.length === 0) {
+        return /* @__PURE__ */ React.createElement("div", { style: { ...card, borderStyle: "dashed", textAlign: "center", color: C.mut, fontSize: 13, lineHeight: 1.5 } }, "Renseigne ton poids du jour (depuis l'accueil) pour suivre ton \xE9volution ici.");
+      }
+      const W = 320, H = 150, padT = 28, padB = 24, padL = 10, padR = 10;
+      const ws = pts.map((p) => p.weight);
+      let lo = Math.min(...ws), hi = Math.max(...ws);
+      const pad = Math.max(0.5, (hi - lo) * 0.2);
+      lo -= pad;
+      hi += pad;
+      const x = (i) => padL + i * (W - padL - padR) / 13;
+      const y = (v) => padT + (1 - (v - lo) / (hi - lo)) * (H - padT - padB);
+      const line = pts.map((p, k) => `${k === 0 ? "M" : "L"} ${x(p.i).toFixed(1)} ${y(p.weight).toFixed(1)}`).join(" ");
+      return /* @__PURE__ */ React.createElement("div", { style: card }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut } }, "\xC9volution sur 2 semaines"), lastW != null && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, fontWeight: 800, color: C.teal } }, "dernier : ", lastW, " kg")), /* @__PURE__ */ React.createElement("svg", { viewBox: `0 0 ${W} ${H}`, style: { width: "100%", height: "auto", display: "block" } }, /* @__PURE__ */ React.createElement("path", { d: line, fill: "none", stroke: C.teal, strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round" }), pts.map((p, k) => /* @__PURE__ */ React.createElement("g", { key: k }, /* @__PURE__ */ React.createElement("circle", { cx: x(p.i), cy: y(p.weight), r: "3.5", fill: C.teal }), /* @__PURE__ */ React.createElement("text", { x: x(p.i), y: y(p.weight) - 9, fill: C.text, fontSize: "10", fontWeight: "700", textAnchor: "middle" }, p.weight), /* @__PURE__ */ React.createElement("text", { x: x(p.i), y: H - 8, fill: p.date === dateKey() ? C.ember : C.mut, fontSize: "8", textAnchor: "middle" }, p.date.slice(8), "/", p.date.slice(5, 7))))));
+    })(), /* @__PURE__ */ React.createElement("div", { ref: recipesRef, style: { marginTop: 28, paddingTop: 8, borderTop: `2px solid ${C.line}` } }, /* @__PURE__ */ React.createElement(RecipesTab, { addMacros, openId: openRecipeId, newSignal: recipeNew })), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
   }
   function IndulgenceGauge({ satfat, sugar, style, daily, title }) {
     const share = daily ? 1 : MEAL_SHARE[style] ?? 0.35;
@@ -2048,26 +1437,11 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     if (satfat != null) rows.push(["Gras satur\xE9s", Math.round(satfat), Math.round(SATFAT_MAX * share)]);
     if (sugar != null) rows.push(["Sucre", Math.round(sugar), Math.round(SUGAR_MAX * share)]);
     if (rows.length === 0) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 11, color: C.mut, marginBottom: 9, lineHeight: 1.4 }, children: title || "\xC0 quel point \xE7a \xAB abuse \xBB" }),
-      rows.map(([label, val, ceil]) => {
-        const z = badZone(val, ceil);
-        const pct = Math.min(100, ceil ? val / ceil * 100 : 0);
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 8 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11.5, color: C.mut }, children: label }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color }, children: [
-              val,
-              " / ",
-              ceil,
-              " g \xB7 ",
-              z.label
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 6, borderRadius: 99, background: C.line, overflow: "hidden" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99, transition: "width .4s" } }) })
-        ] }, label);
-      })
-    ] });
+    return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 9, lineHeight: 1.4 } }, title || "\xC0 quel point \xE7a \xAB abuse \xBB"), rows.map(([label, val, ceil]) => {
+      const z = badZone(val, ceil);
+      const pct = Math.min(100, ceil ? val / ceil * 100 : 0);
+      return /* @__PURE__ */ React.createElement("div", { key: label, style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut } }, label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color } }, val, " / ", ceil, " g \xB7 ", z.label)), /* @__PURE__ */ React.createElement("div", { style: { height: 6, borderRadius: 99, background: C.line, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99, transition: "width .4s" } })));
+    }));
   }
   function RecipesTab({ addMacros, openId, newSignal }) {
     const styleOpts = ["Petit d\xE9j", "Repas", "Collation", "Dessert"];
@@ -2173,46 +1547,28 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       addMacros({ p: +r.protein || 0, c: +r.carbs || 0, f: +r.fat || 0 });
       flash("Ajout\xE9 \xE0 ta journ\xE9e : " + +r.protein || "0 P \xB7 " + +r.carbs || "0 G \xB7 " + +r.fat || "0 L");
     };
-    if (!recipes) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { color: C.mut, fontSize: 13, paddingTop: 8 }, children: "Chargement des recettes..." });
+    if (!recipes) return /* @__PURE__ */ React.createElement("div", { style: { color: C.mut, fontSize: 13, paddingTop: 8 } }, "Chargement des recettes...");
     const fld = { width: "100%", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "10px 12px", fontSize: 14, boxSizing: "border-box", fontFamily: "inherit" };
     const lbl = { fontSize: 11.5, fontWeight: 700, color: C.mut, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 6px" };
-    const pill = (l, v, c) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 4px", textAlign: "center" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 16, fontWeight: 800, color: c }, children: v }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 10, color: C.mut, marginTop: 1 }, children: l })
-    ] });
-    const toastEl = toast ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { position: "fixed", left: 0, right: 0, bottom: 90, display: "flex", justifyContent: "center", zIndex: 50, pointerEvents: "none" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: C.cardHi, border: `1px solid ${C.line}`, color: C.text, fontSize: 13, fontWeight: 600, padding: "10px 16px", borderRadius: 99, boxShadow: "0 6px 20px rgba(0,0,0,.4)" }, children: toast }) }) : null;
+    const pill = (l, v, c) => /* @__PURE__ */ React.createElement("div", { style: { flex: 1, background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 4px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 16, fontWeight: 800, color: c } }, v), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: C.mut, marginTop: 1 } }, l));
+    const toastEl = toast ? /* @__PURE__ */ React.createElement("div", { style: { position: "fixed", left: 0, right: 0, bottom: 90, display: "flex", justifyContent: "center", zIndex: 50, pointerEvents: "none" } }, /* @__PURE__ */ React.createElement("div", { style: { background: C.cardHi, border: `1px solid ${C.line}`, color: C.text, fontSize: 13, fontWeight: 600, padding: "10px 16px", borderRadius: 99, boxShadow: "0 6px 20px rgba(0,0,0,.4)" } }, toast)) : null;
     if (editing) {
       const isEdit = recipes.some((r) => r.id === editing.id);
       const auto = recipeMacros(editing.ingText);
       const shown = editing.manual ? { protein: +editing.protein || 0, carbs: +editing.carbs || 0, fat: +editing.fat || 0 } : editing.aiVals || auto;
       const kc = kcal(shown);
       const src = editing.manual ? "manuel" : editing.aiVals ? "ia" : "local";
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        toastEl,
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Eyebrow, { color: C.ember, children: isEdit ? "Modifier" : "Nouvelle recette" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: h1, children: editing.title || "Ta recette" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: 16, marginTop: 8 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: lbl, children: "Titre" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: editing.title, onChange: (e) => setEditing({ ...editing, title: e.target.value }), placeholder: "Ex. Wok de poulet", style: fld })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: lbl, children: "Style" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" }, children: styleOpts.map((s) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "button",
-              {
-                onClick: () => setEditing({ ...editing, style: s }),
-                style: { padding: "7px 13px", borderRadius: 99, border: `1px solid ${editing.style === s ? C.ember : C.line}`, background: editing.style === s ? C.emberSoft : C.card, color: editing.style === s ? C.ember : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer" },
-                children: s
-              },
-              s
-            )) })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 16 } })
-      ] });
+      return /* @__PURE__ */ React.createElement(React.Fragment, null, toastEl, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, isEdit ? "Modifier" : "Nouvelle recette"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, editing.title || "Ta recette"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16, marginTop: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Titre"), /* @__PURE__ */ React.createElement("input", { value: editing.title, onChange: (e) => setEditing({ ...editing, title: e.target.value }), placeholder: "Ex. Wok de poulet", style: fld })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Style"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, styleOpts.map((s) => /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          key: s,
+          onClick: () => setEditing({ ...editing, style: s }),
+          style: { padding: "7px 13px", borderRadius: 99, border: `1px solid ${editing.style === s ? C.ember : C.line}`, background: editing.style === s ? C.emberSoft : C.card, color: editing.style === s ? C.ember : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }
+        },
+        s
+      ))))), /* @__PURE__ */ React.createElement("div", { style: { height: 16 } }));
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: "RecipesTab" });
+    return /* @__PURE__ */ React.createElement("div", null, "RecipesTab");
   }
   return __toCommonJS(app_exports);
 })();

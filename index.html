@@ -43,37 +43,66 @@
 <body>
   <div id="root"><div id="loader"><div class="spinner"></div><div>ZTL se prépare…</div></div></div>
 
-  <!-- React UMD (via CDN car on ne peut pas bundler react localement) -->
+  <!-- Gestionnaire d'erreurs global (V1 style) -->
+  <script>
+    window.onerror = function(msg, url, line, col, err) {
+      var stack = (err && err.stack) ? '\n\n' + err.stack : '';
+      document.getElementById('root').innerHTML =
+        '<div style="color:#F2543D;padding:30px;font-family:monospace;white-space:pre-wrap;font-size:13px;text-align:left;max-width:600px;margin:0 auto">' +
+        '<h2 style="color:#F2543D;text-align:center">Erreur ZTL</h2>' +
+        msg + '\n' + (url || '') + ':' + line + ':' + col + stack + '</div>';
+      return true;
+    };
+  </script>
+
+  <!-- React UMD -->
   <script src="libs/react.production.min.js"></script>
   <script src="libs/react-dom.production.min.js"></script>
 
-  <!-- Polyfill require() pour que le bundle esbuild trouve React -->
-  <script>
-    // esbuild iife use __require("react") and __require("react/jsx-runtime")
-    // We shim these so they map to the global React/ReactDOM
-    if (typeof require === "undefined") {
-      var require = function(name) {
-        if (name === "react" || name === "react/jsx-runtime") return window.React;
-        if (name === "react-dom") return window.ReactDOM;
-        throw new Error("Cannot find module '" + name + "'");
-      };
-    }
-  </script>
-
-  <!-- Couche de stockage (window.storage API utilisée par l'app) -->
+  <!-- Couche de stockage -->
   <script src="storage.js"></script>
+
+  <!-- Polyfill require() pour le bundle esbuild -->
+  <script>
+    (function() {
+      var r = window.React;
+      var rd = window.ReactDOM;
+      if (!r || !rd) {
+        document.getElementById('root').innerHTML =
+          '<div style="color:#F2543D;padding:30px;font-family:monospace;font-size:13px;text-align:center">' +
+          'Erreur : React ou ReactDOM introuvable.<br>Vérifie que libs/react.production.min.js et libs/react-dom.production.min.js sont bien uploadés.</div>';
+        return;
+      }
+      window.require = function(name) {
+        if (name === "react") return r;
+        if (name === "react-dom") return rd;
+        throw new Error('Module introuvable : ' + name);
+      };
+    })();
+  </script>
 
   <!-- L'application compilée -->
   <script src="app.js"></script>
 
+  <!-- Montage React -->
   <script>
-    // Monter l'application React
-    window.addEventListener('DOMContentLoaded', function() {
-      const root = document.getElementById('root');
-      if (root && window.ZTL && window.ZTL.default) {
-        ReactDOM.createRoot(root).render(React.createElement(window.ZTL.default));
+    try {
+      var mount = function() {
+        var rootEl = document.getElementById('root');
+        if (rootEl && window.ZTL && window.ZTL.default && window.ReactDOM && window.React) {
+          window.ReactDOM.createRoot(rootEl).render(window.React.createElement(window.ZTL.default));
+        }
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mount);
+      } else {
+        mount();
       }
-    });
+    } catch (e) {
+      document.getElementById('root').innerHTML =
+        '<div style="color:#F2543D;padding:30px;font-family:monospace;white-space:pre-wrap;font-size:13px">' +
+        'Erreur au montage : ' + (e.message || e) + '\n' + (e.stack || '') + '</div>';
+    }
   </script>
 </body>
 </html>
