@@ -605,39 +605,32 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     return { protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0), satfat: Math.round(+j.satfat || 0), sugar: Math.round(+j.sugar || 0) };
   }
   async function aiMealFromPhoto(base64, mediaType) {
-    let apiKey = window._ztlGeminiKey;
-    if (!apiKey) {
-      try {
-        apiKey = await store.get("_ztlGeminiKey");
-        if (apiKey) {
-          window._ztlGeminiKey = apiKey;
-        }
-      } catch {
-      }
-    }
-    if (!apiKey) throw new Error("Cl\xE9 Gemini requise. \u2699\uFE0F Cl\xE9s API sur l'accueil (aistudio.google.com/apikey).");
-    const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [
-          { inline_data: { mime_type: mediaType, data: base64 } },
-          { text: 'Analyse ce plat. R\xC3\xA9ponds UNIQUEMENT par un objet JSON: {"plat":"nom","protein":g,"carbs":g,"fat":g}' }
-        ] }] })
-      }
-    );
+    let apiKey = window._ztlClaudeKey;
+    if (!apiKey) throw new Error("Analyse photo temporairement indisponible.");
+    const prompt2 = 'Analyse ce plat. R\xC3\xA9ponds UNIQUEMENT par un objet JSON: {"plat":"nom","protein":g,"carbs":g,"fat":g}';
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 512,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
+            { type: "text", text: prompt2 }
+          ]
+        }]
+      })
+    });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      if (res.status === 403) throw new Error("Cl\xC3\xA9 Gemini invalide ou API non activ\xC3\xA9e.");
-      if (res.status === 429) throw new Error("Quota Gemini d\xC3\xA9pass\xC3\xA9, r\xC3\xA9essaie dans 1 minute.");
-      throw new Error("Erreur Gemini " + res.status + ": " + t.slice(0, 120));
+      throw new Error("Erreur Claude " + res.status);
     }
     const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const clean = text.replace(/```(json)?\n?|```/g, "").trim();
-    const match = clean.match(/\{[^}]+\}/);
-    if (!match) throw new Error("R\xC3\xA9ponse illisible: " + text.slice(0, 80));
+    const text = data.content?.filter((c) => c.type === "text").map((c) => c.text).join("") || "";
+    const match = text.replace(/```(json)?\n?|```/g, "").match(/\{[^}]+\}/);
+    if (!match) throw new Error("R\xC3\xA9ponse illisible");
     const j = JSON.parse(match[0]);
     return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
   }

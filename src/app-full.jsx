@@ -372,34 +372,31 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
 
 /* vision IA : estime le plat et ses macros à partir d'une photo */
 async function aiMealFromPhoto(base64, mediaType) {
-  let apiKey = window._ztlGeminiKey;
-  if (!apiKey) {
-    try { apiKey = await store.get("_ztlGeminiKey"); if (apiKey) { window._ztlGeminiKey = apiKey; } } catch {}
-  }
-  if (!apiKey) throw new Error("Clé Gemini requise. ⚙️ Clés API sur l'accueil (aistudio.google.com/apikey).");
-  
-  const res = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
-    { method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [
-        { inline_data: { mime_type: mediaType, data: base64 } },
-        { text: "Analyse ce plat. RÃ©ponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
-      ]}]})
-    }
-  );
-  if (!res.ok) {
-    const t = await res.text().catch(() => "");
-    if (res.status === 403) throw new Error("ClÃ© Gemini invalide ou API non activÃ©e.");
-    if (res.status === 429) throw new Error("Quota Gemini dÃ©passÃ©, rÃ©essaie dans 1 minute.");
-    throw new Error("Erreur Gemini " + res.status + ": " + t.slice(0, 120));
-  }
+  let apiKey = window._ztlClaudeKey;
+  if (!apiKey) throw new Error("Analyse photo temporairement indisponible.");
+  const prompt = "Analyse ce plat. RÃ©ponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}";
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 512,
+      messages: [{
+        role: "user",
+        content: [
+          { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
+          { type: "text", text: prompt }
+        ]
+      }]
+    }),
+  });
+  if (!res.ok) { const t = await res.text().catch(()=>""); throw new Error("Erreur Claude " + res.status); }
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  const clean = text.replace(/```(json)?\n?|```/g, "").trim();
-  const match = clean.match(/\{[^}]+\}/);
-  if (!match) throw new Error("RÃ©ponse illisible: " + text.slice(0, 80));
+  const text = data.content?.filter(c=>c.type==="text").map(c=>c.text).join("") || "";
+  const match = text.replace(/```(json)?\n?|```/g,"").match(/\{[^}]+\}/);
+  if (!match) throw new Error("RÃ©ponse illisible");
   const j = JSON.parse(match[0]);
-  return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
+  return { plat: j.plat || "Plat", protein: Math.round(+j.protein||0), carbs: Math.round(+j.carbs||0), fat: Math.round(+j.fat||0) };
 }
 
 
