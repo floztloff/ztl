@@ -1,35 +1,30 @@
-// auth-wrapper.js — Gère l'affichage de l'auth ou de l'app
+// auth-wrapper.js — Login immédiat, auto-login si session trouvée
 (function() {
   var h = React.createElement;
   var C = { bg: "#FBF4EC", card: "#FFFFFF", line: "#EFE6DB", text: "#241712", mut: "#9A8C7E", teal: "#0E9C78", ember: "#F2543D" };
 
-  // Composant racine : auth ou app
   function Root() {
     var _u = React.useState(null), user = _u[0], setUser = _u[1];
-    var _l = React.useState(true), loading = _l[0], setLoading = _l[1];
+    var _a = React.useState(false), autoDone = _a[0], setAutoDone = _a[1];
 
+    // Auto-login silencieux si une session existe déjà
     React.useEffect(function() {
-      // Vérifier si déjà connecté (session persistée)
       window.ZTLAuth.getUser().then(function(u) {
         if (u) {
           window._ztlUser = u;
           setUser(u);
-          // Sync cloud vers localStorage
           if (window.store && window.store.syncFromCloud) window.store.syncFromCloud();
         }
-        setLoading(false);
-      }).catch(function() {
-        setLoading(false);
+      }).catch(function(){}).finally(function() {
+        setAutoDone(true);
       });
     }, []);
 
     function onLogin(u) {
       window._ztlUser = u;
       setUser(u);
-      // Sync cloud → localStorage
       if (window.store && window.store.syncFromCloud) {
         window.store.syncFromCloud().then(function() {
-          // Une fois le cloud sync, on push le local
           if (window.store && window.store.pushToCloud) window.store.pushToCloud();
         });
       }
@@ -41,24 +36,13 @@
       setUser(null);
     }
 
-    if (loading) {
-      return h("div", {
-        style: {
-          minHeight: "100vh", background: C.bg, color: C.mut,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "system-ui"
-        }
-      }, "Vérification de ta session...");
-    }
+    // Déjà connecté → app direct
+    if (user) return h(window.ZTL.default, null);
 
-    if (!user) {
-      return h(window.AuthScreen, { onLogin: onLogin });
-    }
-
-    return h(window.ZTL.default, null);
+    // Affiche l'auth tout de suite, sans attendre la vérif
+    return h(window.AuthScreen, { onLogin: onLogin });
   }
 
-  // Montage
   function mount() {
     var rootEl = document.getElementById('root');
     if (rootEl && window.ReactDOM && window.React) {
