@@ -40,8 +40,9 @@ var ZTL = (() => {
   var require_lucide_react = __commonJS({
     "src/lucide-react.cjs"(exports, module) {
       var React2 = typeof window !== "undefined" && window.React || typeof global !== "undefined" && global.React || __require("react");
-      function Svg(props, children) {
-        return React2.createElement("svg", Object.assign({
+      function Svg(props) {
+        var children = Array.prototype.slice.call(arguments, 1);
+        var attrs = Object.assign({
           width: 24,
           height: 24,
           viewBox: "0 0 24 24",
@@ -50,7 +51,8 @@ var ZTL = (() => {
           strokeWidth: 2,
           strokeLinecap: "round",
           strokeLinejoin: "round"
-        }, props), ...children);
+        }, props);
+        return React2.createElement.apply(null, ["svg", attrs].concat(children));
       }
       function P(d) {
         return React2.createElement("path", { d });

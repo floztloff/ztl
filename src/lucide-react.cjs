@@ -1,11 +1,13 @@
 // lucide-react polyfill (CommonJS)
 const React = (typeof window !== 'undefined' && window.React) || (typeof global !== 'undefined' && global.React) || require('react');
-function Svg(props, children) {
-  return React.createElement('svg', Object.assign({
+function Svg(props) {
+  var children = Array.prototype.slice.call(arguments, 1);
+  var attrs = Object.assign({
     width: 24, height: 24, viewBox: '0 0 24 24',
     fill: 'none', stroke: 'currentColor',
     strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round'
-  }, props), ...children);
+  }, props);
+  return React.createElement.apply(null, ['svg', attrs].concat(children));
 }
 function P(d) { return React.createElement('path', { d: d }); }
 function L(x1,y1,x2,y2) { return React.createElement('line', { x1, y1, x2, y2 }); }
