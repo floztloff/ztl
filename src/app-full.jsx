@@ -376,33 +376,35 @@ async function aiMealFromPhoto(base64, mediaType) {
   if (!apiKey) {
     try { apiKey = await store.get("_ztlGeminiKey"); if (apiKey) { window._ztlGeminiKey = apiKey; } } catch {}
   }
-  if (!apiKey) throw new Error("Clé Gemini requise. Ouvre ⚙️ Clé API Gemini sur l'accueil (gratuit: aistudio.google.com/apikey).");
+  if (!apiKey) throw new Error("Clé Gemini requise. ⚙️ Clés API sur l'accueil.");
   
-  const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      contents: [{
-        parts: [
-          { inlineData: { mimeType: mediaType, data: base64 } },
-          { text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom du plat\",\"protein\":<grammes>, \"carbs\":<grammes>, \"fat\":<grammes>}" }
-        ]
-      }]
-    }),
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(() => "");
-    if (res.status === 403) throw new Error("Clé Gemini invalide ou quota dépassé.");
-    throw new Error("Erreur Gemini " + res.status);
+  const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
+  let lastErr;
+  
+  for (const model of models) {
+    try {
+      const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + apiKey, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [
+            { inlineData: { mimeType: mediaType, data: base64 } },
+            { text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
+          ]}]
+        }),
+      });
+      if (res.status === 429) { lastErr = new Error("Quota Gemini atteint, essaie dans 1 min."); continue; }
+      if (!res.ok) { const t = await res.text().catch(()=>""); lastErr = new Error("Erreur " + res.status); continue; }
+      const data = await res.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      const clean = text.replace(/```json\n?|```/g, "").trim();
+      const mt = clean.match(/\{[^}]*\}/);
+      if (!mt) { lastErr = new Error("Réponse illisible"); continue; }
+      const j = JSON.parse(mt[0]);
+      return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
+    } catch (e) { lastErr = e; }
   }
-  const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  // Nettoyer les backticks markdown
-  const clean = text.replace(/```json\n?|```/g, "").trim();
-  const mt = clean.match(/\{[^}]*\}/);
-  if (!mt) throw new Error("Analyse photo: réponse illisible");
-  const j = JSON.parse(mt[0]);
-  return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
+  throw lastErr || new Error("Analyse photo indisponible");
 }
 
 
