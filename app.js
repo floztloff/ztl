@@ -615,29 +615,44 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       } catch {
       }
     }
-    if (!apiKey) throw new Error("Aucune cl\xE9 Groq configur\xE9e. Va sur l'accueil \u2192 \u2699\uFE0F Cl\xE9s API, colle ta cl\xE9 (console.groq.com/keys) et clique Enregistrer.");
+    if (!apiKey) throw new Error("Aucune cl\xE9 Groq. \u2699\uFE0F Cl\xE9s API sur l'accueil (console.groq.com/keys).");
+    const byteString = atob(base64);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+    const blob = new Blob([ab], { type: mediaType });
+    const form = new FormData();
+    form.append("file", blob, "photo." + (mediaType.split("/")[1] || "jpg"));
+    let imageUrl;
+    try {
+      const uploadRes = await fetch("https://0x0.st", { method: "POST", body: form });
+      imageUrl = (await uploadRes.text()).trim();
+      if (!imageUrl.startsWith("http")) throw new Error("Upload \xE9chou\xE9");
+    } catch (e) {
+      throw new Error("Upload image impossible. R\xE9essaie.");
+    }
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
       body: JSON.stringify({
-        model: "llava-v1.5-7b-4096-preview",
+        model: "llama-3.2-11b-vision-preview",
         max_tokens: 300,
         temperature: 0,
         messages: [{ role: "user", content: [
-          { type: "image_url", image_url: { url: "data:" + mediaType + ";base64," + base64 } },
-          { type: "text", text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT par un objet JSON: {"plat":"nom du plat","protein":nombre,"carbs":nombre,"fat":nombre}' }
+          { type: "image_url", image_url: { url: imageUrl } },
+          { type: "text", text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT: {"plat":"nom","protein":g,"carbs":g,"fat":g}' }
         ] }]
       })
     });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      if (res.status === 401) throw new Error("Cl\xE9 Groq invalide. V\xE9rifie-la dans \u2699\uFE0F Cl\xE9s API.");
+      if (res.status === 401) throw new Error("Cl\xE9 Groq invalide.");
       throw new Error("Erreur Groq " + res.status);
     }
     const data = await res.json();
     const text = data.choices?.[0]?.message?.content || "";
     const mt = text.replace(/```json\n?|```/g, "").match(/\{[^}]*\}/);
-    if (!mt) throw new Error("R\xE9ponse illisible: " + text.slice(0, 80));
+    if (!mt) throw new Error("R\xE9ponse illisible");
     const j = JSON.parse(mt[0]);
     return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
   }
