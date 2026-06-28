@@ -617,7 +617,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     }
     if (!apiKey) throw new Error("Cl\xE9 Gemini requise. \u2699\uFE0F Cl\xE9s API sur l'accueil (aistudio.google.com/apikey).");
     const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
