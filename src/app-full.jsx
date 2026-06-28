@@ -915,13 +915,14 @@ function ApiKeyButton() {
   useEffect(() => { getDeepSeekKey().then(k => { if (k) setHasKey(true); }); }, []);
   const handleSave = () => {
     if (!val.trim()) return;
-    // Si la clé commence par "sk-", c'est DeepSeek, sinon Gemini
     if (val.trim().startsWith("sk-")) {
       setDeepSeekKey(val.trim());
     } else {
+      // Clé Groq ou Gemini (vision)
+      window._ztlGroqKey = val.trim();
       window._ztlGeminiKey = val.trim();
-      try { localStorage.setItem("_ztlGeminiKey", val.trim()); } catch {}
-      try { store.set("_ztlGeminiKey", val.trim()); } catch {}
+      try { localStorage.setItem("_ztlGroqKey", val.trim()); } catch {}
+      try { store.set("_ztlGroqKey", val.trim()); } catch {}
     }
     setHasKey(true);
     setShow(false);

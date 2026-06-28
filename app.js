@@ -1122,13 +1122,14 @@ ${lines.join("\n")}`;
       if (val.trim().startsWith("sk-")) {
         setDeepSeekKey(val.trim());
       } else {
+        window._ztlGroqKey = val.trim();
         window._ztlGeminiKey = val.trim();
         try {
-          localStorage.setItem("_ztlGeminiKey", val.trim());
+          localStorage.setItem("_ztlGroqKey", val.trim());
         } catch {
         }
         try {
-          store.set("_ztlGeminiKey", val.trim());
+          store.set("_ztlGroqKey", val.trim());
         } catch {
         }
       }
