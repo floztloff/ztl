@@ -560,15 +560,21 @@ var ZTL = (() => {
     return { protein: Math.round(p), carbs: Math.round(c), fat: Math.round(f), satfat: Math.round(f * 0.4), sugar: null, unmatched, total };
   }
   async function callModel(prompt) {
-    const res = await fetch("https://text.pollinations.ai/openai", {
+    let apiKey = await getDeepSeekKey();
+    if (!apiKey) throw new Error("Cl\xE9 API DeepSeek requise. Ajoute-la dans \u2699\uFE0F Cl\xE9s API sur l'accueil.");
+    const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ model: "", messages: [{ role: "user", content: prompt }] })
+      headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
+      body: JSON.stringify({ model: "deepseek-chat", max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt }] })
     });
-    if (!res.ok) throw new Error("Erreur " + res.status);
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      if (res.status === 401) throw new Error("Cl\xE9 API DeepSeek invalide. Mets-la \xE0 jour dans \u2699\uFE0F Cl\xE9s API.");
+      throw new Error("API DeepSeek erreur " + res.status + " : " + t.slice(0, 150));
+    }
     const data = await res.json();
-    const text = data.choices?.[0]?.message?.content || "";
-    if (!text) throw new Error("R\xE9ponse vide");
+    const text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "";
+    if (!text) throw new Error("R\xE9ponse DeepSeek vide.");
     return text;
   }
   async function aiMacros(ingText) {
@@ -608,38 +614,59 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       }
     }
     if (!apiKey) throw new Error("Cl\xE9 Claude non trouv\xE9e. Contacte le d\xE9veloppeur.");
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 512,
-        messages: [{
-          role: "user",
-          content: [
-            { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-            { type: "text", text: 'Analyse ce plat. R\xC3\xA9ponds UNIQUEMENT par un objet JSON sans backticks: {"plat":"nom du plat","protein":nombre_grammes,"carbs":nombre_grammes,"fat":nombre_grammes}' }
-          ]
-        }]
-      })
-    });
-    if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      if (res.status === 401) throw new Error("Cl\xE9 Claude invalide.");
-      throw new Error("Erreur Claude " + res.status + ": " + t.slice(0, 120));
+    const models = ["claude-sonnet-4-20250514", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"];
+    let lastErr;
+    for (const model of models) {
+      try {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-access": "true"
+          },
+          body: JSON.stringify({
+            model,
+            max_tokens: 512,
+            messages: [{
+              role: "user",
+              content: [
+                { type: "image", source: { type: "base64", media_type: mediaType, data: base64.split(",")[1] || base64 } },
+                { type: "text", text: `Analyse cette photo de plat. R\xE9ponds UNIQUEMENT par un objet JSON valide, sans markdown, sans backticks, au format : {"name":"nom du plat","protein":N,"carbs":N,"fat":N,"description":"br\xE8ve description du plat et des quantit\xE9s estim\xE9es"}. Sois pr\xE9cis, estime les portions visibles.` }
+              ]
+            }]
+          })
+        });
+        if (!res.ok) {
+          const t = await res.text().catch(() => "");
+          lastErr = new Error("HTTP " + res.status + " : " + t.slice(0, 150));
+          if (res.status < 500) break;
+          continue;
+        }
+        const data = await res.json();
+        const text = (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("");
+        if (!text) {
+          lastErr = new Error("R\xE9ponse Claude vide.");
+          continue;
+        }
+        const clean = text.replace(/```(json)?\n?|```/g, "").trim();
+        const matches = clean.match(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g);
+        if (!matches || !matches.length) {
+          lastErr = new Error("Format JSON invalide dans la r\xE9ponse.");
+          continue;
+        }
+        const j = JSON.parse(matches[matches.length - 1]);
+        if (typeof j.protein !== "number" || typeof j.carbs !== "number" || typeof j.fat !== "number") {
+          lastErr = new Error("Format de r\xE9ponse IA invalide.");
+          continue;
+        }
+        return { plat: j.name || j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
+      } catch (e) {
+        lastErr = e;
+      }
     }
-    const data = await res.json();
-    const text = (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("");
-    const clean = text.replace(/```(json)?\n?|```/g, "").trim();
-    const match = clean.match(/\{[^}]+\}/);
-    if (!match) throw new Error("R\xE9ponse illisible: " + text.slice(0, 80));
-    const j = JSON.parse(match[0]);
-    return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
+    throw lastErr || new Error("Analyse photo impossible.");
   }
   var SHOP_UNITS = {
     g: { cls: "mass", f: 1 },
