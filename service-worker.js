@@ -1,13 +1,10 @@
-// ZTL Service Worker
-const CACHE_NAME = "ztl-v4";
+// ZTL Service Worker — v5
+const CACHE_NAME = "ztl-v5";
 const ASSETS = [
   "/",
   "/index.html",
   "/manifest.json",
   "/storage.js",
-  "/icons.js",
-  "/supabase.js",
-  "/auth-ui.js",
   "/app.js",
   "/icon-192.svg",
   "/icon-512.svg",
@@ -41,11 +38,9 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      // Essayer le réseau d'abord, fallback cache
       return fetch(event.request)
         .then((response) => {
-          // Mettre en cache les nouvelles ressources
-          if (response && response.status === 200) {
+          if (response && response.status === 200 && response.type === "basic") {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, clone);
@@ -54,8 +49,7 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          // En mode hors-ligne, servir depuis le cache
-          return cached || new Response("Offline", { status: 503 });
+          return cached || new Response("Mode hors-ligne", { status: 503 });
         });
     })
   );
