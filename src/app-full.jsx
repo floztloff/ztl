@@ -1096,7 +1096,8 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
           style={{ background: C.greenVivid, color: "#fff", border: "none", borderRadius: 10, padding: "8px 13px", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>OK</button>
       </div>
 
-      <button onClick={addRecipe} style={{ width: "100%", marginTop: 22, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+      <ApiKeyButton />
+      <button onClick={addRecipe} style={{ width: "100%", marginTop: 14, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
         <span style={{fontSize:17,lineHeight:1}}>👨‍🍳</span> Ajouter une recette
       </button>
 

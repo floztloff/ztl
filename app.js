@@ -795,6 +795,18 @@ ${lines.join("\n")}`;
     }
     return "";
   };
+  var setDeepSeekKey = (k) => {
+    if (!k || !k.trim()) return;
+    window._ztlDeepSeekKey = k.trim();
+    try {
+      localStorage.setItem("_ztlDeepSeekKey", k.trim());
+    } catch {
+    }
+    try {
+      store.set("_ztlDeepSeekKey", k.trim());
+    } catch {
+    }
+  };
   var promptDeepSeekKey = () => {
     const k = prompt("Cl\xE9 API DeepSeek\n\nEntre ta cl\xE9 API (https://platform.deepseek.com/api_keys).\nElle sera sauvegard\xE9e dans ton compte ZTL et synchronis\xE9e sur tous tes appareils.");
     if (k && k.trim()) {
@@ -1112,6 +1124,23 @@ ${lines.join("\n")}`;
     const { emoji: wEmoji, label, color } = wmoInfo(w.code);
     return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 1, flexShrink: 0, paddingTop: 2 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 24, lineHeight: 1, color } }, wEmoji), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 19, fontWeight: 800, fontFamily: FONT_MONO, lineHeight: 1.1, color: C.ink } }, w.temp, "\xB0"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9.5, color: C.mut, fontWeight: 600 } }, label));
   }
+  function ApiKeyButton() {
+    const [show, setShow] = (0, import_react.useState)(false);
+    const [val, setVal] = (0, import_react.useState)("");
+    const [saved, setSaved] = (0, import_react.useState)(false);
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShow(!show), style: { width: "100%", background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, lineHeight: 1 } }, "\u2699\uFE0F"), " Cl\xE9 API DeepSeek ", saved ? "\u2705" : ""), show && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8, background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 8 } }, "Entre ta cl\xE9 API DeepSeek (https://platform.deepseek.com/api_keys). Elle sera synchronis\xE9e sur tous tes appareils via ton compte."), /* @__PURE__ */ React.createElement("input", { value: val, onChange: (e) => setVal(e.target.value), placeholder: "sk-...", style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 8, padding: "9px 11px", fontSize: 13, marginBottom: 8 } }), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => {
+          setDeepSeekKey(val);
+          setSaved(true);
+          setTimeout(() => setShow(false), 800);
+        },
+        style: { width: "100%", background: C.teal, color: C.bg, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: "pointer" }
+      },
+      "Enregistrer"
+    )));
+  }
   function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions }) {
     const [w, setW] = (0, import_react.useState)(day.weight ?? "");
     const [plan, setPlan] = (0, import_react.useState)(null);
@@ -1183,7 +1212,7 @@ ${lines.join("\n")}`;
         style: { background: C.greenVivid, color: "#fff", border: "none", borderRadius: 10, padding: "8px 13px", fontSize: 13, fontWeight: 800, cursor: "pointer" }
       },
       "OK"
-    )), /* @__PURE__ */ React.createElement("button", { onClick: addRecipe, style: { width: "100%", marginTop: 22, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 17, lineHeight: 1 } }, "\u{1F468}\u200D\u{1F373}"), " Ajouter une recette"), /* @__PURE__ */ React.createElement(
+    )), /* @__PURE__ */ React.createElement(ApiKeyButton, null), /* @__PURE__ */ React.createElement("button", { onClick: addRecipe, style: { width: "100%", marginTop: 14, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 17, lineHeight: 1 } }, "\u{1F468}\u200D\u{1F373}"), " Ajouter une recette"), /* @__PURE__ */ React.createElement(
       "button",
       {
         onClick: () => {
