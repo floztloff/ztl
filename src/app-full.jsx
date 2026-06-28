@@ -372,37 +372,38 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
 
 /* vision IA : estime le plat et ses macros à partir d'une photo */
 async function aiMealFromPhoto(base64, mediaType) {
-  const apiKey = await getDeepSeekKey();
-  if (!apiKey) throw new Error("Clé API requise. Ouvre ⚙️ Clé API DeepSeek sur l'accueil.");
-  const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+  let apiKey = window._ztlGeminiKey;
+  if (!apiKey) {
+    try { apiKey = await store.get("_ztlGeminiKey"); if (apiKey) { window._ztlGeminiKey = apiKey; } } catch {}
+  }
+  if (!apiKey) throw new Error("Clé Gemini requise. Ouvre ⚙️ Clé API Gemini sur l'accueil (gratuit: aistudio.google.com/apikey).");
+  
+  const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey, {
     method: "POST",
-    headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      model: "deepseek-chat",
-      max_tokens: 512,
-      temperature: 0,
-      messages: [{
-        role: "user",
-        content: [
-          { type: "image_url", image_url: { url: "data:" + mediaType + ";base64," + base64 } },
-          { type: "text", text: "Analyse la photo de ce plat. Identifie le plat et estime ses valeurs nutritionnelles. Réponds STRICTEMENT par un objet JSON sur une seule ligne : {\"plat\":\"<nom>\",\"protein\":<entier g>,\"carbs\":<entier g>,\"fat\":<entier g>}" }
+      contents: [{
+        parts: [
+          { inlineData: { mimeType: mediaType, data: base64 } },
+          { text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom du plat\",\"protein\":<grammes>, \"carbs\":<grammes>, \"fat\":<grammes>}" }
         ]
       }]
     }),
   });
   if (!res.ok) {
     const t = await res.text().catch(() => "");
-    if (res.status === 401) throw new Error("Clé API DeepSeek invalide");
-    throw new Error("API DeepSeek erreur " + res.status + ": " + t.slice(0,150));
+    if (res.status === 403) throw new Error("Clé Gemini invalide ou quota dépassé.");
+    throw new Error("Erreur Gemini " + res.status);
   }
   const data = await res.json();
-  const text = data.choices?.[0]?.message?.content || "";
-  const mt = text.match(/\{[^}]*\}/);
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  // Nettoyer les backticks markdown
+  const clean = text.replace(/```json\n?|```/g, "").trim();
+  const mt = clean.match(/\{[^}]*\}/);
   if (!mt) throw new Error("Analyse photo: réponse illisible");
   const j = JSON.parse(mt[0]);
   return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
 }
-
 
 
 /* unités reconnues pour additionner les quantités localement */
@@ -903,7 +904,14 @@ function ApiKeyButton() {
   useEffect(() => { getDeepSeekKey().then(k => { if (k) setHasKey(true); }); }, []);
   const handleSave = () => {
     if (!val.trim()) return;
-    setDeepSeekKey(val.trim());
+    // Si la clé commence par "sk-", c'est DeepSeek, sinon Gemini
+    if (val.trim().startsWith("sk-")) {
+      setDeepSeekKey(val.trim());
+    } else {
+      window._ztlGeminiKey = val.trim();
+      try { localStorage.setItem("_ztlGeminiKey", val.trim()); } catch {}
+      try { store.set("_ztlGeminiKey", val.trim()); } catch {}
+    }
     setHasKey(true);
     setShow(false);
     setVal("");
@@ -911,11 +919,11 @@ function ApiKeyButton() {
   return (
     <>
       <button onClick={() => setShow(!show)} style={{ width: "100%", background: "none", border: `1px solid ${C.line}`, color: hasKey ? C.teal : C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 }}>
-        <span style={{fontSize:14,lineHeight:1}}>⚙️</span> {hasKey ? "✅ Clé API configurée" : "Clé API DeepSeek"}
+        <span style={{fontSize:14,lineHeight:1}}>⚙️</span> {hasKey ? "✅ Clés API" : "Clés API (DeepSeek + Gemini)"}
       </button>
       {show && (
         <div style={{ marginTop: 8, background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 }}>
-          <div style={{ fontSize: 11, color: C.mut, marginBottom: 8 }}>Entre ta clé API DeepSeek. Crée-la sur platform.deepseek.com/api_keys. Elle sera synchronisée sur tous tes appareils.</div>
+          <div style={{ fontSize: 11, color: C.mut, marginBottom: 8 }}>Clé DeepSeek (platform.deepseek.com/api_keys) ou Gemini (aistudio.google.com/apikey, gratuit). Elle sera synchronisée sur tous tes appareils.</div>
           <input value={val} onChange={e => setVal(e.target.value)} placeholder="sk-..." style={{ width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 8, padding: "9px 11px", fontSize: 13, marginBottom: 8 }} />
           <button onClick={handleSave} style={{ width: "100%", background: val.trim() ? C.teal : C.line, color: val.trim() ? C.bg : C.mut, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: val.trim() ? "pointer" : "default" }}>
             Enregistrer

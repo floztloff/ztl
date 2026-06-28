@@ -605,7 +605,41 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     return { protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0), satfat: Math.round(+j.satfat || 0), sugar: Math.round(+j.sugar || 0) };
   }
   async function aiMealFromPhoto(base64, mediaType) {
-    throw new Error("Analyse photo non disponible. Utilise le champ texte pour d\xE9crire ton plat.");
+    let apiKey = window._ztlGeminiKey;
+    if (!apiKey) {
+      try {
+        apiKey = await store.get("_ztlGeminiKey");
+        if (apiKey) {
+          window._ztlGeminiKey = apiKey;
+        }
+      } catch {
+      }
+    }
+    if (!apiKey) throw new Error("Cl\xE9 Gemini requise. Ouvre \u2699\uFE0F Cl\xE9 API Gemini sur l'accueil (gratuit: aistudio.google.com/apikey).");
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            { inlineData: { mimeType: mediaType, data: base64 } },
+            { text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT par un objet JSON: {"plat":"nom du plat","protein":<grammes>, "carbs":<grammes>, "fat":<grammes>}' }
+          ]
+        }]
+      })
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      if (res.status === 403) throw new Error("Cl\xE9 Gemini invalide ou quota d\xE9pass\xE9.");
+      throw new Error("Erreur Gemini " + res.status);
+    }
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const clean = text.replace(/```json\n?|```/g, "").trim();
+    const mt = clean.match(/\{[^}]*\}/);
+    if (!mt) throw new Error("Analyse photo: r\xE9ponse illisible");
+    const j = JSON.parse(mt[0]);
+    return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
   }
   var SHOP_UNITS = {
     g: { cls: "mass", f: 1 },
@@ -1060,12 +1094,24 @@ ${lines.join("\n")}`;
     }, []);
     const handleSave = () => {
       if (!val.trim()) return;
-      setDeepSeekKey(val.trim());
+      if (val.trim().startsWith("sk-")) {
+        setDeepSeekKey(val.trim());
+      } else {
+        window._ztlGeminiKey = val.trim();
+        try {
+          localStorage.setItem("_ztlGeminiKey", val.trim());
+        } catch {
+        }
+        try {
+          store.set("_ztlGeminiKey", val.trim());
+        } catch {
+        }
+      }
       setHasKey(true);
       setShow(false);
       setVal("");
     };
-    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShow(!show), style: { width: "100%", background: "none", border: `1px solid ${C.line}`, color: hasKey ? C.teal : C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, lineHeight: 1 } }, "\u2699\uFE0F"), " ", hasKey ? "\u2705 Cl\xE9 API configur\xE9e" : "Cl\xE9 API DeepSeek"), show && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8, background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 8 } }, "Entre ta cl\xE9 API DeepSeek. Cr\xE9e-la sur platform.deepseek.com/api_keys. Elle sera synchronis\xE9e sur tous tes appareils."), /* @__PURE__ */ React.createElement("input", { value: val, onChange: (e) => setVal(e.target.value), placeholder: "sk-...", style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 8, padding: "9px 11px", fontSize: 13, marginBottom: 8 } }), /* @__PURE__ */ React.createElement("button", { onClick: handleSave, style: { width: "100%", background: val.trim() ? C.teal : C.line, color: val.trim() ? C.bg : C.mut, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: val.trim() ? "pointer" : "default" } }, "Enregistrer")));
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShow(!show), style: { width: "100%", background: "none", border: `1px solid ${C.line}`, color: hasKey ? C.teal : C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, lineHeight: 1 } }, "\u2699\uFE0F"), " ", hasKey ? "\u2705 Cl\xE9s API" : "Cl\xE9s API (DeepSeek + Gemini)"), show && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8, background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 8 } }, "Cl\xE9 DeepSeek (platform.deepseek.com/api_keys) ou Gemini (aistudio.google.com/apikey, gratuit). Elle sera synchronis\xE9e sur tous tes appareils."), /* @__PURE__ */ React.createElement("input", { value: val, onChange: (e) => setVal(e.target.value), placeholder: "sk-...", style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 8, padding: "9px 11px", fontSize: 13, marginBottom: 8 } }), /* @__PURE__ */ React.createElement("button", { onClick: handleSave, style: { width: "100%", background: val.trim() ? C.teal : C.line, color: val.trim() ? C.bg : C.mut, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: val.trim() ? "pointer" : "default" } }, "Enregistrer")));
   }
   function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions }) {
     const [w, setW] = (0, import_react.useState)(day.weight ?? "");
