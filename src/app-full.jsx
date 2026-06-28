@@ -379,7 +379,7 @@ async function aiMealFromPhoto(base64, mediaType) {
   if (!apiKey) throw new Error("Clé Gemini requise. ⚙️ Clés API sur l'accueil (gratuit: aistudio.google.com/apikey).");
   
   const res = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+    "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
     { method: "POST", headers: { "content-type": "application/json" },
       body: JSON.stringify({ contents: [{ parts: [
         { inlineData: { mimeType: mediaType, data: base64 } },
