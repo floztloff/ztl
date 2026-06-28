@@ -373,6 +373,7 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
 /* vision IA : estime le plat et ses macros à partir d'une photo */
 async function aiMealFromPhoto(base64, mediaType) {
   let apiKey = window._ztlClaudeKey;
+  if (!apiKey) { try { apiKey = await store.get("_ztlClaudeKey"); if (apiKey) { window._ztlClaudeKey = apiKey; } } catch {} }
   if (!apiKey) throw new Error("Analyse photo temporairement indisponible.");
   const prompt = "Analyse ce plat. RÃ©ponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}";
   const res = await fetch("https://api.anthropic.com/v1/messages", {

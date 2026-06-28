@@ -606,6 +606,15 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
   }
   async function aiMealFromPhoto(base64, mediaType) {
     let apiKey = window._ztlClaudeKey;
+    if (!apiKey) {
+      try {
+        apiKey = await store.get("_ztlClaudeKey");
+        if (apiKey) {
+          window._ztlClaudeKey = apiKey;
+        }
+      } catch {
+      }
+    }
     if (!apiKey) throw new Error("Analyse photo temporairement indisponible.");
     const prompt2 = 'Analyse ce plat. R\xC3\xA9ponds UNIQUEMENT par un objet JSON: {"plat":"nom","protein":g,"carbs":g,"fat":g}';
     const res = await fetch("https://api.anthropic.com/v1/messages", {
