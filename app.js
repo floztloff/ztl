@@ -1127,19 +1127,20 @@ ${lines.join("\n")}`;
   function ApiKeyButton() {
     const [show, setShow] = (0, import_react.useState)(false);
     const [val, setVal] = (0, import_react.useState)("");
-    const [saved, setSaved] = (0, import_react.useState)(false);
-    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShow(!show), style: { width: "100%", background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, lineHeight: 1 } }, "\u2699\uFE0F"), " Cl\xE9 API DeepSeek ", saved ? "\u2705" : ""), show && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8, background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 8 } }, "Entre ta cl\xE9 API DeepSeek (https://platform.deepseek.com/api_keys). Elle sera synchronis\xE9e sur tous tes appareils via ton compte."), /* @__PURE__ */ React.createElement("input", { value: val, onChange: (e) => setVal(e.target.value), placeholder: "sk-...", style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 8, padding: "9px 11px", fontSize: 13, marginBottom: 8 } }), /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        onClick: () => {
-          setDeepSeekKey(val);
-          setSaved(true);
-          setTimeout(() => setShow(false), 800);
-        },
-        style: { width: "100%", background: C.teal, color: C.bg, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: "pointer" }
-      },
-      "Enregistrer"
-    )));
+    const [hasKey, setHasKey] = (0, import_react.useState)(false);
+    (0, import_react.useEffect)(() => {
+      getDeepSeekKey().then((k) => {
+        if (k) setHasKey(true);
+      });
+    }, []);
+    const handleSave = () => {
+      if (!val.trim()) return;
+      setDeepSeekKey(val.trim());
+      setHasKey(true);
+      setShow(false);
+      setVal("");
+    };
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { onClick: () => setShow(!show), style: { width: "100%", background: "none", border: `1px solid ${C.line}`, color: hasKey ? C.teal : C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, lineHeight: 1 } }, "\u2699\uFE0F"), " ", hasKey ? "\u2705 Cl\xE9 API configur\xE9e" : "Cl\xE9 API DeepSeek"), show && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8, background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 8 } }, "Entre ta cl\xE9 API DeepSeek. Cr\xE9e-la sur platform.deepseek.com/api_keys. Elle sera synchronis\xE9e sur tous tes appareils."), /* @__PURE__ */ React.createElement("input", { value: val, onChange: (e) => setVal(e.target.value), placeholder: "sk-...", style: { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 8, padding: "9px 11px", fontSize: 13, marginBottom: 8 } }), /* @__PURE__ */ React.createElement("button", { onClick: handleSave, style: { width: "100%", background: val.trim() ? C.teal : C.line, color: val.trim() ? C.bg : C.mut, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: val.trim() ? "pointer" : "default" } }, "Enregistrer")));
   }
   function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions }) {
     const [w, setW] = (0, import_react.useState)(day.weight ?? "");

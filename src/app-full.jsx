@@ -906,18 +906,25 @@ function Weather() {
 function ApiKeyButton() {
   const [show, setShow] = useState(false);
   const [val, setVal] = useState("");
-  const [saved, setSaved] = useState(false);
+  const [hasKey, setHasKey] = useState(false);
+  useEffect(() => { getDeepSeekKey().then(k => { if (k) setHasKey(true); }); }, []);
+  const handleSave = () => {
+    if (!val.trim()) return;
+    setDeepSeekKey(val.trim());
+    setHasKey(true);
+    setShow(false);
+    setVal("");
+  };
   return (
     <>
-      <button onClick={() => setShow(!show)} style={{ width: "100%", background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 }}>
-        <span style={{fontSize:14,lineHeight:1}}>⚙️</span> Clé API DeepSeek {saved ? "✅" : ""}
+      <button onClick={() => setShow(!show)} style={{ width: "100%", background: "none", border: `1px solid ${C.line}`, color: hasKey ? C.teal : C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 }}>
+        <span style={{fontSize:14,lineHeight:1}}>⚙️</span> {hasKey ? "✅ Clé API configurée" : "Clé API DeepSeek"}
       </button>
       {show && (
         <div style={{ marginTop: 8, background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 }}>
-          <div style={{ fontSize: 11, color: C.mut, marginBottom: 8 }}>Entre ta clé API DeepSeek (https://platform.deepseek.com/api_keys). Elle sera synchronisée sur tous tes appareils via ton compte.</div>
+          <div style={{ fontSize: 11, color: C.mut, marginBottom: 8 }}>Entre ta clé API DeepSeek. Crée-la sur platform.deepseek.com/api_keys. Elle sera synchronisée sur tous tes appareils.</div>
           <input value={val} onChange={e => setVal(e.target.value)} placeholder="sk-..." style={{ width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 8, padding: "9px 11px", fontSize: 13, marginBottom: 8 }} />
-          <button onClick={() => { setDeepSeekKey(val); setSaved(true); setTimeout(() => setShow(false), 800); }}
-            style={{ width: "100%", background: C.teal, color: C.bg, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+          <button onClick={handleSave} style={{ width: "100%", background: val.trim() ? C.teal : C.line, color: val.trim() ? C.bg : C.mut, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: val.trim() ? "pointer" : "default" }}>
             Enregistrer
           </button>
         </div>
