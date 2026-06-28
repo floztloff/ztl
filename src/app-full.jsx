@@ -1944,7 +1944,95 @@ function RecipesTab({ addMacros, openId, newSignal }) {
       </>
     );
   }
-  return <div>RecipesTab</div>;
+  const styles = ["Tout", ...styleOpts];
+  const list = recipes.filter(r => f === "Tout" || r.style === f);
+  return (
+    <>
+      {toastEl}
+      <Eyebrow color={C.ember}>Recettes</Eyebrow>
+      <h1 style={h1}>Riches en protéines, jamais fades</h1>
+      <p style={{ color: C.mut, margin: "0 0 14px", fontSize: 13 }}>Modifie, ajoute, supprime — les calories se recalculent toutes seules.</p>
+
+      <button onClick={startNew} style={{ width: "100%", background: C.emberSoft, border: `1px solid ${C.ember}`, color: C.ember, borderRadius: 12, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, marginBottom: 16 }}>
+        <Plus size={17} /> Nouvelle recette
+      </button>
+
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
+        {styles.map(s => (
+          <button key={s} onClick={() => setF(s)}
+            style={{ padding: "7px 13px", borderRadius: 99, border: `1px solid ${f === s ? C.ember : C.line}`, background: f === s ? C.emberSoft : C.card, color: f === s ? C.ember : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>{s}</button>
+        ))}
+      </div>
+
+      {list.length === 0 && (
+        <div style={{ background: C.card, border: `1px dashed ${C.line}`, borderRadius: 14, padding: 22, textAlign: "center", color: C.mut, fontSize: 13 }}>
+          Aucune recette ici. Ajoutes-en une avec le bouton ci-dessus.
+        </div>
+      )}
+
+      {list.map(r => {
+        const on = open === r.id;
+        return (
+          <div key={r.id} style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, marginBottom: 11, overflow: "hidden" }}>
+            <button onClick={() => setOpen(on ? null : r.id)} style={{ width: "100%", background: "none", border: "none", padding: 16, display: "flex", alignItems: "center", gap: 12, cursor: "pointer", textAlign: "left" }}>
+              <RecipeThumb recipe={r} size={50} radius={13} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 10.5, fontWeight: 700, color: C.teal, background: C.tealSoft, padding: "2px 7px", borderRadius: 99 }}>{r.style}</span>
+                  <span style={{ fontSize: 11, color: C.mut, fontWeight: 600 }}><b style={{ color: C.ember }}>{kcal(r)}</b> kcal · P {r.protein} · G {r.carbs} · L {r.fat}</span>
+                </div>
+                <div style={{ fontSize: 15.5, fontWeight: 700 }}>{r.title}</div>
+              </div>
+              <ChevronDown size={18} color={C.mut} style={{ transform: on ? "rotate(180deg)" : "none", transition: "transform .25s", flexShrink: 0 }} />
+            </button>
+            {on && (
+              <div style={{ padding: "0 16px 16px" }}>
+                <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                  {pill("protéines", r.protein + " g", C.ember)}
+                  {pill("glucides", r.carbs + " g", C.teal)}
+                  {pill("lipides", r.fat + " g", C.amber)}
+                  {pill("kcal", kcal(r), C.text)}
+                </div>
+                <div style={{ fontSize: 11.5, color: C.mut, marginBottom: 12 }}>Quantités et macros pour une personne</div>
+                <div style={{ background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, padding: 13, marginBottom: 14 }}>
+                  <MacroCompare protein={r.protein} carbs={r.carbs} fat={r.fat} style={r.style} />
+                  <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}` }}>
+                    <IndulgenceGauge satfat={r.satfat != null ? r.satfat : Math.round((r.fat || 0) * 0.4)} sugar={r.sugar ?? null} style={r.style} />
+                  </div>
+                </div>
+                {r.link && (
+                  <a href={safeUrl(r.link)} target="_blank" rel="noopener noreferrer"
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, textDecoration: "none", marginBottom: 14, background: C.emberSoft, border: `1px solid ${C.ember}`, color: C.ember, borderRadius: 11, padding: "11px", fontSize: 13.5, fontWeight: 800 }}>
+                    <ExternalLink size={16} /> Ouvrir la recette
+                  </a>
+                )}
+                {r.ing?.length > 0 && (<>
+                  <div style={lbl}>Ingrédients</div>
+                  <ul style={{ margin: "0 0 6px", paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7 }}>{r.ing.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                </>)}
+                {r.steps?.length > 0 && (<>
+                  <div style={{ ...lbl, marginTop: 12 }}>Préparation</div>
+                  <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7 }}>{r.steps.map((x, i) => <li key={i} style={{ marginBottom: 4 }}>{x}</li>)}</ol>
+                </>)}
+                <button onClick={() => eat(r)} style={{ width: "100%", marginTop: 16, background: C.tealSoft, border: `1px solid ${C.teal}`, color: C.teal, borderRadius: 11, padding: "11px", fontSize: 13.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                  <Plus size={15} /> J'ai mangé ça — ajouter au compteur
+                </button>
+                <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                  <button onClick={() => startEdit(r)} style={{ flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.text, borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                    <Pencil size={14} /> Modifier
+                  </button>
+                  <button onClick={() => del(r.id)} style={{ flex: 1, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                    <Trash2 size={14} /> Supprimer
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <div style={{ height: 8 }} />
+    </>
+  );
 }
 
 

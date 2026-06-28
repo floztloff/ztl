@@ -140,6 +140,10 @@ var ZTL = (() => {
   var FONT_MONO = '"DM Mono", ui-monospace, monospace';
   var TARGETS = { kcal: 2400, protein: 130, carbs: 290, fat: 65 };
   var MEAL_SHARE = { "Petit d\xE9j": 0.25, "Repas": 0.35, "Collation": 0.1, "Dessert": 0.1 };
+  var idealFor = (style) => {
+    const s = MEAL_SHARE[style] ?? 0.35;
+    return { share: s, kcal: Math.round(TARGETS.kcal * s), protein: Math.round(TARGETS.protein * s), carbs: Math.round(TARGETS.carbs * s), fat: Math.round(TARGETS.fat * s) };
+  };
   var SATFAT_MAX = 22;
   var SUGAR_MAX = 50;
   function badZone(value, ceiling) {
@@ -1525,6 +1529,17 @@ ${lines.join("\n")}`;
       return /* @__PURE__ */ React.createElement("div", { style: card }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut } }, "\xC9volution sur 2 semaines"), lastW != null && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, fontWeight: 800, color: C.teal } }, "dernier : ", lastW, " kg")), /* @__PURE__ */ React.createElement("svg", { viewBox: `0 0 ${W} ${H}`, style: { width: "100%", height: "auto", display: "block" } }, /* @__PURE__ */ React.createElement("path", { d: line, fill: "none", stroke: C.teal, strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round" }), pts.map((p, k) => /* @__PURE__ */ React.createElement("g", { key: k }, /* @__PURE__ */ React.createElement("circle", { cx: x(p.i), cy: y(p.weight), r: "3.5", fill: C.teal }), /* @__PURE__ */ React.createElement("text", { x: x(p.i), y: y(p.weight) - 9, fill: C.text, fontSize: "10", fontWeight: "700", textAnchor: "middle" }, p.weight), /* @__PURE__ */ React.createElement("text", { x: x(p.i), y: H - 8, fill: p.date === dateKey() ? C.ember : C.mut, fontSize: "8", textAnchor: "middle" }, p.date.slice(8), "/", p.date.slice(5, 7))))));
     })(), /* @__PURE__ */ React.createElement("div", { ref: recipesRef, style: { marginTop: 28, paddingTop: 8, borderTop: `2px solid ${C.line}` } }, /* @__PURE__ */ React.createElement(RecipesTab, { addMacros, openId: openRecipeId, newSignal: recipeNew })), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
   }
+  function MacroCompare({ protein = 0, carbs = 0, fat = 0, style }) {
+    const p = +protein || 0, c = +carbs || 0, f = +fat || 0;
+    const id = idealFor(style);
+    const kcal = Math.round((p + c) * 4 + f * 9);
+    const rows = [["Calories", kcal, id.kcal, "kcal"], ["Prot\xE9ines", Math.round(p), id.protein, "g"], ["Glucides", Math.round(c), id.carbs, "g"], ["Lipides", Math.round(f), id.fat, "g"]];
+    return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginBottom: 9, lineHeight: 1.4 } }, "Compar\xE9 \xE0 un \xAB ", style || "Repas", " \xBB id\xE9al ", /* @__PURE__ */ React.createElement("span", { style: { color: C.mut } }, "\xB7 ", Math.round(id.share * 100), "% de ta journ\xE9e")), rows.map(([label, val, target, unit]) => {
+      const z = zone(val, target);
+      const pct = Math.min(100, target ? val / target * 100 : 0);
+      return /* @__PURE__ */ React.createElement("div", { key: label, style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.mut } }, label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: z.color } }, val, " / ", target, " ", unit, " \xB7 ", z.label)), /* @__PURE__ */ React.createElement("div", { style: { height: 6, borderRadius: 99, background: C.line, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99, transition: "width .4s" } })));
+    }));
+  }
   function IndulgenceGauge({ satfat, sugar, style, daily, title }) {
     const share = daily ? 1 : MEAL_SHARE[style] ?? 0.35;
     const rows = [];
@@ -1596,9 +1611,9 @@ ${lines.join("\n")}`;
         setRecipes(Array.isArray(r) ? r : []);
       })();
     }, []);
-    const persist = (list) => {
-      setRecipes(list);
-      store.set("recipes", list);
+    const persist = (list2) => {
+      setRecipes(list2);
+      store.set("recipes", list2);
     };
     const kcal = (r) => Math.round((+r.protein || 0) * 4 + (+r.carbs || 0) * 4 + (+r.fat || 0) * 9);
     const flash = (m, ms = 2400) => {
@@ -1693,7 +1708,30 @@ ${lines.join("\n")}`;
         s
       ))))), /* @__PURE__ */ React.createElement("div", { style: { height: 16 } }));
     }
-    return /* @__PURE__ */ React.createElement("div", null, "RecipesTab");
+    const styles = ["Tout", ...styleOpts];
+    const list = recipes.filter((r) => f === "Tout" || r.style === f);
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, toastEl, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Recettes"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Riches en prot\xE9ines, jamais fades"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13 } }, "Modifie, ajoute, supprime \u2014 les calories se recalculent toutes seules."), /* @__PURE__ */ React.createElement("button", { onClick: startNew, style: { width: "100%", background: C.emberSoft, border: `1px solid ${C.ember}`, color: C.ember, borderRadius: 12, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, marginBottom: 16 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 17 }), " Nouvelle recette"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 } }, styles.map((s) => /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        key: s,
+        onClick: () => setF(s),
+        style: { padding: "7px 13px", borderRadius: 99, border: `1px solid ${f === s ? C.ember : C.line}`, background: f === s ? C.emberSoft : C.card, color: f === s ? C.ember : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }
+      },
+      s
+    ))), list.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { background: C.card, border: `1px dashed ${C.line}`, borderRadius: 14, padding: 22, textAlign: "center", color: C.mut, fontSize: 13 } }, "Aucune recette ici. Ajoutes-en une avec le bouton ci-dessus."), list.map((r) => {
+      const on = open === r.id;
+      return /* @__PURE__ */ React.createElement("div", { key: r.id, style: { background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, marginBottom: 11, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpen(on ? null : r.id), style: { width: "100%", background: "none", border: "none", padding: 16, display: "flex", alignItems: "center", gap: 12, cursor: "pointer", textAlign: "left" } }, /* @__PURE__ */ React.createElement(RecipeThumb, { recipe: r, size: 50, radius: 13 }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10.5, fontWeight: 700, color: C.teal, background: C.tealSoft, padding: "2px 7px", borderRadius: 99 } }, r.style), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.mut, fontWeight: 600 } }, /* @__PURE__ */ React.createElement("b", { style: { color: C.ember } }, kcal(r)), " kcal \xB7 P ", r.protein, " \xB7 G ", r.carbs, " \xB7 L ", r.fat)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15.5, fontWeight: 700 } }, r.title)), /* @__PURE__ */ React.createElement(import_lucide_react.ChevronDown, { size: 18, color: C.mut, style: { transform: on ? "rotate(180deg)" : "none", transition: "transform .25s", flexShrink: 0 } })), on && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 16px 16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } }, pill("prot\xE9ines", r.protein + " g", C.ember), pill("glucides", r.carbs + " g", C.teal), pill("lipides", r.fat + " g", C.amber), pill("kcal", kcal(r), C.text)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginBottom: 12 } }, "Quantit\xE9s et macros pour une personne"), /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, padding: 13, marginBottom: 14 } }, /* @__PURE__ */ React.createElement(MacroCompare, { protein: r.protein, carbs: r.carbs, fat: r.fat, style: r.style }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement(IndulgenceGauge, { satfat: r.satfat != null ? r.satfat : Math.round((r.fat || 0) * 0.4), sugar: r.sugar ?? null, style: r.style }))), r.link && /* @__PURE__ */ React.createElement(
+        "a",
+        {
+          href: safeUrl(r.link),
+          target: "_blank",
+          rel: "noopener noreferrer",
+          style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 7, textDecoration: "none", marginBottom: 14, background: C.emberSoft, border: `1px solid ${C.ember}`, color: C.ember, borderRadius: 11, padding: "11px", fontSize: 13.5, fontWeight: 800 }
+        },
+        /* @__PURE__ */ React.createElement(import_lucide_react.ExternalLink, { size: 16 }),
+        " Ouvrir la recette"
+      ), r.ing?.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "Ingr\xE9dients"), /* @__PURE__ */ React.createElement("ul", { style: { margin: "0 0 6px", paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7 } }, r.ing.map((x, i) => /* @__PURE__ */ React.createElement("li", { key: i }, x)))), r.steps?.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { ...lbl, marginTop: 12 } }, "Pr\xE9paration"), /* @__PURE__ */ React.createElement("ol", { style: { margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7 } }, r.steps.map((x, i) => /* @__PURE__ */ React.createElement("li", { key: i, style: { marginBottom: 4 } }, x)))), /* @__PURE__ */ React.createElement("button", { onClick: () => eat(r), style: { width: "100%", marginTop: 16, background: C.tealSoft, border: `1px solid ${C.teal}`, color: C.teal, borderRadius: 11, padding: "11px", fontSize: 13.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Plus, { size: 15 }), " J'ai mang\xE9 \xE7a \u2014 ajouter au compteur"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, marginTop: 10 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => startEdit(r), style: { flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.text, borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Pencil, { size: 14 }), " Modifier"), /* @__PURE__ */ React.createElement("button", { onClick: () => del(r.id), style: { flex: 1, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Trash2, { size: 14 }), " Supprimer"))));
+    }), /* @__PURE__ */ React.createElement("div", { style: { height: 8 } }));
   }
   var h1 = { fontSize: 21, fontWeight: 800, fontFamily: FONT_DISPLAY, margin: "3px 0 6px", letterSpacing: -0.4 };
   var sectionH = { fontSize: 13, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: C.mut, margin: "26px 0 11px" };
