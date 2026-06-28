@@ -1030,6 +1030,10 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
         <ChefHat size={17} /> Ajouter une recette
       </button>
 
+      <button onClick={() => { if (window._ztlLogout) window._ztlLogout(); }}
+        style={{ width: "100%", marginTop: 20, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 14, padding: "13px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+        Se déconnecter
+      </button>
       <div style={{ height: 16 }} />
     </>
   );

@@ -1,20 +1,10 @@
-// auth-wrapper.js — Login instantané, auth obligatoire, bouton déconnexion
+// auth-wrapper.js — Login instantané, auth obligatoire
 (function() {
   var h = React.createElement;
-
-  var styleBtn = {
-    position: "fixed", top: 12, right: 12, zIndex: 999,
-    background: "#FFFFFF", border: "1px solid #EFE6DB", borderRadius: 10,
-    padding: "8px 14px", fontSize: 12, fontWeight: 700,
-    color: "#F2543D", cursor: "pointer",
-    fontFamily: "Onest, system-ui, sans-serif",
-    boxShadow: "0 2px 8px rgba(0,0,0,.06)"
-  };
 
   function Root() {
     var _u = React.useState(null), user = _u[0], setUser = _u[1];
 
-    // Auto-login silencieux
     React.useEffect(function() {
       var attempts = 0;
       function tryAuto() {
@@ -50,15 +40,10 @@
       setUser(null);
     }
 
-    if (user) {
-      return h("div", null,
-        h("button", { onClick: onLogout, style: styleBtn, title: "Se déconnecter" },
-          "Déconnexion"
-        ),
-        h(window.ZTL.default, null)
-      );
-    }
+    // Exposer la déconnexion pour l'app
+    window._ztlLogout = onLogout;
 
+    if (user) return h(window.ZTL.default, null);
     return h(window.AuthScreen, { onLogin: onLogin });
   }
 

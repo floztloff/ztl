@@ -1142,7 +1142,16 @@ ${lines.join("\n")}`;
         style: { background: C.greenVivid, color: "#fff", border: "none", borderRadius: 10, padding: "8px 13px", fontSize: 13, fontWeight: 800, cursor: "pointer" }
       },
       "OK"
-    )), /* @__PURE__ */ React.createElement("button", { onClick: addRecipe, style: { width: "100%", marginTop: 22, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement(import_lucide_react.ChefHat, { size: 17 }), " Ajouter une recette"), /* @__PURE__ */ React.createElement("div", { style: { height: 16 } }));
+    )), /* @__PURE__ */ React.createElement("button", { onClick: addRecipe, style: { width: "100%", marginTop: 22, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement(import_lucide_react.ChefHat, { size: 17 }), " Ajouter une recette"), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => {
+          if (window._ztlLogout) window._ztlLogout();
+        },
+        style: { width: "100%", marginTop: 20, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 14, padding: "13px", fontSize: 13, fontWeight: 700, cursor: "pointer" }
+      },
+      "Se d\xE9connecter"
+    ), /* @__PURE__ */ React.createElement("div", { style: { height: 16 } }));
   }
   function ExercisePicker({ exercises, onAdd, onClose }) {
     const [f, setF] = (0, import_react.useState)("Tout");
