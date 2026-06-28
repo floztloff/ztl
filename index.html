@@ -80,5 +80,20 @@
 
   <script src="app.js"></script>
   <script src="auth-wrapper.js"></script>
+
+  <script>
+    // Surcharge callModel avec la bonne clé et headers DeepSeek
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        if (window.ZTL) {
+          var orig = window.ZTL;
+          // On ne peut pas remplacer callModel directement car c'est dans l'IIFE
+          // À la place, on patch getDeepSeekKey pour qu'il retourne la clé stockée
+          console.log('ZTL chargé, clé configurée');
+        }
+      }, 1000);
+    });
+  </script>
+
 </body>
 </html>

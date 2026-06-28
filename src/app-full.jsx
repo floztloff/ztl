@@ -326,34 +326,30 @@ function recipeMacros(ingText) {
 
 /* macros calculées par l'IA — fiable sur n'importe quel ingrédient */
 async function callModel(prompt) {
-  const API_KEY = "sk-ant-api03-REPLACE_WITH_YOUR_KEY";
-  const models = ["deepseek-chat"];
-  let lastErr;
-  for (const model of models) {
-    try {
-      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
-        body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt }] }),
-      });
-      if (!res.ok) { let t = ""; try { t = (await res.text()).slice(0, 80); } catch {} lastErr = new Error("HTTP " + res.status + " " + t); continue; }
-      const data = await res.json();
-      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "";
-      if (text) return text;
-      lastErr = new Error("réponse vide");
-    } catch (e) { lastErr = e; return null; }
+  let apiKey = await getDeepSeekKey();
+  if (!apiKey) {
+    try { const k = typeof prompt !== "undefined" ? prompt("Clé API DeepSeek") : null; if (k && k.trim()) setDeepSeekKey(k.trim()); } catch {}
+    apiKey = await getDeepSeekKey();
+    if (!apiKey) throw new Error("Clé API requise. Ouvre ⚙️ Clé API DeepSeek sur l'accueil.");
   }
-  // Pas de clé ? Demander
-  const promptKey = () => {
-    if (typeof promptDeepSeekKey === "function") {
-      const k = promptDeepSeekKey();
-      if (k) return callModel(prompt);
-    }
-    return null;
-  };
-  if (!getDeepSeekKey()) return promptKey();
-  throw lastErr || new Error("indisponible");
+  const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
+    body: JSON.stringify({ model: "deepseek-chat", max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt }] }),
+  });
+  if (!res.ok) { 
+    const t = await res.text().catch(() => "");
+    if (res.status === 401) throw new Error("Clé API DeepSeek invalide. Mets-la à jour dans ⚙️ Clé API.");
+    throw new Error("API DeepSeek erreur " + res.status + ": " + t.slice(0, 150));
+  }
+  const data = await res.json();
+  if (!data || !data.choices || !data.choices.length) throw new Error("Réponse DeepSeek vide");
+  const text = data.choices[0].message?.content || "";
+  if (!text) throw new Error("Réponse DeepSeek sans contenu");
+  return text;
 }
+
+
 async function aiMacros(ingText) {
   const prompt = `Tu es nutritionniste. Calcule les valeurs nutritionnelles totales de cette recette pour UNE personne (les quantités ci-dessous sont pour une personne).
 Ingrédients (un par ligne) :
@@ -388,7 +384,7 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
   for (const model of models) {
     try {
       const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-        method: "POST", headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
+        method: "POST", headers: { "content-type": "application/json", "x-api-key": API_KEY,  },
         body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content }] }),
       });
       if (!res.ok) { let t = ""; try { t = (await res.text()).slice(0, 80); } catch {} lastErr = new Error("HTTP " + res.status + " " + t); continue; }
