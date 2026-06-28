@@ -378,7 +378,7 @@ async function aiMealFromPhoto(base64, mediaType) {
   }
   if (!apiKey) throw new Error("Clé Gemini requise. ⚙️ Clés API sur l'accueil.");
   
-  const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
+  const models = ["gemini-1.5-flash-8b", "gemini-1.5-flash"];
   let lastErr;
   
   for (const model of models) {
@@ -393,7 +393,7 @@ async function aiMealFromPhoto(base64, mediaType) {
           ]}]
         }),
       });
-      if (res.status === 429) { lastErr = new Error("Quota Gemini atteint, essaie dans 1 min."); continue; }
+      if (res.status === 429 || res.status === 403) { const t = await res.text().catch(()=>""); lastErr = new Error("Erreur " + res.status + ": " + t.slice(0,100)); continue; }
       if (!res.ok) { const t = await res.text().catch(()=>""); lastErr = new Error("Erreur " + res.status); continue; }
       const data = await res.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";

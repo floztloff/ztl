@@ -616,7 +616,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       }
     }
     if (!apiKey) throw new Error("Cl\xE9 Gemini requise. \u2699\uFE0F Cl\xE9s API sur l'accueil.");
-    const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
+    const models = ["gemini-1.5-flash-8b", "gemini-1.5-flash"];
     let lastErr;
     for (const model of models) {
       try {
@@ -630,8 +630,9 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
             ] }]
           })
         });
-        if (res.status === 429) {
-          lastErr = new Error("Quota Gemini atteint, essaie dans 1 min.");
+        if (res.status === 429 || res.status === 403) {
+          const t = await res.text().catch(() => "");
+          lastErr = new Error("Erreur " + res.status + ": " + t.slice(0, 100));
           continue;
         }
         if (!res.ok) {
