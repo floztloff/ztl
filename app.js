@@ -615,33 +615,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
       } catch {
       }
     }
-    if (!apiKey) {
-      let gemKey = window._ztlGeminiKey;
-      if (!gemKey) {
-        try {
-          gemKey = await store.get("_ztlGeminiKey");
-          if (gemKey) window._ztlGeminiKey = gemKey;
-        } catch {
-        }
-      }
-      if (gemKey) {
-        const res2 = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + gemKey, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ contents: [{ parts: [{ inlineData: { mimeType: mediaType, data: base64 } }, { text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT par un objet JSON: {"plat":"nom","protein":g,"carbs":g,"fat":g}' }] }] })
-        });
-        if (res2.ok) {
-          const data2 = await res2.json();
-          const t = data2.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          const m = t.replace(/```json\n?|```/g, "").match(/\{[^}]*\}/);
-          if (m) {
-            const j2 = JSON.parse(m[0]);
-            return { plat: j2.plat || "", protein: Math.round(+j2.protein || 0), carbs: Math.round(+j2.carbs || 0), fat: Math.round(+j2.fat || 0) };
-          }
-        }
-      }
-      throw new Error("Aucune cl\xE9 vision configur\xE9e. \u2699\uFE0F Cl\xE9s API sur l'accueil.");
-    }
+    if (!apiKey) throw new Error("Aucune cl\xE9 Groq configur\xE9e. Va sur l'accueil \u2192 \u2699\uFE0F Cl\xE9s API, colle ta cl\xE9 (console.groq.com/keys) et clique Enregistrer.");
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
@@ -651,18 +625,19 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
         temperature: 0,
         messages: [{ role: "user", content: [
           { type: "image_url", image_url: { url: "data:" + mediaType + ";base64," + base64 } },
-          { type: "text", text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT par un objet JSON: {"plat":"nom","protein":g,"carbs":g,"fat":g}' }
+          { type: "text", text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT: {"plat":"nom","protein":g,"carbs":g,"fat":g}' }
         ] }]
       })
     });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      throw new Error("Erreur Groq " + res.status + ": " + t.slice(0, 120));
+      if (res.status === 401) throw new Error("Cl\xE9 Groq invalide. V\xE9rifie-la dans \u2699\uFE0F Cl\xE9s API.");
+      throw new Error("Erreur Groq " + res.status);
     }
     const data = await res.json();
     const text = data.choices?.[0]?.message?.content || "";
     const mt = text.replace(/```json\n?|```/g, "").match(/\{[^}]*\}/);
-    if (!mt) throw new Error("R\xE9ponse illisible");
+    if (!mt) throw new Error("R\xE9ponse illisible: " + text.slice(0, 80));
     const j = JSON.parse(mt[0]);
     return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
   }

@@ -376,24 +376,7 @@ async function aiMealFromPhoto(base64, mediaType) {
   if (!apiKey) {
     try { apiKey = await store.get("_ztlGroqKey"); if (apiKey) { window._ztlGroqKey = apiKey; } } catch {}
   }
-  if (!apiKey) {
-    // Fallback: essayer Gemini
-    let gemKey = window._ztlGeminiKey;
-    if (!gemKey) { try { gemKey = await store.get("_ztlGeminiKey"); if (gemKey) window._ztlGeminiKey = gemKey; } catch {} }
-    if (gemKey) {
-      const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + gemKey, {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ inlineData: { mimeType: mediaType, data: base64 } }, { text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }] }] }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const t = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-        const m = t.replace(/```json\n?|```/g, "").match(/\{[^}]*\}/);
-        if (m) { const j = JSON.parse(m[0]); return { plat: j.plat||"", protein: Math.round(+j.protein||0), carbs: Math.round(+j.carbs||0), fat: Math.round(+j.fat||0) }; }
-      }
-    }
-    throw new Error("Aucune clé vision configurée. ⚙️ Clés API sur l'accueil.");
-  }
+  if (!apiKey) throw new Error("Aucune clé Groq configurée. Va sur l'accueil → ⚙️ Clés API, colle ta clé (console.groq.com/keys) et clique Enregistrer.");
   
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -403,15 +386,19 @@ async function aiMealFromPhoto(base64, mediaType) {
       max_tokens: 300, temperature: 0,
       messages: [{ role: "user", content: [
         { type: "image_url", image_url: { url: "data:" + mediaType + ";base64," + base64 } },
-        { type: "text", text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
+        { type: "text", text: "Analyse ce plat. Réponds UNIQUEMENT: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
       ]}]
     }),
   });
-  if (!res.ok) { const t = await res.text().catch(()=>""); throw new Error("Erreur Groq " + res.status + ": " + t.slice(0,120)); }
+  if (!res.ok) { 
+    const t = await res.text().catch(()=>""); 
+    if (res.status === 401) throw new Error("Clé Groq invalide. Vérifie-la dans ⚙️ Clés API.");
+    throw new Error("Erreur Groq " + res.status);
+  }
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content || "";
   const mt = text.replace(/```json\n?|```/g, "").match(/\{[^}]*\}/);
-  if (!mt) throw new Error("Réponse illisible");
+  if (!mt) throw new Error("Réponse illisible: " + text.slice(0,80));
   const j = JSON.parse(mt[0]);
   return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
 }
