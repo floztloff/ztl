@@ -559,11 +559,11 @@ var ZTL = (() => {
     }
     return { protein: Math.round(p), carbs: Math.round(c), fat: Math.round(f), satfat: Math.round(f * 0.4), sugar: null, unmatched, total };
   }
-  async function callModel(prompt2) {
+  async function callModel(prompt) {
     const res = await fetch("https://text.pollinations.ai/openai", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ model: "", messages: [{ role: "user", content: prompt2 }] })
+      body: JSON.stringify({ model: "", messages: [{ role: "user", content: prompt }] })
     });
     if (!res.ok) throw new Error("Erreur " + res.status);
     const data = await res.json();
@@ -572,7 +572,7 @@ var ZTL = (() => {
     return text;
   }
   async function aiMacros(ingText) {
-    const prompt2 = `Tu es nutritionniste. Calcule les valeurs nutritionnelles totales de cette recette pour UNE personne (les quantit\xE9s ci-dessous sont pour une personne).
+    const prompt = `Tu es nutritionniste. Calcule les valeurs nutritionnelles totales de cette recette pour UNE personne (les quantit\xE9s ci-dessous sont pour une personne).
 Ingr\xE9dients (un par ligne) :
 ${ingText}
 
@@ -583,56 +583,61 @@ R\xE8gles :
 - "satfat" = grammes de graisses satur\xE9es ; "sugar" = grammes de sucres.
 R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte autour ni backticks :
 {"protein": <entier>, "carbs": <entier>, "fat": <entier>, "satfat": <entier>, "sugar": <entier>}`;
-    const text = await callModel(prompt2);
+    const text = await callModel(prompt);
     const matches = text.match(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g);
     if (!matches || !matches.length) throw new Error("r\xE9ponse illisible: " + text.slice(0, 100));
     const j = JSON.parse(matches[matches.length - 1]);
     return { protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0), satfat: Math.round(+j.satfat || 0), sugar: Math.round(+j.sugar || 0) };
   }
   async function aiMealFromPhoto(base64, mediaType) {
-    const byteString = atob(base64);
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-    const blob = new Blob([ab], { type: mediaType });
-    const form = new FormData();
-    form.append("file", blob, "photo." + (mediaType.split("/")[1] || "jpg"));
-    let imageUrl;
-    try {
-      const uploadRes = await fetch("https://tmpfiles.org/api/v1/upload", {
-        method: "POST",
-        body: form
-      });
-      const uploadData = await uploadRes.json();
-      if (!uploadData || !uploadData.data || !uploadData.data.url) throw new Error("Upload failed");
-      imageUrl = uploadData.data.url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
-    } catch (e) {
-      const desc = prompt("Impossible d'uploader la photo. D\xE9cris bri\xE8vement ce que tu as mang\xE9 (ex: poulet curry riz)");
-      if (desc) return aiMacros(desc).then((m) => ({ plat: desc, ...m })).catch(() => {
-        throw new Error("Annul\xE9");
-      });
-      throw new Error("Analyse photo impossible. Essaie la saisie texte.");
+    let apiKey = window._ztlClaudeKey;
+    if (!apiKey) {
+      try {
+        apiKey = localStorage.getItem("_ztlClaudeKey");
+      } catch {
+      }
     }
-    const res = await fetch("https://text.pollinations.ai/openai", {
+    if (!apiKey) {
+      try {
+        const v = await store.get("_ztlClaudeKey");
+        if (v) {
+          apiKey = v;
+          window._ztlClaudeKey = v;
+        }
+      } catch {
+      }
+    }
+    if (!apiKey) throw new Error("Cl\xE9 Claude non trouv\xE9e. Contacte le d\xE9veloppeur.");
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
       body: JSON.stringify({
-        model: "",
-        messages: [{ role: "user", content: [
-          { type: "image_url", image_url: { url: imageUrl } },
-          { type: "text", text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT par un objet JSON: {"plat":"nom","protein":g,"carbs":g,"fat":g}' }
-        ] }]
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 512,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
+            { type: "text", text: 'Analyse ce plat. R\xC3\xA9ponds UNIQUEMENT par un objet JSON sans backticks: {"plat":"nom du plat","protein":nombre_grammes,"carbs":nombre_grammes,"fat":nombre_grammes}' }
+          ]
+        }]
       })
     });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      throw new Error("Erreur analyse " + res.status);
+      if (res.status === 401) throw new Error("Cl\xE9 Claude invalide.");
+      throw new Error("Erreur Claude " + res.status + ": " + t.slice(0, 120));
     }
     const data = await res.json();
-    const text = data.choices?.[0]?.message?.content || "";
+    const text = (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("");
     const clean = text.replace(/```(json)?\n?|```/g, "").trim();
     const match = clean.match(/\{[^}]+\}/);
-    if (!match) throw new Error("R\xE9ponse illisible. D\xE9cris ton repas manuellement.");
+    if (!match) throw new Error("R\xE9ponse illisible: " + text.slice(0, 80));
     const j = JSON.parse(match[0]);
     return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
   }
@@ -693,7 +698,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     });
   }
   async function aiShoppingList(lines) {
-    const prompt2 = `Voici des ingr\xE9dients issus de plusieurs recettes planifi\xE9es (avec doublons possibles).
+    const prompt = `Voici des ingr\xE9dients issus de plusieurs recettes planifi\xE9es (avec doublons possibles).
 Regroupe les ingr\xE9dients IDENTIQUES en additionnant leurs quantit\xE9s, et produis une liste de courses claire et compacte.
 - Additionne les quantit\xE9s de m\xEAme unit\xE9 (ex. 350 g + 200 g = 550 g).
 - Garde des unit\xE9s lisibles (g, kg, ml, pi\xE8ces, bo\xEEtes...).
@@ -703,7 +708,7 @@ R\xE9ponds STRICTEMENT par un tableau JSON sur une seule ligne, sans texte ni ba
 
 Ingr\xE9dients :
 ${lines.join("\n")}`;
-    const text = await callModel(prompt2);
+    const text = await callModel(prompt);
     const matches = text.match(/\[[\s\S]*\]/g);
     if (!matches || !matches.length) throw new Error("r\xE9ponse illisible");
     const arr = JSON.parse(matches[matches.length - 1]);
