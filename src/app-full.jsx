@@ -360,40 +360,52 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
 
 /* vision IA : estime le plat et ses macros à partir d'une photo */
 async function aiMealFromPhoto(base64, mediaType) {
-  let apiKey = window._ztlClaudeKey;
-  if (!apiKey) { try { apiKey = localStorage.getItem("_ztlClaudeKey"); } catch {} }
-  if (!apiKey) { try { const v = await store.get("_ztlClaudeKey"); if (v) apiKey = v; } catch {} }
-  if (!apiKey) throw new Error("Analyse photo indisponible (clé manquante).");
+  // Upload image to tmpfiles.org (free, no auth)
+  const byteString = atob(base64);
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+  const blob = new Blob([ab], { type: mediaType });
+  const form = new FormData();
+  form.append("file", blob, "photo." + (mediaType.split("/")[1] || "jpg"));
   
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  let imageUrl;
+  try {
+    const uploadRes = await fetch("https://tmpfiles.org/api/v1/upload", {
+      method: "POST",
+      body: form
+    });
+    const uploadData = await uploadRes.json();
+    if (!uploadData || !uploadData.data || !uploadData.data.url) throw new Error("Upload failed");
+    imageUrl = uploadData.data.url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
+  } catch (e) {
+    // Fallback: demander une description textuelle
+    const desc = prompt("Impossible d'uploader la photo. Décris brièvement ce que tu as mangé (ex: poulet curry riz)");
+    if (desc) return aiMacros(desc).then(m => ({ plat: desc, ...m })).catch(() => { throw new Error("Annulé"); });
+    throw new Error("Analyse photo impossible. Essaie la saisie texte.");
+  }
+  
+  // Analyser via Pollinations qui supporte les URLs d'images
+  const res = await fetch("https://text.pollinations.ai/openai", {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true"
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 512,
-      messages: [{
-        role: "user",
-        content: [
-          { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-          { type: "text", text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON sans backticks: {\"plat\":\"nom du plat\",\"protein\":nombre_grammes,\"carbs\":nombre_grammes,\"fat\":nombre_grammes}" }
-        ]
-      }]
+      model: "",
+      messages: [{ role: "user", content: [
+        { type: "image_url", image_url: { url: imageUrl } },
+        { type: "text", text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
+      ]}]
     }),
   });
-  if (!res.ok) {
+  if (!res.ok) { 
     const t = await res.text().catch(() => "");
-    throw new Error("Erreur Claude " + res.status + ": " + t.slice(0, 120));
+    throw new Error("Erreur analyse " + res.status);
   }
   const data = await res.json();
-  const text = (data.content || []).filter(c => c.type === "text").map(c => c.text).join("");
+  const text = data.choices?.[0]?.message?.content || "";
   const clean = text.replace(/```(json)?\n?|```/g, "").trim();
   const match = clean.match(/\{[^}]+\}/);
-  if (!match) throw new Error("Réponse illisible: " + text.slice(0, 80));
+  if (!match) throw new Error("Réponse illisible. Décris ton repas manuellement.");
   const j = JSON.parse(match[0]);
   return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
 }
