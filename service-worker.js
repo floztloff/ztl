@@ -1,15 +1,19 @@
 // ZTL Service Worker — v5
-const CACHE_NAME = "ztl-v6";
+const CACHE_NAME = "ztl-v7";
 const ASSETS = [
   "/",
   "/index.html",
   "/manifest.json",
   "/storage.js",
+  "/supabase.js",
+  "/auth-ui.js",
+  "/auth-wrapper.js",
   "/app.js",
   "/icon-192.svg",
   "/icon-512.svg",
   "/libs/react.production.min.js",
-  "/libs/react-dom.production.min.js"
+  "/libs/react-dom.production.min.js",
+  "/libs/supabase.min.js"
 ];
 
 // Installation

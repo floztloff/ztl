@@ -60,8 +60,8 @@
   <script src="libs/react.production.min.js"></script>
   <script src="libs/react-dom.production.min.js"></script>
 
-  <!-- 2. Supabase SDK (chargé en parallèle, ne bloque pas la page) -->
-  <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="document.getElementById('root').innerHTML='<div style=\'color:#F2543D;padding:30px;font-family:monospace;font-size:13px;text-align:center\'>Erreur : Impossible de charger Supabase.<br>Vérifie ta connexion internet.</div>'"></script>
+  <!-- 2. Supabase SDK (local, chargement instantané) -->
+  <script src="libs/supabase.min.js"></script>
 
   <!-- 3. Couche Supabase (auth + DB) -->
   <script src="supabase.js"></script>
