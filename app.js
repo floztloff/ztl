@@ -1572,5 +1572,9 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     }
     return /* @__PURE__ */ React.createElement("div", null, "RecipesTab");
   }
+  var h1 = { fontSize: 21, fontWeight: 800, fontFamily: FONT_DISPLAY, margin: "3px 0 6px", letterSpacing: -0.4 };
+  var sectionH = { fontSize: 13, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: C.mut, margin: "26px 0 11px" };
+  var cardBtn = { flex: 1, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 14, display: "flex", alignItems: "center", gap: 10, cursor: "pointer", color: C.text };
+  var navBtn = { background: C.cardHi, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 };
   return __toCommonJS(app_exports);
 })();

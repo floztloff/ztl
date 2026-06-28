@@ -1946,3 +1946,10 @@ function RecipesTab({ addMacros, openId, newSignal }) {
   }
   return <div>RecipesTab</div>;
 }
+
+
+/* ---------- styles partagés ---------- */
+const h1 = { fontSize: 21, fontWeight: 800, fontFamily: FONT_DISPLAY, margin: "3px 0 6px", letterSpacing: -0.4 };
+const sectionH = { fontSize: 13, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: C.mut, margin: "26px 0 11px" };
+const cardBtn = { flex: 1, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 14, display: "flex", alignItems: "center", gap: 10, cursor: "pointer", color: C.text };
+const navBtn = { background: C.cardHi, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 };
