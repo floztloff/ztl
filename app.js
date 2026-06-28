@@ -886,16 +886,20 @@ ${lines.join("\n")}`;
     const [sessions, setSessions] = (0, import_react.useState)(null);
     const [checks, setChecks] = (0, import_react.useState)({});
     const [hist, setHist] = (0, import_react.useState)([]);
-    const [storageOk, setStorageOk] = (0, import_react.useState)(true);
+    const [offline, setOffline] = (0, import_react.useState)(false);
+    (0, import_react.useEffect)(() => {
+      setOffline(!navigator.onLine);
+      const goOff = () => setOffline(true);
+      const goOn = () => setOffline(false);
+      window.addEventListener("offline", goOff);
+      window.addEventListener("online", goOn);
+      return () => {
+        window.removeEventListener("offline", goOff);
+        window.removeEventListener("online", goOn);
+      };
+    }, []);
     (0, import_react.useEffect)(() => {
       (async () => {
-        try {
-          await window.storage.set("__health", "1");
-          const r = await window.storage.get("__health");
-          setStorageOk(!!(r && r.value === "1"));
-        } catch {
-          setStorageOk(false);
-        }
         const d = await store.get("log:" + tk);
         if (d) {
           const macros = d.macros || { p: d.protein || 0, c: 0, f: 0 };
@@ -1006,7 +1010,7 @@ ${lines.join("\n")}`;
       { id: "courses", icon: import_lucide_react.ShoppingCart, label: "Courses" },
       { id: "sleep", icon: import_lucide_react.Moon, label: "Sommeil" }
     ];
-    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: C.bg, color: C.text, fontFamily: FONT_BODY, paddingBottom: 78 } }, /* @__PURE__ */ React.createElement("style", null, `@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Onest:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');`), !storageOk && /* @__PURE__ */ React.createElement("div", { style: { background: C.emberSoft, borderBottom: `1px solid ${C.ember}`, color: C.text, padding: "10px 16px", fontSize: 12.5, lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", { style: { color: C.ember } }, "Sauvegarde inactive."), " Tes donn\xE9es ne seront pas conserv\xE9es tant que le carnet n'est pas ", /* @__PURE__ */ React.createElement("b", null, "publi\xE9"), ". Publie-le (bouton en haut de l'artefact) puis ouvre la version publi\xE9e \u2014 de pr\xE9f\xE9rence sur Claude web/desktop \u2014 pour garder tes donn\xE9es."), /* @__PURE__ */ React.createElement(ZTLHeader, { onHome: () => setTab("home") }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 480, margin: "0 auto", padding: "14px 18px 0" } }, tab === "home" && /* @__PURE__ */ React.createElement(HomeTab, { ...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList } }), tab === "train" && /* @__PURE__ */ React.createElement(TrainTab, { ...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions } }), tab === "food" && /* @__PURE__ */ React.createElement(FoodTab, { ...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew } }), tab === "program" && /* @__PURE__ */ React.createElement(ProgramTab, null), tab === "courses" && /* @__PURE__ */ React.createElement(CoursesTab, null), tab === "sleep" && /* @__PURE__ */ React.createElement(SleepTab, { ...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate } })), /* @__PURE__ */ React.createElement("nav", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", width: "100%", maxWidth: 520 } }, TABS.map((t) => {
+    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: C.bg, color: C.text, fontFamily: FONT_BODY, paddingBottom: 78 } }, /* @__PURE__ */ React.createElement("style", null, `@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Onest:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');`), offline && /* @__PURE__ */ React.createElement("div", { style: { background: "#FFF3CD", borderBottom: `1px solid #E0A33B`, color: C.text, padding: "8px 16px", fontSize: 12, lineHeight: 1.4, textAlign: "center" } }, "\u{1F4E1} ", /* @__PURE__ */ React.createElement("b", null, "Mode hors-ligne"), " \xB7 Tes donn\xE9es sont sauvegard\xE9es localement et synchronis\xE9es d\xE8s le retour de la connexion."), /* @__PURE__ */ React.createElement(ZTLHeader, { onHome: () => setTab("home") }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 480, margin: "0 auto", padding: "14px 18px 0" } }, tab === "home" && /* @__PURE__ */ React.createElement(HomeTab, { ...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList } }), tab === "train" && /* @__PURE__ */ React.createElement(TrainTab, { ...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions } }), tab === "food" && /* @__PURE__ */ React.createElement(FoodTab, { ...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew } }), tab === "program" && /* @__PURE__ */ React.createElement(ProgramTab, null), tab === "courses" && /* @__PURE__ */ React.createElement(CoursesTab, null), tab === "sleep" && /* @__PURE__ */ React.createElement(SleepTab, { ...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate } })), /* @__PURE__ */ React.createElement("nav", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", width: "100%", maxWidth: 520 } }, TABS.map((t) => {
       const A = t.icon, on = tab === t.id;
       return /* @__PURE__ */ React.createElement(
         "button",

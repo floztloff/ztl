@@ -654,15 +654,19 @@ export default function App() {
   const [sessions, setSessions] = useState(null);
   const [checks, setChecks] = useState({});
   const [hist, setHist] = useState([]);
-  const [storageOk, setStorageOk] = useState(true);
+  const [offline, setOffline] = useState(false);
+
+  useEffect(() => {
+    setOffline(!navigator.onLine);
+    const goOff = () => setOffline(true);
+    const goOn = () => setOffline(false);
+    window.addEventListener("offline", goOff);
+    window.addEventListener("online", goOn);
+    return () => { window.removeEventListener("offline", goOff); window.removeEventListener("online", goOn); };
+  }, []);
 
   useEffect(() => {
     (async () => {
-      try {
-        await window.storage.set("__health", "1");
-        const r = await window.storage.get("__health");
-        setStorageOk(!!(r && r.value === "1"));
-      } catch { setStorageOk(false); }
       const d = await store.get("log:" + tk);
       if (d) {
         const macros = d.macros || { p: d.protein || 0, c: 0, f: 0 };
@@ -754,9 +758,9 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: FONT_BODY, paddingBottom: 78 }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Onest:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');`}</style>
-      {!storageOk && (
-        <div style={{ background: C.emberSoft, borderBottom: `1px solid ${C.ember}`, color: C.text, padding: "10px 16px", fontSize: 12.5, lineHeight: 1.5 }}>
-          <b style={{ color: C.ember }}>Sauvegarde inactive.</b> Tes données ne seront pas conservées tant que le carnet n'est pas <b>publié</b>. Publie-le (bouton en haut de l'artefact) puis ouvre la version publiée — de préférence sur Claude web/desktop — pour garder tes données.
+      {offline && (
+        <div style={{ background: "#FFF3CD", borderBottom: `1px solid #E0A33B`, color: C.text, padding: "8px 16px", fontSize: 12, lineHeight: 1.4, textAlign: "center" }}>
+          📡 <b>Mode hors-ligne</b> · Tes données sont sauvegardées localement et synchronisées dès le retour de la connexion.
         </div>
       )}
       <ZTLHeader onHome={() => setTab("home")} />
