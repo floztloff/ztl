@@ -382,11 +382,11 @@ async function aiMealFromPhoto(base64, mediaType) {
     method: "POST",
     headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
     body: JSON.stringify({
-      model: "llama-3.2-11b-vision-preview",
+      model: "llava-v1.5-7b-4096-preview",
       max_tokens: 300, temperature: 0,
       messages: [{ role: "user", content: [
         { type: "image_url", image_url: { url: "data:" + mediaType + ";base64," + base64 } },
-        { type: "text", text: "Analyse ce plat. Réponds UNIQUEMENT: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
+        { type: "text", text: "Analyse ce plat. Réponds UNIQUEMENT par un objet JSON: {\"plat\":\"nom du plat\",\"protein\":nombre,\"carbs\":nombre,\"fat\":nombre}" }
       ]}]
     }),
   });
