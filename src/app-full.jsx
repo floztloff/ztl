@@ -798,7 +798,7 @@ function ZTLHeader({ onHome }) {
       <div style={{ height: "env(safe-area-inset-top, 0px)" }} />
       <div style={{ position: "relative", background: C.bg2, borderBottom: `1px solid ${C.line}`, padding: "12px 14px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 56 }}>
         <button onClick={onHome} aria-label="Accueil" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", width: 36, height: 36, borderRadius: 11, background: C.cardHi, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 }}>
-          <Home size={18} color={C.ink} strokeWidth={2.1} />
+          <span style={{fontSize:18,lineHeight:1,color:C.ink}}>🏠</span>
         </button>
         <button onClick={onHome} aria-label="Accueil" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
           <span style={{ display: "inline-flex", alignItems: "baseline", fontFamily: '"Helvetica Neue", Arial, system-ui, sans-serif', fontWeight: 900, color: C.ink, fontSize: 23, lineHeight: 0.78, transform: "scaleY(0.9)" }}>
@@ -815,15 +815,15 @@ function ZTLHeader({ onHome }) {
 
 /* Météo du jour */
 function wmoInfo(code) {
-  if (code === 0) return { Icon: Sun, label: "Ensoleillé", color: C.amber };
-  if (code === 1 || code === 2) return { Icon: CloudSun, label: "Éclaircies", color: C.amber };
-  if (code === 3) return { Icon: Cloud, label: "Couvert", color: C.mut };
-  if (code === 45 || code === 48) return { Icon: CloudFog, label: "Brouillard", color: C.mut };
-  if (code >= 51 && code <= 57) return { Icon: CloudDrizzle, label: "Bruine", color: C.teal };
-  if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82)) return { Icon: CloudRain, label: "Pluie", color: C.teal };
-  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return { Icon: CloudSnow, label: "Neige", color: C.teal };
-  if (code >= 95) return { Icon: CloudLightning, label: "Orage", color: C.ember };
-  return { Icon: CloudSun, label: "—", color: C.mut };
+  if (code === 0) return { emoji: "☀️", label: "Ensoleillé", color: C.amber };
+  if (code === 1 || code === 2) return { emoji: "⛅", label: "Éclaircies", color: C.amber };
+  if (code === 3) return { emoji: "☁️", label: "Couvert", color: C.mut };
+  if (code === 45 || code === 48) return { emoji: "🌫️", label: "Brouillard", color: C.mut };
+  if (code >= 51 && code <= 57) return { emoji: "🌦️", label: "Bruine", color: C.teal };
+  if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82)) return { emoji: "🌧️", label: "Pluie", color: C.teal };
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return { emoji: "🌨️", label: "Neige", color: C.teal };
+  if (code >= 95) return { emoji: "⛈️", label: "Orage", color: C.ember };
+  return { emoji: "⛅", label: "—", color: C.mut };
 }
 function Weather() {
   const [w, setW] = useState(null);
@@ -846,10 +846,10 @@ function Weather() {
     return () => { done = true; };
   }, []);
   if (!w || w === "err") return null;
-  const { Icon, label, color } = wmoInfo(w.code);
+  const { emoji: wEmoji, label, color } = wmoInfo(w.code);
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 1, flexShrink: 0, paddingTop: 2 }}>
-      <Icon size={24} color={color} strokeWidth={2} />
+      <span style={{fontSize:24,lineHeight:1,color:color}}>{wEmoji}</span>
       <div style={{ fontSize: 19, fontWeight: 800, fontFamily: FONT_MONO, lineHeight: 1.1, color: C.ink }}>{w.temp}°</div>
       <div style={{ fontSize: 9.5, color: C.mut, fontWeight: 600 }}>{label}</div>
     </div>
@@ -922,7 +922,7 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
       <button onClick={() => setTab("food")} style={{ width: "100%", textAlign: "left", background: C.peach, border: "none", borderRadius: 22, padding: 18, cursor: "pointer", color: C.text }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
           <span style={{ fontSize: 12.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: C.mut }}>Macros du jour</span>
-          <span style={{ fontSize: 12, color: C.teal, display: "flex", alignItems: "center", gap: 2 }}>Nutrition <ChevronRight size={14} /></span>
+          <span style={{ fontSize: 12, color: C.teal, display: "flex", alignItems: "center", gap: 2 }}>Nutrition <span style={{fontSize:14,lineHeight:1}}>▶</span></span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           <div style={{ position: "relative", width: 104, height: 104, flexShrink: 0 }}>
@@ -946,36 +946,36 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
       </button>
 
       <button onClick={() => setTab("food")} style={{ width: "100%", marginTop: 12, background: C.coral, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-        <UtensilsCrossed size={18} /> Ajouter un repas
+        <span style={{fontSize:18,lineHeight:1}}>🍽️</span> Ajouter un repas
       </button>
 
       {sleepActive ? (
         <button onClick={endNight} style={{ width: "100%", marginTop: 10, background: C.greenVivid, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-          <Sunrise size={17} /> Terminer la nuit · couché à {hhmm(sleepActive.startedAt)}
+          <span style={{fontSize:17,lineHeight:1}}>🌅</span> Terminer la nuit · couché à {hhmm(sleepActive.startedAt)}
         </button>
       ) : (
         <button onClick={startNight} disabled={sleepActive === undefined} style={{ width: "100%", marginTop: 10, background: C.greenVivid, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-          <Moon size={16} /> Démarrer la nuit
+          <span style={{fontSize:16,lineHeight:1}}>🌙</span> Démarrer la nuit
         </button>
       )}
 
       <h3 style={sectionH}>Au programme aujourd'hui</h3>
       <div style={{ background: C.mint, border: "none", borderRadius: 16, overflow: "hidden" }}>
         <button onClick={() => { if (planSession) saveDay({ ...day, session: planSession.id }); setTab("train"); }} style={{ width: "100%", background: "none", border: "none", borderBottom: `1px solid rgba(0,0,0,0.06)`, padding: "13px 15px", display: "flex", alignItems: "center", gap: 11, cursor: "pointer", textAlign: "left" }}>
-          <Dumbbell size={17} color={C.ember} style={{ flexShrink: 0 }} />
+          <span style={{fontSize:17,lineHeight:1,color:C.ember, flexShrink: 0 }}>🏋️</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 11, color: C.mut }}>Séance</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: planSession ? C.text : C.mut }}>{planSession ? `${planSession.group} · ${planSession.name}` : "Repos / aucune séance prévue"}</div>
           </div>
           {planSession ? (
             <span style={{ display: "flex", alignItems: "center", gap: 4, background: C.coral, color: "#fff", borderRadius: 99, padding: "7px 12px", fontSize: 12.5, fontWeight: 800, flexShrink: 0 }}>
-              <Play size={13} /> Ouvrir
+              <span style={{fontSize:13,lineHeight:1}}>▶️</span> Ouvrir
             </span>
-          ) : <ChevronRight size={17} color={C.mut} />}
+          ) : <span style={{fontSize:17,lineHeight:1,color:C.mut}}>▶</span>}
         </button>
         <div style={{ padding: "13px 15px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: planMeals.length ? 9 : 0 }}>
-            <ChefHat size={16} color={C.teal} />
+            <span style={{fontSize:16,lineHeight:1,color:C.teal}}>👨‍🍳</span>
             <span style={{ fontSize: 11, color: C.mut, flex: 1 }}>Repas prévus</span>
             {planMeals.length > 0 && <span style={{ fontSize: 11.5, color: C.mut }}><b style={{ color: C.ember }}>{planKcal}</b> kcal</span>}
           </div>
@@ -986,9 +986,9 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
               <button key={i} onClick={() => openRecipe(r.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", display: "flex", alignItems: "center", gap: 8, padding: "7px 0", cursor: "pointer", color: C.text }}>
                 <span style={{ width: 5, height: 5, borderRadius: 99, background: C.teal, flexShrink: 0 }} />
                 <span style={{ fontSize: 13.5, flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.title}</span>
-                {r.link && <a href={safeUrl(r.link)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ display: "flex", color: C.ember }}><ExternalLink size={14} /></a>}
+                {r.link && <a href={safeUrl(r.link)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ display: "flex", color: C.ember }}><span style={{fontSize:14,lineHeight:1}}>🔗</span></a>}
                 <span style={{ fontSize: 11, color: C.mut }}>{Math.round((r.protein + r.carbs) * 4 + r.fat * 9)} kcal</span>
-                <ChevronRight size={15} color={C.mut} style={{ flexShrink: 0 }} />
+                <span style={{fontSize:15,lineHeight:1,color:C.mut, flexShrink: 0 }}>▶</span>
               </button>
             ))
           )}
@@ -999,7 +999,7 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
       </div>
 
       <button onClick={() => setTab("sleep")} style={{ width: "100%", textAlign: "left", background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", color: C.text, marginTop: 18 }}>
-        <Moon size={18} color={C.teal} style={{ flexShrink: 0 }} />
+        <span style={{fontSize:18,lineHeight:1,color:C.teal, flexShrink: 0 }}>🌙</span>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 11, color: C.mut }}>Dernière nuit</div>
           <div style={{ fontSize: 15, fontWeight: 700 }}>
@@ -1013,12 +1013,12 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
             <div style={{ fontSize: 14, fontWeight: 800, color: C.teal }}>{hToHM(avg7)}</div>
           </div>
         )}
-        <ChevronRight size={17} color={C.mut} />
+        <span style={{fontSize:17,lineHeight:1,color:C.mut}}>▶</span>
       </button>
 
       <h3 style={sectionH}>Poids</h3>
       <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16, display: "flex", alignItems: "center", gap: 12 }}>
-        <Scale size={18} color={C.teal} />
+        <span style={{fontSize:18,lineHeight:1,color:C.teal}}>⚖️</span>
         <span style={{ fontSize: 13.5, flex: 1 }}>Poids du jour{lastWeight != null ? <span style={{ color: C.mut }}> · dernier {lastWeight} kg</span> : ""}</span>
         <input value={w} onChange={e => setW(e.target.value.replace(",", "."))} inputMode="decimal" placeholder="kg"
           style={{ width: 64, background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "7px 9px", fontSize: 14, textAlign: "center" }} />
@@ -1027,7 +1027,7 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
       </div>
 
       <button onClick={addRecipe} style={{ width: "100%", marginTop: 22, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-        <ChefHat size={17} /> Ajouter une recette
+        <span style={{fontSize:17,lineHeight:1}}>👨‍🍳</span> Ajouter une recette
       </button>
 
       <button onClick={() => { if (window._ztlLogout) window._ztlLogout(); }}
@@ -1059,7 +1059,7 @@ function ExercisePicker({ exercises, onAdd, onClose }) {
             <div style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: C.coral, fontWeight: 800 }}>Exercices</div>
             <div style={{ fontSize: 19, fontWeight: 800, fontFamily: FONT_DISPLAY }}>Ajouter un exercice</div>
           </div>
-          <button onClick={onClose} style={{ background: C.cardHi, border: `1px solid ${C.line}`, borderRadius: 10, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: C.text, flexShrink: 0 }}><X size={17} /></button>
+          <button onClick={onClose} style={{ background: C.cardHi, border: `1px solid ${C.line}`, borderRadius: 10, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: C.text, flexShrink: 0 }}><span style={{fontSize:17,lineHeight:1}}>✕</span></button>
         </div>
         <div style={{ display: "flex", gap: 7, padding: "2px 18px 10px", overflowX: "auto" }}>{cats.map(chip)}</div>
         <div style={{ padding: "0 18px 10px" }}>
@@ -1072,15 +1072,15 @@ function ExercisePicker({ exercises, onAdd, onClose }) {
             return (
               <div key={e.exKey} style={{ borderRadius: 14, background: op ? C.card : "none", marginBottom: op ? 6 : 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 10px" }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: C.mint, display: "flex", alignItems: "center", justifyContent: "center" }}><Dumbbell size={20} color={C.teal} /></div>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: C.mint, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{fontSize:20,lineHeight:1,color:C.teal}}>🏋️</span></div>
                   <button onClick={() => setOpenEx(op ? null : e.exKey)} style={{ flex: 1, minWidth: 0, background: "none", border: "none", textAlign: "left", cursor: "pointer", padding: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{e.name}</div>
                     <div style={{ fontSize: 11.5, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }}>
                       <span>{e.cat} · {e.scheme} · ~{e.dur} min</span>
-                      <span style={{ color: C.teal, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 2 }}>· détails <ChevronDown size={12} style={{ transform: op ? "rotate(180deg)" : "none", transition: "transform .25s" }} /></span>
+                      <span style={{ color: C.teal, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 2 }}>· détails <span style={{fontSize:12,lineHeight:1, transform: op ? "rotate(180deg)" : "none", transition: "transform .25s" }}>▼</span></span>
                     </div>
                   </button>
-                  <button onClick={() => onAdd(e)} title="Ajouter" style={{ flexShrink: 0, width: 30, height: 30, borderRadius: 99, background: C.coral, color: "#fff", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Plus size={16} /></button>
+                  <button onClick={() => onAdd(e)} title="Ajouter" style={{ flexShrink: 0, width: 30, height: 30, borderRadius: 99, background: C.coral, color: "#fff", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><span style={{fontSize:16,lineHeight:1}}>➕</span></button>
                 </div>
                 {op && (
                   <div style={{ padding: "0 12px 14px 66px" }}>
@@ -1090,7 +1090,7 @@ function ExercisePicker({ exercises, onAdd, onClose }) {
                       <div style={{ marginTop: e.art ? 12 : 0 }}>
                         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.teal, marginBottom: 6 }}>À faire</div>
                         {e.do.map((x, i) => (
-                          <div key={i} style={{ display: "flex", gap: 7, marginBottom: 5 }}><Check size={14} color={C.teal} strokeWidth={3} style={{ flexShrink: 0, marginTop: 2 }} /><span style={{ fontSize: 12.5, lineHeight: 1.45 }}>{x}</span></div>
+                          <div key={i} style={{ display: "flex", gap: 7, marginBottom: 5 }}><span style={{fontSize:14,lineHeight:1,color:C.teal, flexShrink: 0, marginTop: 2 }}>✅</span><span style={{ fontSize: 12.5, lineHeight: 1.45 }}>{x}</span></div>
                         ))}
                       </div>
                     )}
@@ -1098,7 +1098,7 @@ function ExercisePicker({ exercises, onAdd, onClose }) {
                       <div style={{ marginTop: 10 }}>
                         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.coral, marginBottom: 6 }}>À éviter</div>
                         {e.avoid.map((x, i) => (
-                          <div key={i} style={{ display: "flex", gap: 7, marginBottom: 5 }}><X size={14} color={C.coral} strokeWidth={3} style={{ flexShrink: 0, marginTop: 2 }} /><span style={{ fontSize: 12.5, lineHeight: 1.45, color: C.mut }}>{x}</span></div>
+                          <div key={i} style={{ display: "flex", gap: 7, marginBottom: 5 }}><span style={{fontSize:14,lineHeight:1,color:C.coral, flexShrink: 0, marginTop: 2 }}>✕</span><span style={{ fontSize: 12.5, lineHeight: 1.45, color: C.mut }}>{x}</span></div>
                         ))}
                       </div>
                     )}
@@ -1152,7 +1152,7 @@ function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSess
         </div>
       ))}
       <button onClick={createSession} style={{ background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 99, padding: "8px 14px", fontSize: 12.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
-        <Plus size={15} /> Nouvelle séance
+        <span style={{fontSize:15,lineHeight:1}}>➕</span> Nouvelle séance
       </button>
 
       {sess && (
@@ -1164,11 +1164,11 @@ function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSess
               <div style={{ fontSize: 16, fontWeight: 800, fontFamily: FONT_DISPLAY }}>{sess.name}</div>
             )}
             <div style={{ fontSize: 12, color: C.mut, display: "flex", alignItems: "center", gap: 5, marginTop: 3 }}>
-              <Clock size={13} /> ~{sessionDur(sess)} min · {sess.ex.length} exo{sess.ex.length > 1 ? "s" : ""}
+              <span style={{fontSize:13,lineHeight:1}}>🕐</span> ~{sessionDur(sess)} min · {sess.ex.length} exo{sess.ex.length > 1 ? "s" : ""}
             </div>
           </div>
           {edit && sess.custom && (
-            <button onClick={deleteSession} title="Supprimer la séance" style={{ background: "none", border: `1px solid ${C.line}`, color: C.coral, borderRadius: 10, width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}><Trash2 size={16} /></button>
+            <button onClick={deleteSession} title="Supprimer la séance" style={{ background: "none", border: `1px solid ${C.line}`, color: C.coral, borderRadius: 10, width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}><span style={{fontSize:16,lineHeight:1}}>🗑️</span></button>
           )}
           <button onClick={() => setEdit(v => !v)} style={{ background: edit ? C.coral : C.cardHi, border: `1px solid ${edit ? C.coral : C.line}`, color: edit ? "#fff" : C.text, borderRadius: 99, padding: "9px 15px", fontSize: 13, fontWeight: 800, cursor: "pointer", flexShrink: 0 }}>{edit ? "Terminer" : "Éditer"}</button>
         </div>
@@ -1191,17 +1191,17 @@ function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSess
             <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
               <button onClick={() => toggleEx(e.id)}
                 style={{ width: 26, height: 26, marginTop: 1, borderRadius: 8, border: `2px solid ${st.done ? C.good : C.line}`, background: st.done ? C.good : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-                {st.done && <Check size={15} color={C.bg} strokeWidth={3} />}
+                {st.done && <span style={{fontSize:15,lineHeight:1,color:C.bg}}>✅</span>}
               </button>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
                   <span style={{ fontSize: 15, fontWeight: 700 }}>{e.name}</span>
                   <span style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
                     <span style={{ fontSize: 13, color: C.coral, fontWeight: 700, whiteSpace: "nowrap" }}>{e.scheme}</span>
-                    {edit && <button onClick={() => removeExercise(e.id)} title="Retirer" style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 0, display: "flex" }}><X size={16} /></button>}
+                    {edit && <button onClick={() => removeExercise(e.id)} title="Retirer" style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 0, display: "flex" }}><span style={{fontSize:16,lineHeight:1}}>✕</span></button>}
                   </span>
                 </div>
-                <div style={{ fontSize: 11, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}><Clock size={11} /> ~{e.dur != null ? e.dur : exDur(e)} min</div>
+                <div style={{ fontSize: 11, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}><span style={{fontSize:11,lineHeight:1}}>🕐</span> ~{e.dur != null ? e.dur : exDur(e)} min</div>
                 <div style={{ margin: "5px 0 8px" }}><TagBadge tag={e.tag} /></div>
                 <p style={{ fontSize: 12.5, color: C.mut, margin: "0 0 10px", lineHeight: 1.5 }}>{e.cue}</p>
                 {e.do && (
@@ -1209,7 +1209,7 @@ function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSess
                     <button onClick={() => setTech(t => ({ ...t, [e.id]: !t[e.id] }))}
                       style={{ background: "none", border: `1px solid ${C.line}`, color: tech[e.id] ? C.ember : C.mut, borderRadius: 9, padding: "6px 11px", fontSize: 12, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
                       {tech[e.id] ? "Masquer la technique" : "Voir la technique"}
-                      <ChevronDown size={14} style={{ transform: tech[e.id] ? "rotate(180deg)" : "none", transition: "transform .25s" }} />
+                      <span style={{fontSize:14,lineHeight:1, transform: tech[e.id] ? "rotate(180deg)" : "none", transition: "transform .25s" }}>▼</span>
                     </button>
                     {tech[e.id] && (
                       <div style={{ marginBottom: 12 }}>
@@ -1218,7 +1218,7 @@ function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSess
                           <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.teal, marginBottom: 6 }}>À faire</div>
                           {e.do.map((x, i) => (
                             <div key={i} style={{ display: "flex", gap: 7, marginBottom: 5 }}>
-                              <Check size={14} color={C.teal} strokeWidth={3} style={{ flexShrink: 0, marginTop: 2 }} />
+                              <span style={{fontSize:14,lineHeight:1,color:C.teal, flexShrink: 0, marginTop: 2 }}>✅</span>
                               <span style={{ fontSize: 12.5, lineHeight: 1.45 }}>{x}</span>
                             </div>
                           ))}
@@ -1227,7 +1227,7 @@ function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSess
                           <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: C.ember, marginBottom: 6 }}>À éviter</div>
                           {e.avoid.map((x, i) => (
                             <div key={i} style={{ display: "flex", gap: 7, marginBottom: 5 }}>
-                              <X size={14} color={C.ember} strokeWidth={3} style={{ flexShrink: 0, marginTop: 2 }} />
+                              <span style={{fontSize:14,lineHeight:1,color:C.ember, flexShrink: 0, marginTop: 2 }}>✕</span>
                               <span style={{ fontSize: 12.5, lineHeight: 1.45, color: C.mut }}>{x}</span>
                             </div>
                           ))}
@@ -1248,7 +1248,7 @@ function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSess
       })}
       {edit && (
         <button onClick={() => setPicker(true)} style={{ width: "100%", background: C.tealSoft, border: `1px solid ${C.teal}`, color: C.teal, borderRadius: 12, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, marginBottom: 8 }}>
-          <Plus size={17} /> Ajouter un exercice
+          <span style={{fontSize:17,lineHeight:1}}>➕</span> Ajouter un exercice
         </button>
       )}
       {sess && sess.ex.length === 0 && !edit && (
@@ -1465,13 +1465,13 @@ function FoodTab({ day, addMacros, setMacros, addMacrosForDate, openRecipeId, re
                 <div style={{ fontSize: 11.5, color: C.mut }}><b style={{ color: C.ember }}>{kcalOf(r)}</b> kcal · P{r.protein} G{r.carbs} L{r.fat}</div>
               </div>
               <button onClick={() => eatRecipe(r)} style={{ background: C.tealSoft, color: C.teal, border: `1px solid ${C.teal}`, borderRadius: 10, padding: "8px 12px", fontSize: 13, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
-                <Plus size={14} /> Ajouter
+                <span style={{fontSize:14,lineHeight:1}}>➕</span> Ajouter
               </button>
             </div>
           ))}
           {plannedMeals.length > 1 && (
             <button onClick={addAllPlanned} style={{ marginTop: 12, width: "100%", background: C.ember, color: "#1b1205", border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-              <Plus size={16} /> Tout ajouter à ma journée
+              <span style={{fontSize:16,lineHeight:1}}>➕</span> Tout ajouter à ma journée
             </button>
           )}
         </div>
@@ -1484,7 +1484,7 @@ function FoodTab({ day, addMacros, setMacros, addMacrosForDate, openRecipeId, re
           <>
             <button onClick={() => fileRef.current && fileRef.current.click()}
               style={{ width: "100%", background: C.coral, color: "#fff", border: "none", borderRadius: 999, padding: "15px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-              <Camera size={18} /> Photo du plat
+              <span style={{fontSize:18,lineHeight:1}}>📷</span> Photo du plat
             </button>
             <p style={{ fontSize: 11.5, color: C.mut, textAlign: "center", marginTop: 8, lineHeight: 1.45 }}>
               L'IA identifie le plat et estime ses macros. Tu pourras ajuster avant d'ajouter.
@@ -1534,7 +1534,7 @@ function FoodTab({ day, addMacros, setMacros, addMacrosForDate, openRecipeId, re
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
         {QUICK_FOODS.map(f => (
           <button key={f.n} onClick={() => addMacros({ p: f.p, c: f.c, f: f.f })} style={chip}>
-            <Plus size={13} color={C.ember} /> {f.n}
+            <span style={{fontSize:13,lineHeight:1,color:C.ember}}>➕</span> {f.n}
           </button>
         ))}
       </div>
@@ -1555,7 +1555,7 @@ function FoodTab({ day, addMacros, setMacros, addMacrosForDate, openRecipeId, re
 
       <button onClick={() => setMacros({ p: 0, c: 0, f: 0 })}
         style={{ marginTop: 14, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 10, padding: "11px", fontSize: 13, fontWeight: 700, cursor: "pointer", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-        <Minus size={14} /> Remettre la journée à zéro
+        <span style={{fontSize:14,lineHeight:1}}>➖</span> Remettre la journée à zéro
       </button>
 
       <h3 style={sectionH}>Historique 7 jours</h3>
@@ -1615,7 +1615,7 @@ function FoodTab({ day, addMacros, setMacros, addMacrosForDate, openRecipeId, re
       {!pastOpen ? (
         <button onClick={() => { setPastOpen(true); setPastResult(null); setPastErr(""); }}
           style={{ width: "100%", background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-          <Plus size={16} /> Ajouter un repas passé
+          <span style={{fontSize:16,lineHeight:1}}>➕</span> Ajouter un repas passé
         </button>
       ) : (
         <div style={card}>
@@ -1628,7 +1628,7 @@ function FoodTab({ day, addMacros, setMacros, addMacrosForDate, openRecipeId, re
           {!pastResult ? (
             <button onClick={calcPast} disabled={pastBusy}
               style={{ width: "100%", marginTop: 12, background: pastBusy ? C.tealSoft : C.teal, color: pastBusy ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: pastBusy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-              <Sparkles size={16} /> {pastBusy ? "Calcul des macros..." : "Calculer les macros avec l'IA"}
+              <span style={{fontSize:16,lineHeight:1}}>✨</span> {pastBusy ? "Calcul des macros..." : "Calculer les macros avec l'IA"}
             </button>
           ) : (
             <>
@@ -1819,7 +1819,7 @@ function RecipePicker({ recipes, dayLabel, added, onAdd, onClose }) {
             <div style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: C.coral, fontWeight: 800 }}>{dayLabel}</div>
             <div style={{ fontSize: 19, fontWeight: 800, fontFamily: FONT_DISPLAY }}>Ajouter une recette</div>
           </div>
-          <button onClick={onClose} style={{ background: C.cardHi, border: `1px solid ${C.line}`, borderRadius: 10, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: C.text, flexShrink: 0 }}><X size={17} /></button>
+          <button onClick={onClose} style={{ background: C.cardHi, border: `1px solid ${C.line}`, borderRadius: 10, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: C.text, flexShrink: 0 }}><span style={{fontSize:17,lineHeight:1}}>✕</span></button>
         </div>
         <div style={{ display: "flex", gap: 7, padding: "2px 18px 10px", overflowX: "auto" }}>{["Tout", ...styleOpts].map(chip)}</div>
         <div style={{ padding: "0 18px 10px" }}>
@@ -1836,7 +1836,7 @@ function RecipePicker({ recipes, dayLabel, added, onAdd, onClose }) {
                   <div style={{ fontSize: 14, fontWeight: 700, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.title}</div>
                   <div style={{ fontSize: 11.5, color: C.mut, marginTop: 2 }}><b style={{ color: C.coral, fontFamily: FONT_MONO }}>{kcalOf(r)}</b> kcal · P{r.protein} G{r.carbs} L{r.fat}</div>
                 </div>
-                <span style={{ flexShrink: 0, width: 30, height: 30, borderRadius: 99, background: isAdded ? C.mint : C.coral, color: isAdded ? C.teal : "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>{isAdded ? <Check size={16} /> : <Plus size={16} />}</span>
+                <span style={{ flexShrink: 0, width: 30, height: 30, borderRadius: 99, background: isAdded ? C.mint : C.coral, color: isAdded ? C.teal : "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>{isAdded ? <span style={{fontSize:16,lineHeight:1}}>✅</span> : <span style={{fontSize:16,lineHeight:1}}>➕</span>}</span>
               </button>
             );
           })}
@@ -1945,7 +1945,7 @@ function RecipesTab({ addMacros, openId, newSignal }) {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}><div style={{ ...lbl, margin: 0 }}>Macros (par personne)</div></div>
             <div style={{ display: "flex", gap: 8 }}>{pill("protéines", shown.protein + " g", C.ember)}{pill("glucides", shown.carbs + " g", C.teal)}{pill("lipides", shown.fat + " g", C.amber)}</div>
             <div style={{ marginTop: 12, textAlign: "center", fontSize: 13, color: C.mut }}>≈ <span style={{ fontSize: 20, fontWeight: 800, color: C.ember }}>{kc}</span> kcal / personne</div>
-            <button onClick={runAI} disabled={aiLoading} style={{ width: "100%", marginTop: 12, background: aiLoading ? C.tealSoft : C.teal, color: aiLoading ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}><Sparkles size={16} /> {aiLoading ? "Calcul en cours…" : "Calculer avec l'IA"}</button>
+            <button onClick={runAI} disabled={aiLoading} style={{ width: "100%", marginTop: 12, background: aiLoading ? C.tealSoft : C.teal, color: aiLoading ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}><span style={{fontSize:16,lineHeight:1}}>✨</span> {aiLoading ? "Calcul en cours…" : "Calculer avec l'IA"}</button>
             <button onClick={() => setEditing({...editing, manual: !editing.manual, protein: String(shown.protein), carbs: String(shown.carbs), fat: String(shown.fat)})} style={{ width: "100%", marginTop: 8, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 10, padding: "9px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>Corriger à la main</button>
           </div>
           <div><div style={lbl}>Préparation <span style={{ textTransform: "none", fontWeight: 400 }}>· une étape par ligne</span></div><textarea value={editing.stepsText} onChange={e => setEditing({...editing, stepsText: e.target.value})} rows={5} placeholder={"Saisir le poulet 8 min\nAjouter la sauce\n..."} style={{ ...fld, resize: "vertical", lineHeight: 1.5 }} /></div>
@@ -1965,7 +1965,7 @@ function RecipesTab({ addMacros, openId, newSignal }) {
       <p style={{ color: C.mut, margin: "0 0 14px", fontSize: 13 }}>Modifie, ajoute, supprime — les calories se recalculent toutes seules.</p>
 
       <button onClick={startNew} style={{ width: "100%", background: C.emberSoft, border: `1px solid ${C.ember}`, color: C.ember, borderRadius: 12, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, marginBottom: 16 }}>
-        <Plus size={17} /> Nouvelle recette
+        <span style={{fontSize:17,lineHeight:1}}>➕</span> Nouvelle recette
       </button>
 
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
@@ -1994,7 +1994,7 @@ function RecipesTab({ addMacros, openId, newSignal }) {
                 </div>
                 <div style={{ fontSize: 15.5, fontWeight: 700 }}>{r.title}</div>
               </div>
-              <ChevronDown size={18} color={C.mut} style={{ transform: on ? "rotate(180deg)" : "none", transition: "transform .25s", flexShrink: 0 }} />
+              <span style={{fontSize:18,lineHeight:1,color:C.mut, transform: on ? "rotate(180deg)" : "none", transition: "transform .25s", flexShrink: 0 }}>▼</span>
             </button>
             {on && (
               <div style={{ padding: "0 16px 16px" }}>
@@ -2014,7 +2014,7 @@ function RecipesTab({ addMacros, openId, newSignal }) {
                 {r.link && (
                   <a href={safeUrl(r.link)} target="_blank" rel="noopener noreferrer"
                     style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, textDecoration: "none", marginBottom: 14, background: C.emberSoft, border: `1px solid ${C.ember}`, color: C.ember, borderRadius: 11, padding: "11px", fontSize: 13.5, fontWeight: 800 }}>
-                    <ExternalLink size={16} /> Ouvrir la recette
+                    <span style={{fontSize:16,lineHeight:1}}>🔗</span> Ouvrir la recette
                   </a>
                 )}
                 {r.ing?.length > 0 && (<>
@@ -2026,14 +2026,14 @@ function RecipesTab({ addMacros, openId, newSignal }) {
                   <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7 }}>{r.steps.map((x, i) => <li key={i} style={{ marginBottom: 4 }}>{x}</li>)}</ol>
                 </>)}
                 <button onClick={() => eat(r)} style={{ width: "100%", marginTop: 16, background: C.tealSoft, border: `1px solid ${C.teal}`, color: C.teal, borderRadius: 11, padding: "11px", fontSize: 13.5, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                  <Plus size={15} /> J'ai mangé ça — ajouter au compteur
+                  <span style={{fontSize:15,lineHeight:1}}>➕</span> J'ai mangé ça — ajouter au compteur
                 </button>
                 <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
                   <button onClick={() => startEdit(r)} style={{ flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.text, borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                    <Pencil size={14} /> Modifier
+                    <span style={{fontSize:14,lineHeight:1}}>✏️</span> Modifier
                   </button>
                   <button onClick={() => del(r.id)} style={{ flex: 1, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                    <Trash2 size={14} /> Supprimer
+                    <span style={{fontSize:14,lineHeight:1}}>🗑️</span> Supprimer
                   </button>
                 </div>
               </div>
@@ -2095,12 +2095,12 @@ function ProgramTab() {
       <h1 style={h1}>Ta semaine</h1>
       <p style={{ color: C.mut, margin: "0 0 14px", fontSize: 13.5 }}>Planifie séances et repas. Navigue sur autant de semaines que tu veux.</p>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.card, border: `1px solid ${C.line}`, borderRadius: 14, padding: "8px 10px", marginBottom: 14 }}>
-        <button onClick={() => setOffset(offset - 1)} style={navBtn}><ChevronLeft size={18} /></button>
+        <button onClick={() => setOffset(offset - 1)} style={navBtn}><span style={{fontSize:18,lineHeight:1}}>◀</span></button>
         <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: 14, fontWeight: 800 }}>{offset === 0 ? "Cette semaine" : offset === 1 ? "Semaine prochaine" : offset === -1 ? "Semaine dernière" : rangeLabel}</div>
           <div style={{ fontSize: 11, color: C.mut }}>{rangeLabel}</div>
         </div>
-        <button onClick={() => setOffset(offset + 1)} style={navBtn}><ChevronRight size={18} /></button>
+        <button onClick={() => setOffset(offset + 1)} style={navBtn}><span style={{fontSize:18,lineHeight:1}}>▶</span></button>
       </div>
       {days.map(dk => {
         var pl = plans[dk] || { meals: [], session: null };
@@ -2111,7 +2111,7 @@ function ProgramTab() {
               <div style={{ fontSize: 14, fontWeight: 800, textTransform: "capitalize", flex: 1 }}>{new Date(dk + "T00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}{isToday ? " · aujourd'hui" : ""}</div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <Dumbbell size={15} color={C.ember} />
+              <span style={{fontSize:15,lineHeight:1,color:C.ember}}>🏋️</span>
               <select value={pl.session || ""} onChange={e => setSession(dk, e.target.value)} style={sel}>
                 <option value="">Repos / aucune séance</option>
                 {[...new Set(progSessions.map(s => s.group))].map(g => (
@@ -2121,7 +2121,7 @@ function ProgramTab() {
                 ))}
               </select>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}><ChefHat size={15} color={C.teal} /><span style={{ fontSize: 12.5, fontWeight: 700, color: C.mut }}>Repas</span></div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}><span style={{fontSize:15,lineHeight:1,color:C.teal}}>👨‍🍳</span><span style={{ fontSize: 12.5, fontWeight: 700, color: C.mut }}>Repas</span></div>
             {(pl.meals || []).length === 0 && <div style={{ fontSize: 12, color: C.mut, marginBottom: 8 }}>Aucun repas prévu.</div>}
             {(pl.meals || []).map(rid => {
               var r = recById(rid);
@@ -2129,11 +2129,11 @@ function ProgramTab() {
                 <div key={rid} style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, marginBottom: 6 }}>
                   <RecipeThumb recipe={r} size={34} radius={9} />
                   <span style={{ fontSize: 13, flex: 1 }}>{r ? r.title : "Recette supprimée"}</span>
-                  <button onClick={() => removeMeal(dk, rid)} style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 2 }}><X size={15} /></button>
+                  <button onClick={() => removeMeal(dk, rid)} style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 2 }}><span style={{fontSize:15,lineHeight:1}}>✕</span></button>
                 </div>
               );
             })}
-            <button onClick={() => setPickFor(dk)} style={{ marginTop: 4, background: "none", border: `1px dashed ${C.line}`, color: C.coral, borderRadius: 10, padding: "9px", fontSize: 12.5, fontWeight: 700, cursor: "pointer", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}><Plus size={14} /> Ajouter une recette</button>
+            <button onClick={() => setPickFor(dk)} style={{ marginTop: 4, background: "none", border: `1px dashed ${C.line}`, color: C.coral, borderRadius: 10, padding: "9px", fontSize: 12.5, fontWeight: 700, cursor: "pointer", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}><span style={{fontSize:14,lineHeight:1}}>➕</span> Ajouter une recette</button>
             {(pl.meals || []).length > 0 && (() => {
               var t = dayTotals(pl.meals);
               return (<div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}` }}>
@@ -2200,7 +2200,7 @@ function CoursesTab() {
       <Eyebrow color={C.ember}>Courses</Eyebrow>
       <h1 style={h1}>Ta liste</h1>
       <p style={{ color: C.mut, margin: "0 0 14px", fontSize: 13.5 }}>Générée depuis toutes les recettes planifiées à venir, avec les quantités additionnées.</p>
-      <button onClick={() => generate()} disabled={busy} style={{ width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 }}><Sparkles size={16} /> {busy ? "Calcul de la liste…" : "Actualiser depuis le programme"}</button>
+      <button onClick={() => generate()} disabled={busy} style={{ width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 }}><span style={{fontSize:16,lineHeight:1}}>✨</span> {busy ? "Calcul de la liste…" : "Actualiser depuis le programme"}</button>
       {err && <div style={{ fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 }}>{err}</div>}
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
         <input value={newItem} onChange={e => setNewItem(e.target.value)} onKeyDown={e => { if (e.key === "Enter") addManual(); }} placeholder="Ajouter un article…" style={{ flex: 1, boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 10, padding: "11px 12px", fontSize: 14 }} />
@@ -2218,18 +2218,18 @@ function CoursesTab() {
             {sorted.map((it, i) => (
               <div key={it.id} style={{ display: "flex", alignItems: "center", gap: 11, padding: "11px 0", borderBottom: i < items.length - 1 ? `1px solid ${C.line}` : "none" }}>
                 <button onClick={() => toggle(it.id)} style={{ width: 22, height: 22, borderRadius: 6, border: `2px solid ${it.checked ? C.good : C.line}`, background: it.checked ? C.good : "transparent", cursor: "pointer", flexShrink: 0 }}>
-                  {it.checked && <Check size={13} color={C.bg} strokeWidth={3} />}
+                  {it.checked && <span style={{fontSize:13,lineHeight:1,color:C.bg}}>✅</span>}
                 </button>
                 {editId === it.id ? (
                   <>
                     <input autoFocus value={editText} onChange={e => setEditText(e.target.value)} onKeyDown={e => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") { setEditId(null); setEditText(""); } }} style={{ flex: 1, boxSizing: "border-box", background: C.bg, border: `1px solid ${C.teal}`, color: C.text, borderRadius: 8, padding: "7px 9px", fontSize: 14 }} />
-                    <button onClick={saveEdit} style={{ background: C.coral, color: "#fff", border: "none", borderRadius: 8, padding: "7px 10px", cursor: "pointer" }}><Check size={15} strokeWidth={3} /></button>
+                    <button onClick={saveEdit} style={{ background: C.coral, color: "#fff", border: "none", borderRadius: 8, padding: "7px 10px", cursor: "pointer" }}><span style={{fontSize:15,lineHeight:1}}>✅</span></button>
                   </>
                 ) : (
                   <>
                     <span style={{ flex: 1, fontSize: 14, color: it.checked ? C.mut : C.text, textDecoration: it.checked ? "line-through" : "none" }}>{it.text}</span>
-                    <button onClick={() => startEdit(it)} style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 4 }}><Pencil size={15} /></button>
-                    <button onClick={() => del(it.id)} style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 4 }}><Trash2 size={15} /></button>
+                    <button onClick={() => startEdit(it)} style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 4 }}><span style={{fontSize:15,lineHeight:1}}>✏️</span></button>
+                    <button onClick={() => del(it.id)} style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 4 }}><span style={{fontSize:15,lineHeight:1}}>🗑️</span></button>
                   </>
                 )}
               </div>
@@ -2341,7 +2341,7 @@ function SleepTab({ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepFo
         active ? (
           <div style={cardBox}>
             <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 6 }}>
-              <Moon size={20} color={C.teal} />
+              <span style={{fontSize:20,lineHeight:1,color:C.teal}}>🌙</span>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 700 }}>Nuit en cours</div>
                 <div style={{ fontSize: 12, color: C.mut }}>démarrée à {hhmm(new Date(active.startedAt))}</div>
@@ -2351,18 +2351,18 @@ function SleepTab({ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepFo
               <span style={{ fontSize: 36, fontWeight: 800, color: C.teal }}>{eh} h {String(em).padStart(2, "0")}</span>
               <div style={{ fontSize: 12, color: C.mut }}>de repos écoulées</div>
             </div>
-            <button onClick={endNight} style={btnTeal}><Sunrise size={18} /> Je me réveille</button>
+            <button onClick={endNight} style={btnTeal}><span style={{fontSize:18,lineHeight:1}}>🌅</span> Je me réveille</button>
           </div>
         ) : (
           <>
-            <button onClick={startNight} style={{ ...btnTeal, padding: "18px", fontSize: 16 }}><Moon size={19} /> Démarrer la nuit</button>
+            <button onClick={startNight} style={{ ...btnTeal, padding: "18px", fontSize: 16 }}><span style={{fontSize:19,lineHeight:1}}>🌙</span> Démarrer la nuit</button>
             <p style={{ fontSize: 12.5, color: C.mut, textAlign: "center", margin: "11px 0 0", lineHeight: 1.5 }}>
               Appuie quand tu te couches. Au réveil, tu termines et l'heure est prise toute seule.
             </p>
             {justEnded && day.sleep && (
               <div style={{ ...cardBox, marginTop: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <Check size={16} color={C.good} strokeWidth={3} />
+                  <span style={{fontSize:16,lineHeight:1,color:C.good}}>✅</span>
                   <span style={{ fontSize: 14, fontWeight: 700 }}>Nuit enregistrée</span>
                 </div>
                 <div style={{ fontSize: 12.5, color: C.mut, margin: "0 0 14px" }}>{day.sleep.bed} → {day.sleep.wake} · {hToHM(day.sleep.hours)} de sommeil</div>
@@ -2395,7 +2395,7 @@ function SleepTab({ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepFo
           <button onClick={saveManual} style={{ ...btnTeal, marginTop: 14 }}>Enregistrer la nuit</button>
           {justEnded && (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, marginTop: 12, color: C.good, fontSize: 13, fontWeight: 700 }}>
-              <Check size={15} strokeWidth={3} /> Nuit du {fmtShort(manualDate)} enregistrée
+              <span style={{fontSize:15,lineHeight:1}}>✅</span> Nuit du {fmtShort(manualDate)} enregistrée
             </div>
           )}
         </div>
@@ -2462,7 +2462,7 @@ function SleepTab({ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepFo
                 {d.quality ? <span style={{ fontSize: 11.5, color: C.mut }}>· {d.quality}/5</span> : null}
                 <button onClick={() => onDeleteSleep(d.date)} aria-label="Supprimer la nuit"
                   style={{ marginLeft: "auto", background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 6, display: "flex" }}>
-                  <Trash2 size={16} />
+                  <span style={{fontSize:16,lineHeight:1}}>🗑️</span>
                 </button>
               </div>
             ))}
