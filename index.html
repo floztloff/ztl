@@ -43,7 +43,6 @@
 <body>
   <div id="root"><div id="loader"><div class="spinner"></div><div>ZTL se prépare…</div></div></div>
 
-  <!-- Gestionnaire d'erreurs global -->
   <script>
     window.onerror = function(msg, url, line, col, err) {
       var stack = (err && err.stack) ? '\n\n' + err.stack : '';
@@ -55,32 +54,20 @@
     };
   </script>
 
-  <!-- Dépendances (ordre strict) -->
-  <!-- 1. React -->
   <script src="libs/react.production.min.js"></script>
   <script src="libs/react-dom.production.min.js"></script>
-
-  <!-- 2. Supabase SDK (local, chargement instantané) -->
   <script src="libs/supabase.min.js"></script>
-
-  <!-- 3. Couche Supabase (auth + DB) -->
   <script src="supabase.js"></script>
-
-  <!-- 4. Couche de stockage (localStorage + cloud sync) -->
   <script src="storage.js"></script>
-
-  <!-- 5. UI Auth -->
   <script src="auth-ui.js"></script>
 
-  <!-- 6. Polyfill require() pour le bundle esbuild -->
   <script>
     (function() {
       var r = window.React;
       var rd = window.ReactDOM;
       if (!r || !rd) {
         document.getElementById('root').innerHTML =
-          '<div style="color:#F2543D;padding:30px;font-family:monospace;font-size:13px;text-align:center">' +
-          'Erreur : React ou ReactDOM introuvable.</div>';
+          '<div style="color:#F2543D;padding:30px;font-family:monospace;font-size:13px;text-align:center">Erreur : React ou ReactDOM introuvable.</div>';
         return;
       }
       window.require = function(name) {
@@ -91,11 +78,7 @@
     })();
   </script>
 
-  <!-- 7. App ZTL compilée -->
-  <script src="ds-key-init.js"></script>
   <script src="app.js"></script>
-
-  <!-- 8. Wrapper auth → app -->
   <script src="auth-wrapper.js"></script>
 </body>
 </html>
