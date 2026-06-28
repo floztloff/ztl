@@ -1930,15 +1930,18 @@ function RecipesTab({ addMacros, openId, newSignal }) {
         <h1 style={h1}>{editing.title || "Ta recette"}</h1>
         <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 8 }}>
           <div><div style={lbl}>Titre</div><input value={editing.title} onChange={e => setEditing({...editing, title: e.target.value})} placeholder="Ex. Wok de poulet" style={fld} /></div>
-          <div>
-            <div style={lbl}>Style</div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {styleOpts.map(s => (
-                <button key={s} onClick={() => setEditing({...editing, style: s})}
-                  style={{ padding: "7px 13px", borderRadius: 99, border: `1px solid ${editing.style === s ? C.ember : C.line}`, background: editing.style === s ? C.emberSoft : C.card, color: editing.style === s ? C.ember : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>{s}</button>
-              ))}
-            </div>
+          <div><div style={lbl}>Style</div><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{styleOpts.map(s => (<button key={s} onClick={() => setEditing({...editing, style: s})} style={{ padding: "7px 13px", borderRadius: 99, border: `1px solid ${editing.style === s ? C.ember : C.line}`, background: editing.style === s ? C.emberSoft : C.card, color: editing.style === s ? C.ember : C.text, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>{s}</button>))}</div></div>
+          <div><div style={lbl}>Lien <span style={{ textTransform: "none", fontWeight: 400 }}>· optionnel</span></div><input value={editing.link || ""} onChange={e => setEditing({...editing, link: e.target.value})} placeholder="https://…" style={fld} /></div>
+          <div><div style={lbl}>Ingrédients <span style={{ textTransform: "none", fontWeight: 400 }}>· un par ligne, pour une personne</span></div><textarea value={editing.ingText} onChange={e => setEditing({...editing, ingText: e.target.value, aiVals: null})} rows={6} placeholder={"350 g de steak haché\n1 pain à burger\n1 tranche de cheddar"} style={{ ...fld, resize: "vertical", lineHeight: 1.6 }} /></div>
+          <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}><div style={{ ...lbl, margin: 0 }}>Macros (par personne)</div></div>
+            <div style={{ display: "flex", gap: 8 }}>{pill("protéines", shown.protein + " g", C.ember)}{pill("glucides", shown.carbs + " g", C.teal)}{pill("lipides", shown.fat + " g", C.amber)}</div>
+            <div style={{ marginTop: 12, textAlign: "center", fontSize: 13, color: C.mut }}>≈ <span style={{ fontSize: 20, fontWeight: 800, color: C.ember }}>{kc}</span> kcal / personne</div>
+            <button onClick={runAI} disabled={aiLoading} style={{ width: "100%", marginTop: 12, background: aiLoading ? C.tealSoft : C.teal, color: aiLoading ? C.teal : C.bg, border: "none", borderRadius: 11, padding: "12px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}><Sparkles size={16} /> {aiLoading ? "Calcul en cours…" : "Calculer avec l'IA"}</button>
+            <button onClick={() => setEditing({...editing, manual: !editing.manual, protein: String(shown.protein), carbs: String(shown.carbs), fat: String(shown.fat)})} style={{ width: "100%", marginTop: 8, background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 10, padding: "9px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>Corriger à la main</button>
           </div>
+          <div><div style={lbl}>Préparation <span style={{ textTransform: "none", fontWeight: 400 }}>· une étape par ligne</span></div><textarea value={editing.stepsText} onChange={e => setEditing({...editing, stepsText: e.target.value})} rows={5} placeholder={"Saisir le poulet 8 min\nAjouter la sauce\n..."} style={{ ...fld, resize: "vertical", lineHeight: 1.5 }} /></div>
+          <div style={{ display: "flex", gap: 10 }}><button onClick={() => setEditing(null)} style={{ flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.text, borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Annuler</button><button onClick={saveEdit} disabled={aiLoading} style={{ flex: 2, background: C.ember, border: "none", color: "#1b1205", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: "pointer", opacity: aiLoading ? 0.7 : 1 }}>Enregistrer</button></div>
         </div>
         <div style={{ height: 16 }} />
       </>
