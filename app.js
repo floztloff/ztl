@@ -605,35 +605,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     return { protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0), satfat: Math.round(+j.satfat || 0), sugar: Math.round(+j.sugar || 0) };
   }
   async function aiMealFromPhoto(base64, mediaType) {
-    const apiKey = await getDeepSeekKey();
-    if (!apiKey) throw new Error("Cl\xE9 API requise. Ouvre \u2699\uFE0F Cl\xE9 API DeepSeek sur l'accueil.");
-    const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-      method: "POST",
-      headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        max_tokens: 512,
-        temperature: 0,
-        messages: [{
-          role: "user",
-          content: [
-            { type: "image_url", image_url: { url: "data:" + mediaType + ";base64," + base64 } },
-            { type: "text", text: 'Analyse la photo de ce plat. Identifie le plat et estime ses valeurs nutritionnelles. R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne : {"plat":"<nom>","protein":<entier g>,"carbs":<entier g>,"fat":<entier g>}' }
-          ]
-        }]
-      })
-    });
-    if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      if (res.status === 401) throw new Error("Cl\xE9 API DeepSeek invalide");
-      throw new Error("API DeepSeek erreur " + res.status + ": " + t.slice(0, 150));
-    }
-    const data = await res.json();
-    const text = data.choices?.[0]?.message?.content || "";
-    const mt = text.match(/\{[^}]*\}/);
-    if (!mt) throw new Error("Analyse photo: r\xE9ponse illisible");
-    const j = JSON.parse(mt[0]);
-    return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
+    throw new Error("Analyse photo non disponible. Utilise le champ texte pour d\xE9crire ton plat.");
   }
   var SHOP_UNITS = {
     g: { cls: "mass", f: 1 },
