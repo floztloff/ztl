@@ -605,41 +605,15 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
     return { protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0), satfat: Math.round(+j.satfat || 0), sugar: Math.round(+j.sugar || 0) };
   }
   async function aiMealFromPhoto(base64, mediaType) {
-    let apiKey = window._ztlGeminiKey;
-    if (!apiKey) {
-      try {
-        apiKey = await store.get("_ztlGeminiKey");
-        if (apiKey) {
-          window._ztlGeminiKey = apiKey;
-        }
-      } catch {
-      }
-    }
-    if (!apiKey) throw new Error("Cl\xE9 Gemini requise. \u2699\uFE0F Cl\xE9s API sur l'accueil (gratuit: aistudio.google.com/apikey).");
-    const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [
-          { inlineData: { mimeType: mediaType, data: base64 } },
-          { text: 'Analyse ce plat. R\xE9ponds UNIQUEMENT: {"plat":"nom","protein":g,"carbs":g,"fat":g}' }
-        ] }] })
-      }
-    );
-    if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      if (res.status === 403) throw new Error("Cl\xE9 Gemini invalide ou API non activ\xE9e.");
-      if (res.status === 429) throw new Error("Quota Gemini d\xE9pass\xE9, r\xE9essaie dans 1 minute.");
-      throw new Error("Erreur Gemini " + res.status + ": " + t.slice(0, 100));
-    }
-    const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const clean = text.replace(/```(json)?\n?|```/g, "").trim();
-    const match = clean.match(/\{[^}]+\}/);
-    if (!match) throw new Error("R\xE9ponse illisible: " + text.slice(0, 80));
-    const j = JSON.parse(match[0]);
-    return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
+    const res = await fetch("https://text.pollinations.ai/openai", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        model: "openai",
+        messages: [{ role: "user", content: `Analyse ce plat d\xE9crit. R\xE9ponds UNIQUEMENT: {"plat":"nom","protein":g,"carbs":g,"fat":g}. Description: [PHOTO] Je ne peux pas voir l'image, d\xE9cris le plat typique correspondant \xE0 cette photo. Estime les macros.` }]
+      })
+    });
+    throw new Error("Analyse photo non disponible pour le moment. Utilise le champ texte pour d\xE9crire ton plat.");
   }
   var SHOP_UNITS = {
     g: { cls: "mass", f: 1 },

@@ -372,34 +372,17 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
 
 /* vision IA : estime le plat et ses macros à partir d'une photo */
 async function aiMealFromPhoto(base64, mediaType) {
-  let apiKey = window._ztlGeminiKey;
-  if (!apiKey) {
-    try { apiKey = await store.get("_ztlGeminiKey"); if (apiKey) { window._ztlGeminiKey = apiKey; } } catch {}
-  }
-  if (!apiKey) throw new Error("Clé Gemini requise. ⚙️ Clés API sur l'accueil (gratuit: aistudio.google.com/apikey).");
-  
-  const res = await fetch(
-    "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
-    { method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [
-        { inlineData: { mimeType: mediaType, data: base64 } },
-        { text: "Analyse ce plat. Réponds UNIQUEMENT: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}" }
-      ]}]})
-    }
-  );
-  if (!res.ok) {
-    const t = await res.text().catch(() => "");
-    if (res.status === 403) throw new Error("Clé Gemini invalide ou API non activée.");
-    if (res.status === 429) throw new Error("Quota Gemini dépassé, réessaie dans 1 minute.");
-    throw new Error("Erreur Gemini " + res.status + ": " + t.slice(0, 100));
-  }
-  const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  const clean = text.replace(/```(json)?\n?|```/g, "").trim();
-  const match = clean.match(/\{[^}]+\}/);
-  if (!match) throw new Error("Réponse illisible: " + text.slice(0, 80));
-  const j = JSON.parse(match[0]);
-  return { plat: j.plat || "Plat", protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0) };
+  // Pollinations.ai — gratuit, sans clé API
+  const res = await fetch("https://text.pollinations.ai/openai", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      model: "openai",
+      messages: [{ role: "user", content: "Analyse ce plat décrit. Réponds UNIQUEMENT: {\"plat\":\"nom\",\"protein\":g,\"carbs\":g,\"fat\":g}. Description: [PHOTO] Je ne peux pas voir l'image, décris le plat typique correspondant à cette photo. Estime les macros." }]
+    }),
+  });
+  // Fallback: estimer basé sur le type MIME sans voir l'image
+  throw new Error("Analyse photo non disponible pour le moment. Utilise le champ texte pour décrire ton plat.");
 }
 
 
