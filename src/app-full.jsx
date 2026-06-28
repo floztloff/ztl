@@ -327,18 +327,18 @@ function recipeMacros(ingText) {
 /* macros calculées par l'IA — fiable sur n'importe quel ingrédient */
 async function callModel(prompt) {
   const API_KEY = "sk-ant-api03-REPLACE_WITH_YOUR_KEY";
-  const models = ["claude-sonnet-4-20250514", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"];
+  const models = ["deepseek-chat"];
   let lastErr;
   for (const model of models) {
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
         method: "POST",
         headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
         body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content: prompt }] }),
       });
       if (!res.ok) { let t = ""; try { t = (await res.text()).slice(0, 80); } catch {} lastErr = new Error("HTTP " + res.status + " " + t); continue; }
       const data = await res.json();
-      const text = (data.content || []).map(i => (i && i.type === "text" ? i.text : "")).join("");
+      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "";
       if (text) return text;
       lastErr = new Error("réponse vide");
     } catch (e) { lastErr = e; return null; }
@@ -383,17 +383,17 @@ Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte aut
     { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
     { type: "text", text: prompt },
   ];
-  const models = ["claude-sonnet-4-20250514", "claude-sonnet-4-6"];
+  const models = ["deepseek-chat"];
   let lastErr;
   for (const model of models) {
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
         method: "POST", headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
         body: JSON.stringify({ model, max_tokens: 1024, temperature: 0, messages: [{ role: "user", content }] }),
       });
       if (!res.ok) { let t = ""; try { t = (await res.text()).slice(0, 80); } catch {} lastErr = new Error("HTTP " + res.status + " " + t); continue; }
       const data = await res.json();
-      const text = (data.content || []).map(i => (i && i.type === "text" ? i.text : "")).join("");
+      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "";
       const mt = text.match(/\{[\s\S]*\}/);
       if (!mt) { lastErr = new Error("réponse illisible"); continue; }
       const j = JSON.parse(mt[0]);
