@@ -505,10 +505,16 @@ const getDeepSeekKey = async () => {
   if (typeof window !== "undefined") {
     if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
     try { const k = localStorage.getItem("_ztlDeepSeekKey"); if (k) { window._ztlDeepSeekKey = k; return k; } } catch {}
-    // Essayer Supabase (sync cloud)
     try { const v = await store.get("_ztlDeepSeekKey"); if (v) { window._ztlDeepSeekKey = v; localStorage.setItem("_ztlDeepSeekKey", v); return v; } } catch {}
   }
   return "";
+};
+
+const setDeepSeekKey = (k) => {
+  if (!k || !k.trim()) return;
+  window._ztlDeepSeekKey = k.trim();
+  try { localStorage.setItem("_ztlDeepSeekKey", k.trim()); } catch {}
+  try { store.set("_ztlDeepSeekKey", k.trim()); } catch {}
 };
 const promptDeepSeekKey = () => {
   const k = prompt("Clé API DeepSeek\n\nEntre ta clé API (https://platform.deepseek.com/api_keys).\nElle sera sauvegardée dans ton compte ZTL et synchronisée sur tous tes appareils.");
@@ -893,6 +899,30 @@ function Weather() {
       <div style={{ fontSize: 19, fontWeight: 800, fontFamily: FONT_MONO, lineHeight: 1.1, color: C.ink }}>{w.temp}°</div>
       <div style={{ fontSize: 9.5, color: C.mut, fontWeight: 600 }}>{label}</div>
     </div>
+  );
+}
+
+
+function ApiKeyButton() {
+  const [show, setShow] = useState(false);
+  const [val, setVal] = useState("");
+  const [saved, setSaved] = useState(false);
+  return (
+    <>
+      <button onClick={() => setShow(!show)} style={{ width: "100%", background: "none", border: `1px solid ${C.line}`, color: C.mut, borderRadius: 12, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8 }}>
+        <span style={{fontSize:14,lineHeight:1}}>⚙️</span> Clé API DeepSeek {saved ? "✅" : ""}
+      </button>
+      {show && (
+        <div style={{ marginTop: 8, background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 }}>
+          <div style={{ fontSize: 11, color: C.mut, marginBottom: 8 }}>Entre ta clé API DeepSeek (https://platform.deepseek.com/api_keys). Elle sera synchronisée sur tous tes appareils via ton compte.</div>
+          <input value={val} onChange={e => setVal(e.target.value)} placeholder="sk-..." style={{ width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 8, padding: "9px 11px", fontSize: 13, marginBottom: 8 }} />
+          <button onClick={() => { setDeepSeekKey(val); setSaved(true); setTimeout(() => setShow(false), 800); }}
+            style={{ width: "100%", background: C.teal, color: C.bg, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+            Enregistrer
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
