@@ -641,7 +641,7 @@ R\xE9ponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte a
         if (!res.ok) {
           const t = await res.text().catch(() => "");
           lastErr = new Error("HTTP " + res.status + " : " + t.slice(0, 150));
-          if (res.status < 500) break;
+          if (res.status < 500 && res.status !== 404) break;
           continue;
         }
         const data = await res.json();
