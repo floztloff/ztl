@@ -367,9 +367,10 @@ Règles :
 Réponds STRICTEMENT par un objet JSON sur une seule ligne, sans aucun texte autour ni backticks :
 {"protein": <entier>, "carbs": <entier>, "fat": <entier>, "satfat": <entier>, "sugar": <entier>}`;
   const text = await callModel(prompt);
-  const m = text && text.match(/\{[\s\S]*?\}/);
-  if (!m) throw new Error("réponse illisible");
-  const j = JSON.parse(m[0]);
+  // Extraire le dernier objet JSON (le plus complet)
+  const matches = text.match(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g);
+  if (!matches || !matches.length) throw new Error("réponse illisible: " + text.slice(0,100));
+  const j = JSON.parse(matches[matches.length - 1]);
   return { protein: Math.round(+j.protein || 0), carbs: Math.round(+j.carbs || 0), fat: Math.round(+j.fat || 0), satfat: Math.round(+j.satfat || 0), sugar: Math.round(+j.sugar || 0) };
 }
 
@@ -473,9 +474,9 @@ Réponds STRICTEMENT par un tableau JSON sur une seule ligne, sans texte ni back
 Ingrédients :
 ${lines.join("\n")}`;
   const text = await callModel(prompt);
-  const m = text && text.match(/\[[\s\S]*\]/);
-  if (!m) throw new Error("réponse illisible");
-  const arr = JSON.parse(m[0]);
+  const matches = text.match(/\[[\s\S]*\]/g);
+  if (!matches || !matches.length) throw new Error("réponse illisible");
+  const arr = JSON.parse(matches[matches.length - 1]);
   return Array.isArray(arr) ? arr.map(x => ({ item: String(x.item || "").trim(), qty: String(x.qty || "").trim() })).filter(x => x.item) : [];
 }
 
