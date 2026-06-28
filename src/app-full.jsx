@@ -501,18 +501,21 @@ const store = {
 };
 
 
-const getDeepSeekKey = () => {
+const getDeepSeekKey = async () => {
   if (typeof window !== "undefined") {
     if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
     try { const k = localStorage.getItem("_ztlDeepSeekKey"); if (k) { window._ztlDeepSeekKey = k; return k; } } catch {}
+    // Essayer Supabase (sync cloud)
+    try { const v = await store.get("_ztlDeepSeekKey"); if (v) { window._ztlDeepSeekKey = v; localStorage.setItem("_ztlDeepSeekKey", v); return v; } } catch {}
   }
   return "";
 };
 const promptDeepSeekKey = () => {
-  const k = prompt("Clé API DeepSeek\n\nPour utiliser l'IA (calcul macros, analyse photo), entre ta clé API DeepSeek.\nCrée-la sur https://platform.deepseek.com/api_keys\n\nTa clé est stockée uniquement dans ton navigateur.");
+  const k = prompt("Clé API DeepSeek\n\nEntre ta clé API (https://platform.deepseek.com/api_keys).\nElle sera sauvegardée dans ton compte ZTL et synchronisée sur tous tes appareils.");
   if (k && k.trim()) {
     window._ztlDeepSeekKey = k.trim();
     try { localStorage.setItem("_ztlDeepSeekKey", k.trim()); } catch {}
+    try { store.set("_ztlDeepSeekKey", k.trim()); } catch {} // sync Supabase
     return k.trim();
   }
   return "";

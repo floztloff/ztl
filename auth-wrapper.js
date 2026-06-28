@@ -17,7 +17,16 @@
           if (u) {
             window._ztlUser = u;
             setUser(u);
-            if (window.store && window.store.syncFromCloud) window.store.syncFromCloud();
+            if (window.store && window.store.syncFromCloud) {
+              window.store.syncFromCloud().then(function() {
+                // Charger la clé DeepSeek depuis le cloud
+                if (window.store) {
+                  window.store.get("_ztlDeepSeekKey").then(function(v) {
+                    if (v) { window._ztlDeepSeekKey = v; try { localStorage.setItem("_ztlDeepSeekKey", v); } catch {} }
+                  }).catch(function(){});
+                }
+              });
+            }
           }
         }).catch(function(){});
       }

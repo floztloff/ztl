@@ -772,7 +772,7 @@ ${lines.join("\n")}`;
       }
     }
   };
-  var getDeepSeekKey = () => {
+  var getDeepSeekKey = async () => {
     if (typeof window !== "undefined") {
       if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
       try {
@@ -783,15 +783,28 @@ ${lines.join("\n")}`;
         }
       } catch {
       }
+      try {
+        const v = await store.get("_ztlDeepSeekKey");
+        if (v) {
+          window._ztlDeepSeekKey = v;
+          localStorage.setItem("_ztlDeepSeekKey", v);
+          return v;
+        }
+      } catch {
+      }
     }
     return "";
   };
   var promptDeepSeekKey = () => {
-    const k = prompt("Cl\xE9 API DeepSeek\n\nPour utiliser l'IA (calcul macros, analyse photo), entre ta cl\xE9 API DeepSeek.\nCr\xE9e-la sur https://platform.deepseek.com/api_keys\n\nTa cl\xE9 est stock\xE9e uniquement dans ton navigateur.");
+    const k = prompt("Cl\xE9 API DeepSeek\n\nEntre ta cl\xE9 API (https://platform.deepseek.com/api_keys).\nElle sera sauvegard\xE9e dans ton compte ZTL et synchronis\xE9e sur tous tes appareils.");
     if (k && k.trim()) {
       window._ztlDeepSeekKey = k.trim();
       try {
         localStorage.setItem("_ztlDeepSeekKey", k.trim());
+      } catch {
+      }
+      try {
+        store.set("_ztlDeepSeekKey", k.trim());
       } catch {
       }
       return k.trim();
