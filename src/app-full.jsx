@@ -2322,8 +2322,9 @@ function CoursesTab() {
           var dk = days[d];
           if (dk < td) continue;
           var raw;
-          try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { continue; }
-          var meals = raw && (raw.meals || []);
+          try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { raw = null; }
+          if (!raw) continue;
+          var meals = raw.meals || [];
           if (!meals.length) continue;
           nPlans++;
           dbg.push(dk + ": " + meals.length + " repas");

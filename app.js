@@ -2054,9 +2054,10 @@ ${lines.join("\n")}`;
             try {
               raw = await window.ZTLDb.getUserData(u, "plan:" + dk);
             } catch (e) {
-              continue;
+              raw = null;
             }
-            var meals = raw && (raw.meals || []);
+            if (!raw) continue;
+            var meals = raw.meals || [];
             if (!meals.length) continue;
             nPlans++;
             dbg.push(dk + ": " + meals.length + " repas");
