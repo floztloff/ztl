@@ -1911,6 +1911,13 @@ ${lines.join("\n")}`;
           } catch (e) {
             p = null;
           }
+          if (typeof p === "string") {
+            try {
+              p = JSON.parse(p);
+            } catch (e) {
+              p = null;
+            }
+          }
           if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
           map[dk] = p || { meals: [], sessions: [] };
         }
