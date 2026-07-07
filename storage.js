@@ -7,9 +7,21 @@
 
   const store = {
     async get(k) {
-      // Always read from localStorage first (fast, works offline)
-      try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; }
-      catch { return null; }
+      try { const r = localStorage.getItem(k); if (r) { const v = JSON.parse(r); if (v && typeof v === "object" && !Array.isArray(v)) return v; } }
+      catch {}
+      var u = uid();
+      if (u && window.ZTLDb) {
+        try {
+          var cloudVal = null;
+          if (k.startsWith("log:")) { cloudVal = await window.ZTLDb.getDailyLog(u, k.slice(4)); }
+          if (cloudVal == null) { cloudVal = await window.ZTLDb.getUserData(u, k); }
+          if (cloudVal != null) {
+            if (typeof cloudVal === "string") { try { cloudVal = JSON.parse(cloudVal); } catch(e) { return null; } }
+            if (cloudVal && typeof cloudVal === "object") { try { localStorage.setItem(k, JSON.stringify(cloudVal)); } catch {} return cloudVal; }
+          }
+        } catch (e) {}
+      }
+      return null;
     },
     async set(k, v) {
       try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { console.warn('Storage.save error:', e); }
