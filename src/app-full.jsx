@@ -812,12 +812,12 @@ export default function App() {
       )}
       <ZTLHeader onHome={() => setTab("home")} />
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "14px 18px 0" }}>
-        {tab === "home" && <HomeTab {...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList }} />}
-        {tab === "train" && <TrainTab {...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions }} />}
-        {tab === "food" && <FoodTab {...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew }} />}
-        {tab === "program" && <ProgramTab />}
-        {tab === "courses" && <CoursesTab />}
-        {tab === "sleep" && <SleepTab {...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate }} />}
+        <div style={{ display: tab === "home" ? "block" : "none" }}><HomeTab {...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList }} /></div>
+        <div style={{ display: tab === "train" ? "block" : "none" }}><TrainTab {...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions }} /></div>
+        <div style={{ display: tab === "food" ? "block" : "none" }}><FoodTab {...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew }} /></div>
+        <div style={{ display: tab === "program" ? "block" : "none" }}><ProgramTab /></div>
+        <div style={{ display: tab === "courses" ? "block" : "none" }}><CoursesTab /></div>
+        <div style={{ display: tab === "sleep" ? "block" : "none" }}><SleepTab {...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate }} /></div>
       </div>
 
       <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" }}>
@@ -2283,10 +2283,26 @@ function CoursesTab() {
   const persist = (list) => { setItems(list); store.set("shopping", list); };
 
   const collectLines = async (recs) => {
-    const keys = await store.list("plan:");
     const td = dateKey();
     const lines = [];
-    for (const k of keys) { const date = k.slice(5); if (date < td) continue; const pl = await store.get(k); if (!pl || !pl.meals) continue; if (pl.shop === false) continue; for (const rid of pl.meals) { const r = (recs || []).find(x => x.id === rid); if (!r) continue; const factor = (pl.juliette && pl.juliette[rid]) ? 1.75 : 1; for (const line of (r.ing || [])) if (line && line.trim()) lines.push(scaleLine(line.trim(), factor)); } }
+    // Parcourir toutes les clés localStorage qui commencent par "plan:"
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (!key || !key.startsWith("plan:")) continue;
+        var date = key.slice(5);
+        if (date < td) continue;
+        var raw;
+        try { raw = JSON.parse(localStorage.getItem(key)); } catch { continue; }
+        if (!raw || !raw.meals) continue;
+        for (const rid of raw.meals) {
+          var r = (recs || []).find(x => x.id === rid);
+          if (!r) continue;
+          var factor = (raw.juliette && raw.juliette[rid]) ? 1.75 : 1;
+          for (const line of (r.ing || [])) if (line && line.trim()) lines.push(scaleLine(line.trim(), factor));
+        }
+      }
+    } catch {}
     return lines;
   };
 

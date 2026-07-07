@@ -1112,7 +1112,7 @@ ${lines.join("\n")}`;
       { id: "courses", icon: "\u{1F6D2}", label: "Courses" },
       { id: "sleep", icon: "\u{1F319}", label: "Sommeil" }
     ];
-    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: C.bg, color: C.text, fontFamily: FONT_BODY, paddingBottom: 78 } }, /* @__PURE__ */ React.createElement("style", null, `@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Onest:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');`), offline && /* @__PURE__ */ React.createElement("div", { style: { background: "#FFF3CD", borderBottom: `1px solid #E0A33B`, color: C.text, padding: "8px 16px", fontSize: 12, lineHeight: 1.4, textAlign: "center" } }, "\u{1F4E1} ", /* @__PURE__ */ React.createElement("b", null, "Mode hors-ligne"), " \xB7 Tes donn\xE9es sont sauvegard\xE9es localement et synchronis\xE9es d\xE8s le retour de la connexion."), /* @__PURE__ */ React.createElement(ZTLHeader, { onHome: () => setTab("home") }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 480, margin: "0 auto", padding: "14px 18px 0" } }, tab === "home" && /* @__PURE__ */ React.createElement(HomeTab, { ...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList } }), tab === "train" && /* @__PURE__ */ React.createElement(TrainTab, { ...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions } }), tab === "food" && /* @__PURE__ */ React.createElement(FoodTab, { ...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew } }), tab === "program" && /* @__PURE__ */ React.createElement(ProgramTab, null), tab === "courses" && /* @__PURE__ */ React.createElement(CoursesTab, null), tab === "sleep" && /* @__PURE__ */ React.createElement(SleepTab, { ...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate } })), /* @__PURE__ */ React.createElement("nav", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", width: "100%", maxWidth: 520 } }, TABS.map((t) => {
+    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: C.bg, color: C.text, fontFamily: FONT_BODY, paddingBottom: 78 } }, /* @__PURE__ */ React.createElement("style", null, `@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Onest:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');`), offline && /* @__PURE__ */ React.createElement("div", { style: { background: "#FFF3CD", borderBottom: `1px solid #E0A33B`, color: C.text, padding: "8px 16px", fontSize: 12, lineHeight: 1.4, textAlign: "center" } }, "\u{1F4E1} ", /* @__PURE__ */ React.createElement("b", null, "Mode hors-ligne"), " \xB7 Tes donn\xE9es sont sauvegard\xE9es localement et synchronis\xE9es d\xE8s le retour de la connexion."), /* @__PURE__ */ React.createElement(ZTLHeader, { onHome: () => setTab("home") }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 480, margin: "0 auto", padding: "14px 18px 0" } }, /* @__PURE__ */ React.createElement("div", { style: { display: tab === "home" ? "block" : "none" } }, /* @__PURE__ */ React.createElement(HomeTab, { ...{ day, sess, exDone, workoutDone, pillars, checks, toggleCheck, setTab, hist, saveDay, saveSleepForDate, openRecipe, addRecipe, sessions: sessList } })), /* @__PURE__ */ React.createElement("div", { style: { display: tab === "train" ? "block" : "none" } }, /* @__PURE__ */ React.createElement(TrainTab, { ...{ day, saveDay, toggleEx, setExVal, exlast, sessions: sessList, saveSessions } })), /* @__PURE__ */ React.createElement("div", { style: { display: tab === "food" ? "block" : "none" } }, /* @__PURE__ */ React.createElement(FoodTab, { ...{ day, addMacros, setMacros, addMacrosForDate, openRecipeId, recipeNew } })), /* @__PURE__ */ React.createElement("div", { style: { display: tab === "program" ? "block" : "none" } }, /* @__PURE__ */ React.createElement(ProgramTab, null)), /* @__PURE__ */ React.createElement("div", { style: { display: tab === "courses" ? "block" : "none" } }, /* @__PURE__ */ React.createElement(CoursesTab, null)), /* @__PURE__ */ React.createElement("div", { style: { display: tab === "sleep" ? "block" : "none" } }, /* @__PURE__ */ React.createElement(SleepTab, { ...{ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepForDate } }))), /* @__PURE__ */ React.createElement("nav", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.line}`, display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", width: "100%", maxWidth: 520 } }, TABS.map((t) => {
       const on = tab === t.id;
       return /* @__PURE__ */ React.createElement(
         "button",
@@ -1988,21 +1988,29 @@ ${lines.join("\n")}`;
       store.set("shopping", list);
     };
     const collectLines = async (recs) => {
-      const keys = await store.list("plan:");
       const td = dateKey();
       const lines = [];
-      for (const k of keys) {
-        const date = k.slice(5);
-        if (date < td) continue;
-        const pl = await store.get(k);
-        if (!pl || !pl.meals) continue;
-        if (pl.shop === false) continue;
-        for (const rid of pl.meals) {
-          const r = (recs || []).find((x) => x.id === rid);
-          if (!r) continue;
-          const factor = pl.juliette && pl.juliette[rid] ? 1.75 : 1;
-          for (const line of r.ing || []) if (line && line.trim()) lines.push(scaleLine(line.trim(), factor));
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var key = localStorage.key(i);
+          if (!key || !key.startsWith("plan:")) continue;
+          var date = key.slice(5);
+          if (date < td) continue;
+          var raw;
+          try {
+            raw = JSON.parse(localStorage.getItem(key));
+          } catch {
+            continue;
+          }
+          if (!raw || !raw.meals) continue;
+          for (const rid of raw.meals) {
+            var r = (recs || []).find((x) => x.id === rid);
+            if (!r) continue;
+            var factor = raw.juliette && raw.juliette[rid] ? 1.75 : 1;
+            for (const line of r.ing || []) if (line && line.trim()) lines.push(scaleLine(line.trim(), factor));
+          }
         }
+      } catch {
       }
       return lines;
     };
