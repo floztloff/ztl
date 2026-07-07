@@ -1114,6 +1114,7 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
       </div>
 
       <ApiKeyButton />
+      <button onClick={async function(){try{var v=await window.ZTLDb.getUserData(window._ztlUser.id,"_ztlDeepSeekKey");alert("Supabase: "+(v||"NULL")+" (type="+typeof v+")");}catch(e){alert("Err: "+e.message);}}} style={{marginTop:4,width:"100%",background:"#eee",border:"1px solid #999",borderRadius:8,padding:"4px",fontSize:10,cursor:"pointer"}}>🔬 Test Supabase DeepSeek</button>
       <button onClick={addRecipe} style={{ width: "100%", marginTop: 14, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
         <span style={{fontSize:17,lineHeight:1}}>👨‍🍳</span> Ajouter une recette
       </button>
