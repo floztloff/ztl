@@ -1880,6 +1880,7 @@ ${lines.join("\n")}`;
     const [offset, setOffset] = (0, import_react.useState)(0);
     const [plans, setPlans] = (0, import_react.useState)({});
     const [pickFor, setPickFor] = (0, import_react.useState)(null);
+    const progRef = (0, import_react.useRef)({});
     (0, import_react.useEffect)(() => {
       (async () => {
         let r = await store.get("recipes");
@@ -1896,14 +1897,16 @@ ${lines.join("\n")}`;
         var map = {};
         for (const dk of days) {
           var p = await store.get("plan:" + dk);
-          map[dk] = p || { meals: [], session: null };
+          var cached = progRef.current[dk];
+          map[dk] = cached || p || { meals: [], session: null };
         }
         setPlans(map);
       })();
     }, [offset]);
     var savePlan = (dk, next) => {
-      setPlans((p) => ({ ...p, [dk]: next }));
+      progRef.current[dk] = next;
       store.set("plan:" + dk, next);
+      setPlans((p) => ({ ...p, [dk]: next }));
     };
     var setSession = (dk, sid) => savePlan(dk, { meals: plans[dk]?.meals || [], session: sid || null });
     var addMeal = (dk, rid) => {
@@ -1943,7 +1946,15 @@ ${lines.join("\n")}`;
       var isToday = dk === dateKey();
       return /* @__PURE__ */ React.createElement("div", { key: dk, style: { background: C.card, border: `1px solid ${isToday ? C.ember : C.line}`, borderRadius: 16, padding: 14, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 800, textTransform: "capitalize", flex: 1 } }, (/* @__PURE__ */ new Date(dk + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), isToday ? " \xB7 aujourd'hui" : "")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1, color: C.ember } }, "\u{1F3CB}\uFE0F"), /* @__PURE__ */ React.createElement("select", { value: pl.session || "", onChange: (e) => setSession(dk, e.target.value), style: sel }, /* @__PURE__ */ React.createElement("option", { value: "" }, "Repos / aucune s\xE9ance"), [...new Set(progSessions.map((s) => s.group))].map((g) => /* @__PURE__ */ React.createElement("optgroup", { key: g, label: g }, progSessions.filter((s) => s.group === g).map((s) => /* @__PURE__ */ React.createElement("option", { key: s.id, value: s.id }, s.name)))))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1, color: C.teal } }, "\u{1F468}\u200D\u{1F373}"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, fontWeight: 700, color: C.mut } }, "Repas")), (pl.meals || []).length === 0 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: C.mut, marginBottom: 8 } }, "Aucun repas pr\xE9vu."), (pl.meals || []).map((rid) => {
         var r = recById(rid);
-        return /* @__PURE__ */ React.createElement("div", { key: rid, style: { display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, marginBottom: 6 } }, /* @__PURE__ */ React.createElement(RecipeThumb, { recipe: r, size: 34, radius: 9 }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, flex: 1 } }, r ? r.title : "Recette supprim\xE9e"), /* @__PURE__ */ React.createElement("button", { onClick: () => removeMeal(dk, rid), style: { background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 2 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1 } }, "\u2715")));
+        var jul = (pl.juliette || {})[rid];
+        var toggleJ = () => {
+          var cur = plans[dk] || { meals: [] };
+          var jul2 = { ...cur.juliette || {} };
+          if (jul) delete jul2[rid];
+          else jul2[rid] = true;
+          savePlan(dk, { ...cur, juliette: jul2 });
+        };
+        return /* @__PURE__ */ React.createElement("div", { key: rid, style: { display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, marginBottom: 6 } }, /* @__PURE__ */ React.createElement(RecipeThumb, { recipe: r, size: 34, radius: 9 }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, flex: 1 } }, r ? r.title : "Recette supprim\xE9e"), /* @__PURE__ */ React.createElement("button", { onClick: toggleJ, title: "Juliette mange aussi (\xD71.75)", style: { background: jul ? C.emberSoft : "none", border: `1px solid ${jul ? C.ember : C.line}`, color: jul ? C.ember : C.mut, borderRadius: 7, width: 28, height: 28, fontSize: 12, fontWeight: 800, cursor: "pointer", flexShrink: 0 } }, "J"), /* @__PURE__ */ React.createElement("button", { onClick: () => removeMeal(dk, rid), style: { background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 2 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1 } }, "\u2715")));
       }), /* @__PURE__ */ React.createElement("button", { onClick: () => setPickFor(dk), style: { marginTop: 4, background: "none", border: `1px dashed ${C.line}`, color: C.coral, borderRadius: 10, padding: "9px", fontSize: 12.5, fontWeight: 700, cursor: "pointer", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 5 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, lineHeight: 1 } }, "\u2795"), " Ajouter une recette"), (pl.meals || []).length > 0 && (() => {
         var t = dayTotals(pl.meals);
         return /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: C.mut, textTransform: "uppercase", letterSpacing: 1, marginBottom: 9 } }, "Apport des repas / objectif"), miniGauge("Calories", t.kcal, TARGETS.kcal), miniGauge("Prot\xE9ines", Math.round(t.p), TARGETS.protein), miniGauge("Glucides", Math.round(t.c), TARGETS.carbs), miniGauge("Lipides", Math.round(t.f), TARGETS.fat));

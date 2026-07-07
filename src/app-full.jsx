@@ -2157,15 +2157,16 @@ function ProgramTab() {
   const [offset, setOffset] = useState(0);
   const [plans, setPlans] = useState({});
   const [pickFor, setPickFor] = useState(null);
+  const progRef = useRef({});
 
   useEffect(() => { (async () => { let r = await store.get("recipes"); if (!Array.isArray(r) || !r.length) r = RECIPES; setRecipes(r); let ss = await store.get("sessions"); if (!Array.isArray(ss) || !ss.length) ss = SESSIONS.map(normalizeSession); setProgSessions(ss); })(); }, []);
 
   const days = weekDaysFrom(offset);
   useEffect(() => {
-    (async () => { var map = {}; for (const dk of days) { var p = await store.get("plan:" + dk); map[dk] = p || { meals: [], session: null }; } setPlans(map); })();
+    (async () => { var map = {}; for (const dk of days) { var p = await store.get("plan:" + dk); var cached = progRef.current[dk]; map[dk] = cached || p || { meals: [], session: null }; } setPlans(map); })();
   }, [offset]);
 
-  var savePlan = (dk, next) => { setPlans(p => ({ ...p, [dk]: next })); store.set("plan:" + dk, next); };
+  var savePlan = (dk, next) => { progRef.current[dk] = next; store.set("plan:" + dk, next); setPlans(p => ({ ...p, [dk]: next })); };
   var setSession = (dk, sid) => savePlan(dk, { meals: (plans[dk]?.meals) || [], session: sid || null });
   var addMeal = (dk, rid) => { var cur = plans[dk] || { meals: [] }; if ((cur.meals || []).includes(rid)) return; savePlan(dk, { ...cur, meals: [...(cur.meals || []), rid] }); };
   var removeMeal = (dk, rid) => { var cur = plans[dk] || { meals: [] }; var jul = { ...(cur.juliette || {}) }; delete jul[rid]; savePlan(dk, { ...cur, meals: (cur.meals || []).filter(x => x !== rid), juliette: jul }); };
@@ -2223,10 +2224,13 @@ function ProgramTab() {
             {(pl.meals || []).length === 0 && <div style={{ fontSize: 12, color: C.mut, marginBottom: 8 }}>Aucun repas prévu.</div>}
             {(pl.meals || []).map(rid => {
               var r = recById(rid);
+              var jul = (pl.juliette || {})[rid];
+              var toggleJ = () => { var cur = plans[dk] || { meals: [] }; var jul2 = { ...(cur.juliette || {}) }; if (jul) delete jul2[rid]; else jul2[rid] = true; savePlan(dk, { ...cur, juliette: jul2 }); };
               return (
                 <div key={rid} style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, marginBottom: 6 }}>
                   <RecipeThumb recipe={r} size={34} radius={9} />
                   <span style={{ fontSize: 13, flex: 1 }}>{r ? r.title : "Recette supprimée"}</span>
+                  <button onClick={toggleJ} title="Juliette mange aussi (×1.75)" style={{ background: jul ? C.emberSoft : "none", border: `1px solid ${jul ? C.ember : C.line}`, color: jul ? C.ember : C.mut, borderRadius: 7, width: 28, height: 28, fontSize: 12, fontWeight: 800, cursor: "pointer", flexShrink: 0 }}>J</button>
                   <button onClick={() => removeMeal(dk, rid)} style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 2 }}><span style={{fontSize:15,lineHeight:1}}>✕</span></button>
                 </div>
               );
