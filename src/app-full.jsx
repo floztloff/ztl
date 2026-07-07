@@ -2305,32 +2305,40 @@ function CoursesTab() {
     var td = dateKey();
     var lines = [];
     var nPlans = 0, nMeals = 0, nFound = 0, nMiss = 0;
+    var dbg = [];
     try {
-      for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (!key || key.indexOf("plan:") !== 0) continue;
-        var dk = key.slice(5);
-        if (dk < td) continue;
-        var raw;
-        try { raw = JSON.parse(localStorage.getItem(key)); } catch { continue; }
-        if (!raw || !(raw.meals && raw.meals.length)) continue;
-        nPlans++;
-        for (var j = 0; j < raw.meals.length; j++) {
-          var rid = raw.meals[j];
-          nMeals++;
-          var r = (recs || []).find(function(x) { return x.id === rid; });
-          if (!r) { nMiss++; continue; }
-          nFound++;
-          var factor = (raw.juliette && raw.juliette[rid]) ? 1.75 : 1;
-          var ing = r.ing || [];
-          for (var k = 0; k < ing.length; k++) {
-            var line = ing[k];
-            if (line && line.trim()) lines.push(scaleLine(line.trim(), factor));
+      // Lire les plans pour les 4 prochaines semaines explicitement
+      for (var w = 0; w < 4; w++) {
+        var days = weekDaysFrom(w);
+        for (var d = 0; d < days.length; d++) {
+          var dk = days[d];
+          if (dk < td) continue;
+          var key = "plan:" + dk;
+          var rawText = localStorage.getItem(key);
+          if (!rawText) { continue; }
+          var raw;
+          try { raw = JSON.parse(rawText); } catch { continue; }
+          var meals = raw && raw.meals;
+          if (!meals || !meals.length) continue;
+          nPlans++;
+          dbg.push(dk + ": " + meals.length + " repas");
+          for (var j = 0; j < meals.length; j++) {
+            var rid = meals[j];
+            nMeals++;
+            var r = (recs || []).find(function(x) { return x.id === rid; });
+            if (!r) { nMiss++; continue; }
+            nFound++;
+            var factor = (raw.juliette && raw.juliette[rid]) ? 1.75 : 1;
+            var ing = r.ing || [];
+            for (var k = 0; k < ing.length; k++) {
+              var line = ing[k];
+              if (line && line.trim()) lines.push(scaleLine(line.trim(), factor));
+            }
           }
         }
       }
     } catch (e) { setDebug("collectLines error: " + e.message); return []; }
-    setDebug(nPlans + " jours planifiés, " + nMeals + " repas, " + nFound + " recettes trouvées, " + nMiss + " manquantes → " + lines.length + " ingrédients");
+    setDebug(nPlans + " jours planifiés, " + nMeals + " repas, " + nFound + " recettes trouvées, " + nMiss + " manquantes → " + lines.length + " ingrédients\n" + dbg.slice(0,5).join(", "));
     return lines;
   };
 
