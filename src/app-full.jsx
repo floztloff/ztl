@@ -515,11 +515,18 @@ const store = {
 const getDeepSeekKey = async () => {
   if (typeof window !== "undefined") {
     if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
-    try { const k = localStorage.getItem("_ztlDeepSeekKey"); if (k && k.length > 3) { var c = k; try { var p = JSON.parse(k); if (typeof p === "string") c = p; } catch {} window._ztlDeepSeekKey = c.trim(); return c.trim(); } } catch {}
+    try { 
+      var k = localStorage.getItem("_ztlDeepSeekKey"); 
+      if (k && k.length > 3) { 
+        try { k = JSON.parse(k); } catch {} 
+        k = String(k).trim().replace(/^"+|"+$/g, ""); 
+        window._ztlDeepSeekKey = k; return k; 
+      } 
+    } catch {}
     for (var retry = 0; retry < 3; retry++) {
       try { 
         var v = await store.get("_ztlDeepSeekKey"); 
-        if (v) { var c = (typeof v === "string" ? v : String(v)); window._ztlDeepSeekKey = c.trim(); localStorage.setItem("_ztlDeepSeekKey", c.trim()); return c.trim(); } 
+        if (v) { v = String(v).trim().replace(/^"+|"+$/g, ""); window._ztlDeepSeekKey = v; try { localStorage.setItem("_ztlDeepSeekKey", v); } catch {} return v; } 
       } catch {}
       if (retry < 2) await new Promise(function(r) { setTimeout(r, 500); });
     }
@@ -723,6 +730,20 @@ export default function App() {
     (async () => {
       // D'abord sync depuis Supabase dans localStorage
       try { await store.syncFromCloud(); } catch {}
+      // Nettoyer les logs corrompus (objets avec clés numériques 0,1,2...)
+      try {
+        for (var ci=0; ci<localStorage.length; ci++) {
+          var ck = localStorage.key(ci);
+          if (ck && ck.indexOf("log:")===0) {
+            try {
+              var cv = JSON.parse(localStorage.getItem(ck));
+              if (cv && typeof cv === "object" && cv["0"] !== undefined && !Array.isArray(cv)) {
+                localStorage.removeItem(ck);
+              }
+            } catch(e) {}
+          }
+        }
+      } catch(e) {}
       const d = await store.get("log:" + tk);
       if (d) {
         const macros = d.macros || { p: d.protein || 0, c: 0, f: 0 };

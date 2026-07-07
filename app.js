@@ -842,16 +842,15 @@ ${lines.join("\n")}`;
     if (typeof window !== "undefined") {
       if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
       try {
-        const k = localStorage.getItem("_ztlDeepSeekKey");
+        var k = localStorage.getItem("_ztlDeepSeekKey");
         if (k && k.length > 3) {
-          var c = k;
           try {
-            var p = JSON.parse(k);
-            if (typeof p === "string") c = p;
+            k = JSON.parse(k);
           } catch {
           }
-          window._ztlDeepSeekKey = c.trim();
-          return c.trim();
+          k = String(k).trim().replace(/^"+|"+$/g, "");
+          window._ztlDeepSeekKey = k;
+          return k;
         }
       } catch {
       }
@@ -859,10 +858,13 @@ ${lines.join("\n")}`;
         try {
           var v = await store.get("_ztlDeepSeekKey");
           if (v) {
-            var c = typeof v === "string" ? v : String(v);
-            window._ztlDeepSeekKey = c.trim();
-            localStorage.setItem("_ztlDeepSeekKey", c.trim());
-            return c.trim();
+            v = String(v).trim().replace(/^"+|"+$/g, "");
+            window._ztlDeepSeekKey = v;
+            try {
+              localStorage.setItem("_ztlDeepSeekKey", v);
+            } catch {
+            }
+            return v;
           }
         } catch {
         }
@@ -1018,6 +1020,21 @@ ${lines.join("\n")}`;
         try {
           await store.syncFromCloud();
         } catch {
+        }
+        try {
+          for (var ci = 0; ci < localStorage.length; ci++) {
+            var ck = localStorage.key(ci);
+            if (ck && ck.indexOf("log:") === 0) {
+              try {
+                var cv = JSON.parse(localStorage.getItem(ck));
+                if (cv && typeof cv === "object" && cv["0"] !== void 0 && !Array.isArray(cv)) {
+                  localStorage.removeItem(ck);
+                }
+              } catch (e) {
+              }
+            }
+          }
+        } catch (e) {
         }
         const d = await store.get("log:" + tk);
         if (d) {
