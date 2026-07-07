@@ -1893,7 +1893,9 @@ ${lines.join("\n")}`;
       })();
     }, []);
     const days = weekDaysFrom(offset);
+    const [initialLoaded, setInitialLoaded] = (0, import_react.useState)(false);
     (0, import_react.useEffect)(() => {
+      if (initialLoaded) return;
       (async () => {
         var map = {};
         for (const dk of days) {
@@ -1907,8 +1909,9 @@ ${lines.join("\n")}`;
           map[dk] = p || { meals: [], sessions: [] };
         }
         setPlans(map);
+        setInitialLoaded(true);
       })();
-    }, [offset, loadKey.current]);
+    }, [offset]);
     var savePlan = (dk, next) => {
       try {
         localStorage.setItem("plan:" + dk, JSON.stringify(next));

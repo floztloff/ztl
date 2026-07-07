@@ -2163,7 +2163,10 @@ function ProgramTab() {
   useEffect(() => { (async () => { let r = await store.get("recipes"); if (!Array.isArray(r) || !r.length) r = RECIPES; setRecipes(r); let ss = await store.get("sessions"); if (!Array.isArray(ss) || !ss.length) ss = SESSIONS.map(normalizeSession); setProgSessions(ss); })(); }, []);
 
   const days = weekDaysFrom(offset);
+  // Charger les plans UNE SEULE FOIS depuis localStorage (pas de re-render qui écrase)
+  const [initialLoaded, setInitialLoaded] = useState(false);
   useEffect(() => {
+    if (initialLoaded) return;
     (async () => {
       var map = {};
       for (const dk of days) {
@@ -2171,13 +2174,13 @@ function ProgramTab() {
           var raw = localStorage.getItem("plan:" + dk);
           var p = raw ? JSON.parse(raw) : null;
         } catch { p = null; }
-        // backward compat: old format "session" → new format "sessions"
         if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
         map[dk] = p || { meals: [], sessions: [] };
       }
       setPlans(map);
+      setInitialLoaded(true);
     })();
-  }, [offset, loadKey.current]);
+  }, [offset]);
 
   var savePlan = (dk, next) => {
     try { localStorage.setItem("plan:" + dk, JSON.stringify(next)); } catch {}
