@@ -524,7 +524,7 @@ const setDeepSeekKey = (k) => {
   if (!k || !k.trim()) return;
   window._ztlDeepSeekKey = k.trim();
   try { localStorage.setItem("_ztlDeepSeekKey", k.trim()); } catch {}
-  try { store.set("_ztlDeepSeekKey", k.trim()); } catch {}
+  try { await store.set("_ztlDeepSeekKey", k.trim()); } catch {}
 };
 
 const dateKey = (d = new Date()) =>
