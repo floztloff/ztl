@@ -2157,17 +2157,35 @@ function ProgramTab() {
   const [offset, setOffset] = useState(0);
   const [plans, setPlans] = useState({});
   const [pickFor, setPickFor] = useState(null);
-  const progRef = useRef({});
+  const loadKey = useRef(0);
 
   useEffect(() => { (async () => { let r = await store.get("recipes"); if (!Array.isArray(r) || !r.length) r = RECIPES; setRecipes(r); let ss = await store.get("sessions"); if (!Array.isArray(ss) || !ss.length) ss = SESSIONS.map(normalizeSession); setProgSessions(ss); })(); }, []);
 
   const days = weekDaysFrom(offset);
+  const reload = () => { loadKey.current++; };
   useEffect(() => {
-    (async () => { var map = {}; for (const dk of days) { var p = await store.get("plan:" + dk); var cached = progRef.current[dk]; map[dk] = cached || p || { meals: [], session: null }; } setPlans(map); })();
-  }, [offset]);
+    (async () => {
+      var map = {};
+      for (const dk of days) {
+        try {
+          var raw = localStorage.getItem("plan:" + dk);
+          var p = raw ? JSON.parse(raw) : null;
+        } catch { p = null; }
+        map[dk] = p || { meals: [], session: null };
+      }
+      setPlans(map);
+    })();
+  }, [offset, loadKey.current]);
 
-  var savePlan = (dk, next) => { progRef.current[dk] = next; store.set("plan:" + dk, next); setPlans(p => ({ ...p, [dk]: next })); };
-  var setSession = (dk, sid) => savePlan(dk, { meals: (plans[dk]?.meals) || [], session: sid || null });
+  var savePlan = (dk, next) => {
+    try { localStorage.setItem("plan:" + dk, JSON.stringify(next)); } catch {}
+    store.set("plan:" + dk, next);
+    setPlans(p => ({ ...p, [dk]: next }));
+  };
+  var setSession = (dk, sid) => {
+    var cur = (plans[dk] || { meals: [], session: null });
+    savePlan(dk, { meals: cur.meals || [], session: sid || null });
+  };
   var addMeal = (dk, rid) => { var cur = plans[dk] || { meals: [] }; if ((cur.meals || []).includes(rid)) return; savePlan(dk, { ...cur, meals: [...(cur.meals || []), rid] }); };
   var removeMeal = (dk, rid) => { var cur = plans[dk] || { meals: [] }; var jul = { ...(cur.juliette || {}) }; delete jul[rid]; savePlan(dk, { ...cur, meals: (cur.meals || []).filter(x => x !== rid), juliette: jul }); };
   var recById = (id) => (recipes || []).find(r => r.id === id);

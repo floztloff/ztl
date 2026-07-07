@@ -1880,7 +1880,7 @@ ${lines.join("\n")}`;
     const [offset, setOffset] = (0, import_react.useState)(0);
     const [plans, setPlans] = (0, import_react.useState)({});
     const [pickFor, setPickFor] = (0, import_react.useState)(null);
-    const progRef = (0, import_react.useRef)({});
+    const loadKey = (0, import_react.useRef)(0);
     (0, import_react.useEffect)(() => {
       (async () => {
         let r = await store.get("recipes");
@@ -1892,23 +1892,36 @@ ${lines.join("\n")}`;
       })();
     }, []);
     const days = weekDaysFrom(offset);
+    const reload = () => {
+      loadKey.current++;
+    };
     (0, import_react.useEffect)(() => {
       (async () => {
         var map = {};
         for (const dk of days) {
-          var p = await store.get("plan:" + dk);
-          var cached = progRef.current[dk];
-          map[dk] = cached || p || { meals: [], session: null };
+          try {
+            var raw = localStorage.getItem("plan:" + dk);
+            var p = raw ? JSON.parse(raw) : null;
+          } catch {
+            p = null;
+          }
+          map[dk] = p || { meals: [], session: null };
         }
         setPlans(map);
       })();
-    }, [offset]);
+    }, [offset, loadKey.current]);
     var savePlan = (dk, next) => {
-      progRef.current[dk] = next;
+      try {
+        localStorage.setItem("plan:" + dk, JSON.stringify(next));
+      } catch {
+      }
       store.set("plan:" + dk, next);
       setPlans((p) => ({ ...p, [dk]: next }));
     };
-    var setSession = (dk, sid) => savePlan(dk, { meals: plans[dk]?.meals || [], session: sid || null });
+    var setSession = (dk, sid) => {
+      var cur = plans[dk] || { meals: [], session: null };
+      savePlan(dk, { meals: cur.meals || [], session: sid || null });
+    };
     var addMeal = (dk, rid) => {
       var cur = plans[dk] || { meals: [] };
       if ((cur.meals || []).includes(rid)) return;
