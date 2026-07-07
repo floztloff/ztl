@@ -1893,32 +1893,37 @@ ${lines.join("\n")}`;
       })();
     }, []);
     const days = weekDaysFrom(offset);
-    const [initialLoaded, setInitialLoaded] = (0, import_react.useState)(false);
-    (0, import_react.useEffect)(() => {
-      if (initialLoaded) return;
-      (async () => {
-        var map = {};
-        for (const dk of days) {
-          try {
-            var raw = localStorage.getItem("plan:" + dk);
-            var p = raw ? JSON.parse(raw) : null;
-          } catch {
-            p = null;
-          }
-          if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
-          map[dk] = p || { meals: [], sessions: [] };
+    const initRef = (0, import_react.useRef)(false);
+    if (!initRef.current) {
+      initRef.current = true;
+      var initMap = {};
+      for (var di = 0; di < days.length; di++) {
+        var dk2 = days[di];
+        try {
+          var raw2 = localStorage.getItem("plan:" + dk2);
+          var p2 = raw2 ? JSON.parse(raw2) : null;
+        } catch (e) {
+          p2 = null;
         }
-        setPlans(map);
-        setInitialLoaded(true);
-      })();
-    }, [offset]);
+        if (p2 && p2.session && !p2.sessions) p2 = { ...p2, sessions: [p2.session] };
+        initMap[dk2] = p2 || { meals: [], sessions: [] };
+      }
+      setTimeout(function() {
+        setPlans(initMap);
+      }, 0);
+    }
     var savePlan = (dk, next) => {
       try {
         localStorage.setItem("plan:" + dk, JSON.stringify(next));
       } catch {
       }
       store.set("plan:" + dk, next);
-      setPlans((p) => ({ ...p, [dk]: next }));
+      setPlans(function(p) {
+        var n = {};
+        for (var k in p) n[k] = p[k];
+        n[dk] = next;
+        return n;
+      });
     };
     var toggleSession = (dk, sid) => {
       var cur = plans[dk] || { meals: [], sessions: [] };
