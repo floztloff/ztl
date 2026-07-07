@@ -16,8 +16,8 @@
           if (k.startsWith("log:")) { cloudVal = await window.ZTLDb.getDailyLog(u, k.slice(4)); }
           if (cloudVal == null) { cloudVal = await window.ZTLDb.getUserData(u, k); }
           if (cloudVal != null) {
-            if (typeof cloudVal === "string") { try { cloudVal = JSON.parse(cloudVal); } catch(e) { return null; } }
-            if (cloudVal && typeof cloudVal === "object") { try { localStorage.setItem(k, JSON.stringify(cloudVal)); } catch {} return cloudVal; }
+            if (typeof cloudVal === "string" && (cloudVal[0] === "{" || cloudVal[0] === "[")) { try { cloudVal = JSON.parse(cloudVal); } catch(e) {} }
+            if (cloudVal != null) { try { localStorage.setItem(k, cloudVal && typeof cloudVal === "object" ? JSON.stringify(cloudVal) : String(cloudVal)); } catch {} return cloudVal; }
           }
         } catch (e) {}
       }
