@@ -7,7 +7,7 @@
 
   const store = {
     async get(k) {
-      try { const r = localStorage.getItem(k); if (r) { const v = JSON.parse(r); if (v && typeof v === "object" && !Array.isArray(v)) return v; } }
+      try { const r = localStorage.getItem(k); if (r) { try { const v = JSON.parse(r); if (v != null) return v; } catch {} return r; } }
       catch {}
       var u = uid();
       if (u && window.ZTLDb) {
