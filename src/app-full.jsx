@@ -979,17 +979,19 @@ function HomeTab({ day, sess, exDone, workoutDone, setTab, hist, saveDay, saveSl
     (async () => {
       setPlan((await store.get("plan:" + dateKey())) || { meals: [], session: null });
       let r = await store.get("recipes"); if (!Array.isArray(r) || !r.length) r = RECIPES; setRecipes(r);
-      setSleepActive((await store.get("sleepActive")) || null);
+      var sa = window._ztlSleepActive || (await store.get("sleepActive")) || null;
+      setSleepActive(sa);
+      window._ztlSleepActive = sa;
     })();
   }, []);
   const hhmm = (ts) => { const d = new Date(ts); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
-  const startNight = () => { const a = { startedAt: Date.now() }; setSleepActive(a); store.set("sleepActive", a); };
+  const startNight = () => { const a = { startedAt: Date.now() }; setSleepActive(a); store.set("sleepActive", a); window._ztlSleepActive = a; };
   const endNight = () => {
     const a = sleepActive; if (!a) return;
     const nowTs = Date.now();
     const hours = Math.max(0, Math.round(((nowTs - a.startedAt) / 3600000) * 10) / 10);
     saveSleepForDate(dateKey(), { bed: hhmm(a.startedAt), wake: hhmm(nowTs), quality: 0, hours, endedAt: new Date(nowTs).toISOString() });
-    setSleepActive(null); store.del("sleepActive");
+    setSleepActive(null); store.del("sleepActive"); window._ztlSleepActive = null;
   };
   const m = day.macros || { p: 0, c: 0, f: 0 };
   const kcal = Math.round((m.p + m.c) * 4 + m.f * 9);
@@ -2488,11 +2490,11 @@ function SleepTab({ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepFo
 
   useEffect(() => {
     (async () => {
-      const act = await store.get("sleepActive");
+      const act = window._ztlSleepActive || (await store.get("sleepActive"));
       if (act && act.startedAt && day.sleep && day.sleep.endedAt && day.sleep.endedAt >= act.startedAt) {
-        store.del("sleepActive"); setActive(null);
+        store.del("sleepActive"); setActive(null); window._ztlSleepActive = null;
       } else {
-        setActive(act);
+        setActive(act || null);
       }
     })();
     const id = setInterval(() => setNow(Date.now()), 20000);
@@ -2509,6 +2511,7 @@ function SleepTab({ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepFo
   const startNight = () => {
     const a = { startedAt: new Date().toISOString() };
     store.set("sleepActive", a); setActive(a); setNow(Date.now()); setJustEnded(false);
+    window._ztlSleepActive = a;
   };
   const endNight = () => {
     if (!active) return;
@@ -2519,6 +2522,7 @@ function SleepTab({ day, saveDay, hist, onSleepSaved, onDeleteSleep, saveSleepFo
     saveDay({ ...day, sleep: { bed: b, wake: w, quality: q, hours, endedAt: end.toISOString() } });
     onSleepSaved(today, hours, q);
     store.del("sleepActive"); setActive(null); setJustEnded(true);
+    window._ztlSleepActive = null;
   };
   const saveManual = () => {
     const hours = calcHours(bed, wake);

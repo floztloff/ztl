@@ -1247,7 +1247,9 @@ ${lines.join("\n")}`;
         let r = await store.get("recipes");
         if (!Array.isArray(r) || !r.length) r = RECIPES;
         setRecipes(r);
-        setSleepActive(await store.get("sleepActive") || null);
+        var sa = window._ztlSleepActive || await store.get("sleepActive") || null;
+        setSleepActive(sa);
+        window._ztlSleepActive = sa;
       })();
     }, []);
     const hhmm = (ts) => {
@@ -1258,6 +1260,7 @@ ${lines.join("\n")}`;
       const a = { startedAt: Date.now() };
       setSleepActive(a);
       store.set("sleepActive", a);
+      window._ztlSleepActive = a;
     };
     const endNight = () => {
       const a = sleepActive;
@@ -1267,6 +1270,7 @@ ${lines.join("\n")}`;
       saveSleepForDate(dateKey(), { bed: hhmm(a.startedAt), wake: hhmm(nowTs), quality: 0, hours, endedAt: new Date(nowTs).toISOString() });
       setSleepActive(null);
       store.del("sleepActive");
+      window._ztlSleepActive = null;
     };
     const m = day.macros || { p: 0, c: 0, f: 0 };
     const kcal = Math.round((m.p + m.c) * 4 + m.f * 9);
@@ -2223,12 +2227,13 @@ ${lines.join("\n")}`;
     const [manualDate, setManualDate] = (0, import_react.useState)(dateKey());
     (0, import_react.useEffect)(() => {
       (async () => {
-        const act = await store.get("sleepActive");
+        const act = window._ztlSleepActive || await store.get("sleepActive");
         if (act && act.startedAt && day.sleep && day.sleep.endedAt && day.sleep.endedAt >= act.startedAt) {
           store.del("sleepActive");
           setActive(null);
+          window._ztlSleepActive = null;
         } else {
-          setActive(act);
+          setActive(act || null);
         }
       })();
       const id = setInterval(() => setNow(Date.now()), 2e4);
@@ -2248,6 +2253,7 @@ ${lines.join("\n")}`;
       setActive(a);
       setNow(Date.now());
       setJustEnded(false);
+      window._ztlSleepActive = a;
     };
     const endNight = () => {
       if (!active) return;
@@ -2261,6 +2267,7 @@ ${lines.join("\n")}`;
       store.del("sleepActive");
       setActive(null);
       setJustEnded(true);
+      window._ztlSleepActive = null;
     };
     const saveManual = () => {
       const hours = calcHours(bed, wake);
