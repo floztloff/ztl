@@ -2160,7 +2160,20 @@ ${lines.join("\n")}`;
     var remaining = items.filter(function(it) {
       return !it.checked;
     }).length;
-    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Courses"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta liste"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "G\xE9n\xE9r\xE9e depuis toutes les recettes planifi\xE9es \xE0 venir, avec les quantit\xE9s additionn\xE9es."), /* @__PURE__ */ React.createElement("button", { onClick: () => doGenerate(), disabled: busy, style: { width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", busy ? "Calcul de la liste\u2026" : "Actualiser depuis le programme"), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Courses"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta liste"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "G\xE9n\xE9r\xE9e depuis toutes les recettes planifi\xE9es \xE0 venir, avec les quantit\xE9s additionn\xE9es."), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
+      try {
+        await store.syncFromCloud();
+        var u = window._ztlUser && window._ztlUser.id;
+        var raw = "";
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k.indexOf("log:") === 0) raw += k + "=" + localStorage.getItem(k).slice(0, 150) + "\n";
+        }
+        alert(raw || "AUCUN log dans localStorage");
+      } catch (e) {
+        alert("Err: " + e.message);
+      }
+    }, style: { marginTop: 4, width: "100%", background: "#eee", border: "1px solid #999", borderRadius: 8, padding: "5px", fontSize: 10, cursor: "pointer" } }, "\u{1F52C} Debug syncFromCloud"), /* @__PURE__ */ React.createElement("button", { onClick: () => doGenerate(), disabled: busy, style: { width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", busy ? "Calcul de la liste\u2026" : "Actualiser depuis le programme"), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
       var u = window._ztlUser && window._ztlUser.id;
       if (!u || !window.ZTLDb) return;
       var dbg = [];
