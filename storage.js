@@ -64,8 +64,9 @@
         var localKey = "log:" + log.date;
         var local = localStorage.getItem(localKey);
         if (!local) {
-          // Cloud has data that local doesn't — pull it
-          localStorage.setItem(localKey, JSON.stringify(log.data));
+          var d = log.data;
+          if (typeof d === "string") { try { d = JSON.parse(d); } catch(e) { d = null; } }
+          if (d) localStorage.setItem(localKey, JSON.stringify(d));
         }
       }
       // Sync user data
