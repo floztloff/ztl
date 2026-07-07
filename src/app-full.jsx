@@ -714,6 +714,8 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
+      // D'abord sync depuis Supabase dans localStorage
+      try { await store.syncFromCloud(); } catch {}
       const d = await store.get("log:" + tk);
       if (d) {
         const macros = d.macros || { p: d.protein || 0, c: 0, f: 0 };

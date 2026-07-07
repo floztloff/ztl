@@ -1002,6 +1002,10 @@ ${lines.join("\n")}`;
     }, []);
     (0, import_react.useEffect)(() => {
       (async () => {
+        try {
+          await store.syncFromCloud();
+        } catch {
+        }
         const d = await store.get("log:" + tk);
         if (d) {
           const macros = d.macros || { p: d.protein || 0, c: 0, f: 0 };
