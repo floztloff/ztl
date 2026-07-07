@@ -2000,27 +2000,38 @@ ${lines.join("\n")}`;
       })());
     }), pickFor && /* @__PURE__ */ React.createElement(RecipePicker, { recipes, dayLabel: (/* @__PURE__ */ new Date(pickFor + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), added: plans[pickFor]?.meals || [], onAdd: (rid) => addMeal(pickFor, rid), onClose: () => setPickFor(null) }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement("button", { onClick: async function() {
       var u = window._ztlUser && window._ztlUser.id;
+      alert("User ID: " + (u || "NON CONNECT\xC9"));
+    }, style: { fontSize: 10, padding: "4px 8px", background: "#eee", border: "1px solid #999", borderRadius: 6, cursor: "pointer", marginRight: 5 } }, "\u{1F194} User ID"), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
+      var u = window._ztlUser && window._ztlUser.id;
       if (!u) return alert("Pas connect\xE9");
       try {
-        var p = await window.ZTLDb.getUserData(u, "plan:2026-07-08");
-        alert(p ? JSON.stringify(p, "", 2) : "AUCUNE donn\xE9e pour le 8 juillet dans Supabase");
+        var keys = await window.ZTLDb.listUserDataKeys(u, "plan:");
+        alert(keys.length ? keys.join("\n") : "AUCUNE cl\xE9 plan: dans Supabase");
       } catch (e) {
         alert("Erreur: " + e.message);
       }
-    }, style: { fontSize: 10, padding: "4px 8px", background: C.emberSoft, border: "1px solid " + C.ember, borderRadius: 6, cursor: "pointer", marginRight: 5 } }, "\u{1F52C} Supabase: plan 08/07"), /* @__PURE__ */ React.createElement("button", { onClick: function() {
+    }, style: { fontSize: 10, padding: "4px 8px", background: C.emberSoft, border: "1px solid " + C.ember, borderRadius: 6, cursor: "pointer", marginRight: 5 } }, "\u{1F52C} listUserDataKeys"), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
+      var u = window._ztlUser && window._ztlUser.id;
+      if (!u) return alert("Pas connect\xE9");
+      try {
+        var p = await window.ZTLDb.getUserData(u, "plan:2026-07-08");
+        alert(p ? JSON.stringify(p) : "NULL");
+      } catch (e) {
+        alert("Erreur: " + e.message);
+      }
+    }, style: { fontSize: 10, padding: "4px 8px", background: C.emberSoft, border: "1px solid " + C.ember, borderRadius: 6, cursor: "pointer", marginRight: 5 } }, "\u{1F52C} get plan 08/07"), /* @__PURE__ */ React.createElement("button", { onClick: function() {
       var dbg = [];
       for (var i = 0; i < localStorage.length; i++) {
         var k = localStorage.key(i);
         if (k.indexOf("plan:") === 0) {
           try {
             var v = JSON.parse(localStorage.getItem(k));
-            dbg.push(k.slice(5) + ": meals=" + (v.meals || []).length + " sessions=" + (v.sessions || []).length);
+            dbg.push(k.slice(5) + ": meals=" + (v.meals || []).length);
           } catch (e) {
-            dbg.push(k.slice(5) + ": err");
           }
         }
       }
-      alert(dbg.length ? dbg.join("\n") : "AUCUNE cl\xE9 plan: dans localStorage");
+      alert(dbg.length ? dbg.join("\n") : "AUCUN localStorage");
     }, style: { fontSize: 10, padding: "4px 8px", background: C.mint, border: "1px solid " + C.teal, borderRadius: 6, cursor: "pointer" } }, "\u{1F52C} localStorage")), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" } }, "\u{1F5D3}\uFE0F Programme type (exemple)"), !imgErr ? /* @__PURE__ */ React.createElement("img", { src: "programme-type.png", alt: "Programme type", style: { width: "100%", display: "block" }, onError: () => setImgErr(true) }) : /* @__PURE__ */ React.createElement("div", { style: { padding: 20, textAlign: "center", color: C.mut, fontSize: 13 } }, "Image non disponible")), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
   }
   function CoursesTab() {
