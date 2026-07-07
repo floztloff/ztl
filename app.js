@@ -2086,7 +2086,7 @@ ${lines.join("\n")}`;
             }
             var meals = raw.meals || [];
             if (!meals.length) {
-              progress.push(dk.slice(5) + ":noMeals");
+              progress.push(dk.slice(5) + ":meals=[] raw=" + JSON.stringify(raw).slice(0, 80));
               continue;
             }
             dbg.push(dk + "=" + meals.length + "repas");

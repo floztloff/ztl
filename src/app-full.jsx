@@ -2329,7 +2329,7 @@ function CoursesTab() {
           try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { progress.push(dk.slice(5)+":err"); continue; }
           if (!raw) { progress.push(dk.slice(5)+":null"); continue; }
           var meals = raw.meals || [];
-          if (!meals.length) { progress.push(dk.slice(5)+":noMeals"); continue; }
+          if (!meals.length) { progress.push(dk.slice(5)+":meals=[] raw="+JSON.stringify(raw).slice(0,80)); continue; }
           dbg.push(dk + "=" + meals.length + "repas");
           for (var j = 0; j < meals.length; j++) {
             var rid = meals[j];
