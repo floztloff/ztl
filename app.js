@@ -860,7 +860,7 @@ ${lines.join("\n")}`;
     }
     return "";
   };
-  var setDeepSeekKey = (k) => {
+  var setDeepSeekKey = async (k) => {
     if (!k || !k.trim()) return;
     window._ztlDeepSeekKey = k.trim();
     try {
@@ -868,7 +868,7 @@ ${lines.join("\n")}`;
     } catch {
     }
     try {
-      store.set("_ztlDeepSeekKey", k.trim());
+      await store.set("_ztlDeepSeekKey", k.trim());
     } catch {
     }
   };

@@ -520,7 +520,7 @@ const getDeepSeekKey = async () => {
   return "";
 };
 
-const setDeepSeekKey = (k) => {
+const setDeepSeekKey = async (k) => {
   if (!k || !k.trim()) return;
   window._ztlDeepSeekKey = k.trim();
   try { localStorage.setItem("_ztlDeepSeekKey", k.trim()); } catch {}
