@@ -41,68 +41,76 @@ function badZone(value, ceiling) {
 
 /* ---------- données statiques ---------- */
 const SESSIONS = [
-  { id: "maisonA", group: "Maison", name: "Maison A", sub: "Plein le corps · ~25 min", ex: [
-    { id: "ma1", name: "Squat au poids du corps", scheme: "2 × 12", cue: "Descends comme pour t'asseoir, dos droit, pousse dans les talons.", art: "squat",
-      do: ["Pieds largeur d'épaules, pointes légèrement ouvertes", "Pousse les fesses en arrière, dos droit, poitrine ouverte", "Descends cuisses parallèles au sol, poids dans les talons"],
-      avoid: ["Genoux qui rentrent vers l'intérieur", "Talons qui décollent du sol", "Dos qui s'arrondit"] },
-    { id: "ma2", name: "Pompes inclinées", scheme: "2 × 8-10", cue: "Mains surélevées sur un meuble, corps gainé. Plus haut = plus facile.", tag: "soft", art: "incline",
-      do: ["Mains un peu plus larges que les épaules sur un support stable", "Corps gainé en planche, descends la poitrine vers le support", "Coudes à ~45° du corps — plus doux pour l'épaule"],
-      avoid: ["Bassin qui s'affaisse ou fesses en l'air", "Descendre trop bas si l'épaule tire", "Coudes écartés à 90°"] },
-    { id: "ma3", name: "Rowing élastique", scheme: "2 × 12", cue: "Tire les coudes vers l'arrière, serre les omoplates.", tag: "good", art: "row",
-      do: ["Élastique à hauteur de poitrine, bras tendus devant", "Tire les coudes vers l'arrière en serrant les omoplates", "Reviens lentement, en contrôle"],
-      avoid: ["Épaules qui montent vers les oreilles", "Dos qui s'arrondit", "Mouvement fait à la va-vite"] },
-    { id: "ma4", name: "Rotation externe élastique", scheme: "2 × 12 / bras", cue: "Coude au corps, écarte l'avant-bras. Léger et contrôlé.", tag: "good", art: "extrot",
-      do: ["Coude collé au flanc, plié à 90°", "Écarte lentement l'avant-bras vers l'extérieur", "Reste léger et lent — c'est le but"],
-      avoid: ["Décoller le coude du corps", "Élastique trop dur", "Geste rapide ou en force"] },
-    { id: "ma5", name: "Gainage planche", scheme: "2 × 20-30 s", cue: "Corps aligné, abdos et fessiers serrés.", art: "plank",
-      do: ["Coudes sous les épaules, appui avant-bras + pointes de pieds", "Corps parfaitement aligné, abdos et fessiers serrés", "Respire normalement"],
-      avoid: ["Fesses en l'air ou dos creusé", "Tête qui pend vers le bas", "Tenir affaissé : 15 s parfaites valent mieux"] },
+  /* ===== Séance 1 — Abdos (~25 min) ===== */
+  { id: "abdos", group: "Maison", name: "Abdos", sub: "~25 min · 2-3×/semaine", ex: [
+    { id: "ab1", name: "Dead bug", scheme: "3 × 8 / côté", cue: "Allongé dos, bras et jambe opposés descendent lentement, dos collé au sol.", art: "deadbug", tag: "good",
+      do: ["Allongé sur le dos, bras vers le plafond, jambes levées genoux à 90°", "Descends lentement le bras et la jambe opposés sans les poser, reviens, alterne", "Bas du dos collé au tapis — si le dos se creuse, réduis l'amplitude", "Lent et contrôlé, souffle en tendant", "Le mouvement part du ventre"],
+      avoid: ["Dos qui se creuse", "Bras ou jambes qui touchent le sol", "Mouvement rapide ou saccadé"] },
+    { id: "ab2", name: "Bas des abdos (exo bouteilles)", scheme: "3 × 12", cue: "Assis en appui arrière, jambes serrées décollées passent par-dessus des bouteilles.", art: "bottles",
+      do: ["Assis en appui arrière sur les mains, buste incliné, jambes serrées décollées (2 bouteilles au sol)", "Déplace les jambes serrées d'un côté à l'autre par-dessus les bouteilles, puis en les contournant côté corps", "Jambes serrées, ce sont les abdos qui les déplacent", "Buste gainé, ne t'effondre pas en arrière"],
+      avoid: ["Jambes qui se desserrent", "Buste qui s'effondre en arrière", "Forcer si l'épaule tire en appui"] },
+    { id: "ab3", name: "Toe-touch (crunch vers le haut)", scheme: "3 × 12", cue: "Allongé dos, jambes levées, décolle les omoplates pour toucher les pieds.", art: "toetouch",
+      do: ["Allongé sur le dos, jambes tendues levées vers le plafond, bras vers les pieds", "Décolle les omoplates et va chercher tes pieds, puis redescends lentement", "Ne tire pas sur la nuque — pars du ventre", "Pas d'élan avec les bras", "Épaules qui décollent, lombaires plaquées"],
+      avoid: ["Tirer sur la nuque", "Donner de l'élan avec les bras", "Décoller les lombaires du sol"] },
+    { id: "ab4", name: "Heel touches (crunch côtés)", scheme: "3 × 12 / côté", cue: "Sur le dos, genoux fléchis, épaules décollées, touche chaque talon alternativement.", art: "heeltouch",
+      do: ["Sur le dos, genoux fléchis pieds au sol, épaules décollées, bras le long du corps", "Penche-toi alternativement sur chaque côté pour toucher le talon, droite puis gauche", "Le mouvement vient de la taille (on raccourcit le flanc)", "Épaules décollées en permanence", "Nuque relâchée"],
+      avoid: ["Décoller les épaules du sol trop haut", "Nuque tendue", "Mouvement trop rapide"] },
+    { id: "ab5", name: "Planche ventrale", scheme: "3 × 20-40 s", cue: "Avant-bras au sol, corps aligné, ventre et fessiers serrés.", art: "plank", tag: "good",
+      do: ["Appui sur les avant-bras, coudes sous les épaules, corps aligné tête-talons", "Tiens la position en gainant le ventre et serrant les fessiers", "Respire normalement", "Corps droit : ni fesses en l'air, ni bassin qui tombe", "Épaules loin des oreilles"],
+      avoid: ["Fesses en l'air ou bassin qui tombe", "Retenir sa respiration", "Épaules remontées vers les oreilles"] },
   ]},
-  { id: "maisonB", group: "Maison", name: "Maison B", sub: "Plein le corps · ~25 min", ex: [
-    { id: "mb1", name: "Fentes alternées", scheme: "2 × 10 / jambe", cue: "Grand pas, genou arrière vers le sol, buste droit.", art: "lunge",
-      do: ["Grand pas en avant, descends les deux genoux", "Genou avant au-dessus de la cheville, buste droit", "Pousse sur le talon avant pour remonter"],
-      avoid: ["Genou avant qui dépasse la pointe du pied", "Buste penché en avant", "Pas trop court"] },
-    { id: "mb2", name: "Pont fessier", scheme: "2 × 15", cue: "Pousse les hanches vers le haut, serre les fessiers en haut.", art: "bridge",
-      do: ["Dos au sol, pieds à plat largeur de bassin", "Pousse dans les talons, monte les hanches", "Serre fort les fessiers en haut, 1 seconde"],
-      avoid: ["Pousser avec le bas du dos", "Cambrer les reins", "Monter trop haut"] },
-    { id: "mb3", name: "Face pull élastique", scheme: "2 × 15", cue: "Tire vers le visage, coudes hauts. Top pour l'épaule.", tag: "good", art: "facepull",
-      do: ["Élastique à hauteur du visage, devant toi", "Tire vers le front, coudes hauts et ouverts", "Serre les omoplates en fin de mouvement"],
-      avoid: ["Coudes qui tombent vers le bas", "Hausser les épaules", "Élastique trop dur"] },
-    { id: "mb4", name: "Pompes inclinées", scheme: "2 × 8-10", cue: "Comme en séance A.", tag: "soft", art: "incline",
-      do: ["Mains un peu plus larges que les épaules sur un support stable", "Corps gainé en planche, descends la poitrine vers le support", "Coudes à ~45° du corps — plus doux pour l'épaule"],
-      avoid: ["Bassin qui s'affaisse ou fesses en l'air", "Descendre trop bas si l'épaule tire", "Coudes écartés à 90°"] },
-    { id: "mb5", name: "Pallof press élastique", scheme: "2 × 10 / côté", cue: "Élastique sur le côté, tends les bras devant sans tourner le buste.", art: "pallof",
-      do: ["Élastique fixé sur le côté, à hauteur de poitrine", "Tends les bras droit devant, puis reviens", "Garde le buste face à l'avant, sans tourner"],
-      avoid: ["Laisser le buste pivoter vers l'élastique", "Cambrer le dos", "Bras trop relâchés"] },
+
+  /* ===== Séance 2 — Dos + Biceps (~35-40 min) ===== */
+  { id: "dos-biceps", group: "Maison", name: "Dos + Biceps", sub: "~35-40 min · dos d'abord, biceps ensuite", ex: [
+    { id: "db1", name: "Rowing horizontal (tirage debout)", scheme: "3 × 10-12", cue: "Debout face à la porte, élastique poitrine, tire vers le ventre, serre les omoplates.", band: "rouge (~7 kg)", tag: "good", art: "row",
+      do: ["Accroche-porte au milieu (hauteur poitrine), une poignée par main, debout face à la porte, recule pour tendre", "Tire les poignées vers le ventre, coudes vers l'arrière le long du corps, serre les omoplates", "Retour lent", "Tire avec les coudes, serre les omoplates", "Buste droit et fixe, pas de balancier", "Épaules basses, genoux légèrement fléchis"],
+      avoid: ["Buste qui balance", "Épaules qui montent vers les oreilles", "Tirer trop vite"] },
+    { id: "db2", name: "Tirage vertical (lat pulldown)", scheme: "3 × 10-12", cue: "À genoux face à la porte, élastique en haut, tire vers les épaules.", band: "vert → rouge (progressif)", tag: "good", art: "latpulldown",
+      do: ["Accroche-porte tout en haut. À genoux face à la porte, bras tendus vers le haut vers l'ancrage", "Tire vers le bas jusqu'aux épaules, coudes vers les côtes (dans les poches arrière)", "Remontée lente", "Ce sont les coudes qui descendent ; sens les dorsaux sous les aisselles", "Léger buste incliné en arrière, gainé", "TOUJOURS devant la nuque, JAMAIS derrière"],
+      avoid: ["Tirer derrière la nuque", "Bras qui s'écartent", "À surveiller si l'aisselle tire"] },
+    { id: "db3", name: "Curl biceps", scheme: "3 × 10-12", cue: "Debout sur l'élastique, monte les poignées aux épaules, descente lente.", band: "rouge (~7 kg)", art: "curl",
+      do: ["Debout, pieds au milieu de l'élastique, une poignée par main, bras tendus, paumes vers l'avant", "Monte les poignées vers les épaules en pliant les coudes", "Redescends lentement (2 s)", "Coudes fixes et collés au corps", "Amplitude complète", "Descente freinée aussi importante que la montée"],
+      avoid: ["Coudes qui s'écartent du corps", "Balancier du buste", "Descente trop rapide"] },
+    { id: "db4", name: "Curl marteau (prise neutre)", scheme: "3 × 10-12", cue: "Même installation, pouces vers le haut, poignet ne tourne pas.", band: "rouge (~7 kg)", art: "hammercurl",
+      do: ["Même installation que le curl", "Monte paumes qui se font face (pouces en haut)", "Coudes fixes, descente lente", "Le poignet ne tourne jamais", "Prise neutre maintenue", "Descente freinée"],
+      avoid: ["Tourner le poignet", "Coudes qui s'écartent", "Descente rapide"] },
   ]},
-  { id: "upperA", group: "Programme salle", name: "Haut A", sub: "Basic Fit · ~45 min", ex: [
-    { id: "ua1", name: "Tirage vertical poulie (prise neutre)", scheme: "3 × 10", cue: "Machine lat pulldown. Tire vers la poitrine, omoplates basses.", tag: "good" },
-    { id: "ua2", name: "Rowing assis machine", scheme: "3 × 10", cue: "Tire vers le ventre, dos droit.", tag: "good" },
-    { id: "ua3", name: "Développé pec machine (léger)", scheme: "3 × 10", cue: "Chest press. Amplitude contrôlée, ne force pas en arrière.", tag: "soft" },
-    { id: "ua4", name: "Face pull poulie", scheme: "3 × 15", cue: "Corde en haut, tire vers le visage.", tag: "good" },
-    { id: "ua5", name: "Rotation externe poulie", scheme: "3 × 12", cue: "Coiffe des rotateurs. Léger.", tag: "good" },
-    { id: "ua6", name: "Curl biceps haltères", scheme: "3 × 12", cue: "Coudes collés au corps." },
+
+  /* ===== Séance 3 — Pecs + Triceps (~30-35 min) ===== */
+  { id: "pecs-triceps", group: "Maison", name: "Pecs + Triceps", sub: "~30-35 min · léger côté pecs en attendant kiné", ex: [
+    { id: "pt1", name: "Pompes inclinées", scheme: "3 × 8-10 (→12)", cue: "Mains surélevées (plan de travail), corps gainé, coudes à 45°.", tag: "soft", art: "incline",
+      do: ["Mains surélevées (mur → plan de travail → canapé → sol). Démarrage : plan de travail", "Corps gainé et droit", "Descends lentement, coudes à ~45° (jamais en croix), jusqu'à approcher la poitrine", "Puis pousse", "Amplitude que TU contrôles", "Progresse seulement si 12 reps propres et zéro gêne épaule"],
+      avoid: ["Coudes écartés à 90° (en croix)", "Bassin qui s'affaisse ou fesses en l'air", "Forcer si l'aisselle tire — monte les mains plus haut"] },
+    { id: "pt2", name: "Extension triceps pushdown", scheme: "3 × 10-12", cue: "Debout face à la porte, élastique en haut, pousse vers le bas coudes fixes.", band: "rouge (~7 kg)", art: "pushdown",
+      do: ["Accroche-porte tout en haut, debout face à la porte, tout près", "Coudes collés aux flancs, avant-bras remontés", "Pousse vers le bas jusqu'à tendre les bras, serre le triceps en bas", "Remonte lentement", "Les coudes ne bougent PAS — vissés aux flancs"],
+      avoid: ["Coudes qui s'écartent du corps", "Remontée rapide", "Extension incomplète"] },
+    { id: "pt3", name: "Kickback triceps", scheme: "3 × 10-12 / bras", cue: "Buste penché 45°, élastique sous le pied, tends le bras vers l'arrière.", band: "jaune (~5 kg)", art: "kickback",
+      do: ["Un bras à la fois. Élastique sous le pied avant, buste penché ~45° (dos droit, gainé), jambes fléchies", "Coude remonté le long du flanc ; tends le bras vers l'arrière", "Serre le triceps en fin de mouvement", "Retour lent", "Le haut du bras reste FIXE contre le buste ; seul l'avant-bras bouge", "Extension complète + pause"],
+      avoid: ["Bouger le haut du bras", "Dos qui s'arrondit dans la position penchée", "Extension incomplète"] },
   ]},
-  { id: "lowerA", group: "Programme salle", name: "Bas A", sub: "Basic Fit · ~45 min", ex: [
-    { id: "la1", name: "Presse à cuisses", scheme: "3 × 12", cue: "Pieds largeur bassin, ne verrouille pas les genoux." },
-    { id: "la2", name: "Leg curl (ischios)", scheme: "3 × 12", cue: "Contrôle la descente." },
-    { id: "la3", name: "Fentes ou split squat", scheme: "2 × 10 / jambe", cue: "Haltères légers le long du corps." },
-    { id: "la4", name: "Mollets debout", scheme: "3 × 15", cue: "Talon bien bas pour étirer." },
-    { id: "la5", name: "Gainage + Pallof", scheme: "3 × 30 s", cue: "Anti-rotation, abdos serrés." },
+
+  /* ===== Séance 4 — Épaules (~20 min) ===== */
+  { id: "epaules", group: "Maison", name: "Épaules", sub: "~20 min + exo bonus · léger et contrôlé", ex: [
+    { id: "ep1", name: "Band pull-apart", scheme: "3 × 12-15", cue: "Élastique devant, écarte les bras à l'horizontale en serrant les omoplates.", band: "bleu ciel/canard (~3-4 kg léger)", tag: "good", art: "pullapart",
+      do: ["Debout, élastique entre les deux mains, bras tendus devant à hauteur de poitrine, légère tension de départ", "Écarte les bras à l'horizontale jusqu'à frôler la poitrine", "Serre les omoplates, retour lent", "Reste à hauteur de poitrine — jamais au-dessus des épaules", "Épaules basses"],
+      avoid: ["Monter au-dessus des épaules", "Épaules haussées", "Toute gêne à l'aisselle réduis l'amplitude"] },
+    { id: "ep2", name: "Rotation externe (coude au corps)", scheme: "3 × 12-15 / côté", cue: "Coude collé au flanc à 90°, écarte l'avant-bras vers l'extérieur.", band: "bleu ciel (~3 kg très léger)", tag: "good", art: "extrot",
+      do: ["Accroche-porte à hauteur de coude. De profil, côté travaillé le plus éloigné de la porte", "Coude collé au flanc à 90° (serviette entre coude et côtes)", "Coude vissé au flanc, fais pivoter l'avant-bras vers l'extérieur", "Retour lent", "Amplitude confortable seulement — ne force pas la rotation", "Arrête-toi avant tout tiraillement"],
+      avoid: ["Décoller le coude du corps", "Forcer la rotation", "Élastique trop dur"] },
+    { id: "ep3", name: "Élévation latérale", scheme: "3 × 12-15", cue: "Pieds sur l'élastique, lève les bras sur les côtés jusqu'à l'horizontale, pas plus haut.", band: "bleu ciel (~3 kg léger)", tag: "soft", art: "lateralraise",
+      do: ["Debout, pieds au milieu de l'élastique, une poignée par main, bras le long du corps", "Lève les bras sur les côtés jusqu'à hauteur d'épaule (horizontale) et PAS plus haut", "Redescends lentement", "JAMAIS au-dessus de l'épaule", "Prise neutre (pouce vers l'avant), ne « verse » pas", "Coudes légèrement fléchis, lent, zéro élan"],
+      avoid: ["Monter au-dessus de l'épaule", "Coudes bloqués", "Toute gêne aisselle/avant d'épaule → stoppe"] },
+    { id: "ep4", name: "Slot bonus (exo au choix)", scheme: "1-2 exos", cue: "Ajoute un exo au choix (curl, marteau, pushdown, kickback, bas des abdos).", band: "au choix",
+      do: ["Choisis 1-2 exercices bonus : curl biceps, curl marteau, pushdown triceps, kickback triceps, ou bas des abdos", "Jamais de pompes/pecs ici"],
+      avoid: ["Pompes ou pecs dans cette séance"] },
   ]},
-  { id: "upperB", group: "Programme salle", name: "Haut B", sub: "Basic Fit · ~45 min", ex: [
-    { id: "ub1", name: "Développé épaules machine (devant, léger)", scheme: "3 × 10", cue: "Jamais derrière la nuque.", tag: "soft" },
-    { id: "ub2", name: "Tirage horizontal poulie", scheme: "3 × 10", cue: "Serre les omoplates.", tag: "good" },
-    { id: "ub3", name: "Pompes", scheme: "3 × max contrôlé", cue: "Amplitude que tu maîtrises.", tag: "soft" },
-    { id: "ub4", name: "Oiseau / rear delts", scheme: "3 × 15", cue: "Buste penché, écarte les bras.", tag: "good" },
-    { id: "ub5", name: "Extensions triceps poulie", scheme: "3 × 12", cue: "Coudes fixes." },
-  ]},
-  { id: "lowerB", group: "Programme salle", name: "Bas B", sub: "Basic Fit · ~45 min", ex: [
-    { id: "lb1", name: "Hack squat ou goblet squat", scheme: "3 × 12", cue: "Dos calé, descends bas et contrôlé." },
-    { id: "lb2", name: "Soulevé de terre roumain léger", scheme: "3 × 10", cue: "Charge légère, dos droit, prise sans forcer l'épaule." },
-    { id: "lb3", name: "Extensions quadriceps", scheme: "3 × 12", cue: "Pause en haut." },
-    { id: "lb4", name: "Relevés de genoux / crunch poulie", scheme: "3 × 12", cue: "Souffle en remontant." },
-    { id: "lb5", name: "Mollets", scheme: "3 × 15", cue: "Amplitude complète." },
+
+  /* ===== Séance 5 — Cardio ===== */
+  { id: "cardio", group: "Maison", name: "Cardio", sub: "Footing 30-40 min ou fractionné 25-30 min", ex: [
+    { id: "ca1", name: "Footing facile", scheme: "30-40 min", cue: "Allure facile — test de la parole. ~65-75% FC max. Matin à jeun ou fin de journée.",
+      do: ["Durée : 30-40 min", "Allure facile — test de la parole. ~65-75% FC max", "Quand : matin à jeun (tranquille) ou fin de journée", "Jamais juste avant la muscu du soir", "Ça doit rester facile même si tu te sens capable de plus"] },
+    { id: "ca2", name: "Fractionné (1×/semaine)", scheme: "25-30 min", cue: "10 min échauffement → 30s vite / 90s lent × 8-10 → retour au calme.",
+      do: ["10 min échauffement → 30 s vite / 90 s lent × 8-10 → retour au calme", "Durée : ~25-30 min", "Quand : plutôt le soir ou après avoir mangé — pas à jeun"] },
   ]},
 ];
 
@@ -121,12 +129,13 @@ function exCat(e) {
   const n = ((e && e.name) || "").toLowerCase();
   if (/(squat|fente|presse|jambe|mollet|quadri|ischio|hack|goblet|pont fessier|souleve|soulevé|leg|split)/.test(n)) return "Jambes";
   if (/(pompe|developpe pec|développé pec|chest|pec)/.test(n)) return "Pecs";
-  if (/(tirage|rowing|row|traction|dos)/.test(n)) return "Dos";
-  if (/(epaule|épaule|oiseau|rear delt|face pull|elevation|élévation|delts)/.test(n)) return "Épaules";
+  if (/(tirage|rowing|row|traction|dos|lat pulldown)/.test(n)) return "Dos";
+  if (/(epaule|épaule|oiseau|rear delt|face pull|elevation|élévation|delts|pull.apart)/.test(n)) return "Épaules";
   if (/(rotation externe|coiffe|rotateur)/.test(n)) return "Coiffe";
   if (/(curl|biceps)/.test(n)) return "Biceps";
-  if (/(triceps|extension triceps)/.test(n)) return "Triceps";
-  if (/(gainage|planche|pallof|crunch|abdo|genoux|releve|relevé)/.test(n)) return "Gainage";
+  if (/(triceps|extension triceps|kickback|pushdown)/.test(n)) return "Triceps";
+  if (/(gainage|planche|pallof|crunch|abdo|genoux|releve|relevé|dead bug|toe.touch|heel touch|bouteille)/.test(n)) return "Gainage";
+  if (/(footing|fractionné|cardio)/.test(n)) return "Cardio";
   return "Autre";
 }
 function normalizeSession(s) {
@@ -687,7 +696,7 @@ export default function App() {
   const addRecipe = () => { setOpenRecipeId(null); setRecipeNew(n => n + 1); setTab("food"); };
   const [loading, setLoading] = useState(true);
   const tk = dateKey();
-  const [day, setDay] = useState({ macros: { p: 0, c: 0, f: 0 }, sleep: null, weight: null, workout: {}, session: "maisonA" });
+  const [day, setDay] = useState({ macros: { p: 0, c: 0, f: 0 }, sleep: null, weight: null, workout: {}, session: "abdos" });
   const [exlast, setExlast] = useState({});
   const [sessions, setSessions] = useState(null);
   const [checks, setChecks] = useState({});
@@ -1278,7 +1287,8 @@ function TrainTab({ day, saveDay, toggleEx, setExVal, exlast, sessions, saveSess
                     {edit && <button onClick={() => removeExercise(e.id)} title="Retirer" style={{ background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 0, display: "flex" }}><span style={{fontSize:16,lineHeight:1}}>✕</span></button>}
                   </span>
                 </div>
-                <div style={{ fontSize: 11, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}><span style={{fontSize:11,lineHeight:1}}>🕐</span> ~{e.dur != null ? e.dur : exDur(e)} min</div>
+                <div style={{ fontSize: 11, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}><Clock size={11} /> ~{e.dur != null ? e.dur : exDur(e)} min</div>
+                {e.band && <div style={{ fontSize: 11, color: C.teal, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>Élastique : {e.band}</div>}
                 <div style={{ margin: "5px 0 8px" }}><TagBadge tag={e.tag} /></div>
                 <p style={{ fontSize: 12.5, color: C.mut, margin: "0 0 10px", lineHeight: 1.5 }}>{e.cue}</p>
                 {e.do && (

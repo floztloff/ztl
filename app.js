@@ -137,133 +137,195 @@ var ZTL = (() => {
     return { label: "\xE7a abuse", color: C.ember };
   }
   var SESSIONS = [
-    { id: "maisonA", group: "Maison", name: "Maison A", sub: "Plein le corps \xB7 ~25 min", ex: [
+    /* ===== Séance 1 — Abdos (~25 min) ===== */
+    { id: "abdos", group: "Maison", name: "Abdos", sub: "~25 min \xB7 2-3\xD7/semaine", ex: [
       {
-        id: "ma1",
-        name: "Squat au poids du corps",
-        scheme: "2 \xD7 12",
-        cue: "Descends comme pour t'asseoir, dos droit, pousse dans les talons.",
-        art: "squat",
-        do: ["Pieds largeur d'\xE9paules, pointes l\xE9g\xE8rement ouvertes", "Pousse les fesses en arri\xE8re, dos droit, poitrine ouverte", "Descends cuisses parall\xE8les au sol, poids dans les talons"],
-        avoid: ["Genoux qui rentrent vers l'int\xE9rieur", "Talons qui d\xE9collent du sol", "Dos qui s'arrondit"]
+        id: "ab1",
+        name: "Dead bug",
+        scheme: "3 \xD7 8 / c\xF4t\xE9",
+        cue: "Allong\xE9 dos, bras et jambe oppos\xE9s descendent lentement, dos coll\xE9 au sol.",
+        art: "deadbug",
+        tag: "good",
+        do: ["Allong\xE9 sur le dos, bras vers le plafond, jambes lev\xE9es genoux \xE0 90\xB0", "Descends lentement le bras et la jambe oppos\xE9s sans les poser, reviens, alterne", "Bas du dos coll\xE9 au tapis \u2014 si le dos se creuse, r\xE9duis l'amplitude", "Lent et contr\xF4l\xE9, souffle en tendant", "Le mouvement part du ventre"],
+        avoid: ["Dos qui se creuse", "Bras ou jambes qui touchent le sol", "Mouvement rapide ou saccad\xE9"]
       },
       {
-        id: "ma2",
-        name: "Pompes inclin\xE9es",
-        scheme: "2 \xD7 8-10",
-        cue: "Mains sur\xE9lev\xE9es sur un meuble, corps gain\xE9. Plus haut = plus facile.",
-        tag: "soft",
-        art: "incline",
-        do: ["Mains un peu plus larges que les \xE9paules sur un support stable", "Corps gain\xE9 en planche, descends la poitrine vers le support", "Coudes \xE0 ~45\xB0 du corps \u2014 plus doux pour l'\xE9paule"],
-        avoid: ["Bassin qui s'affaisse ou fesses en l'air", "Descendre trop bas si l'\xE9paule tire", "Coudes \xE9cart\xE9s \xE0 90\xB0"]
+        id: "ab2",
+        name: "Bas des abdos (exo bouteilles)",
+        scheme: "3 \xD7 12",
+        cue: "Assis en appui arri\xE8re, jambes serr\xE9es d\xE9coll\xE9es passent par-dessus des bouteilles.",
+        art: "bottles",
+        do: ["Assis en appui arri\xE8re sur les mains, buste inclin\xE9, jambes serr\xE9es d\xE9coll\xE9es (2 bouteilles au sol)", "D\xE9place les jambes serr\xE9es d'un c\xF4t\xE9 \xE0 l'autre par-dessus les bouteilles, puis en les contournant c\xF4t\xE9 corps", "Jambes serr\xE9es, ce sont les abdos qui les d\xE9placent", "Buste gain\xE9, ne t'effondre pas en arri\xE8re"],
+        avoid: ["Jambes qui se desserrent", "Buste qui s'effondre en arri\xE8re", "Forcer si l'\xE9paule tire en appui"]
       },
       {
-        id: "ma3",
-        name: "Rowing \xE9lastique",
-        scheme: "2 \xD7 12",
-        cue: "Tire les coudes vers l'arri\xE8re, serre les omoplates.",
+        id: "ab3",
+        name: "Toe-touch (crunch vers le haut)",
+        scheme: "3 \xD7 12",
+        cue: "Allong\xE9 dos, jambes lev\xE9es, d\xE9colle les omoplates pour toucher les pieds.",
+        art: "toetouch",
+        do: ["Allong\xE9 sur le dos, jambes tendues lev\xE9es vers le plafond, bras vers les pieds", "D\xE9colle les omoplates et va chercher tes pieds, puis redescends lentement", "Ne tire pas sur la nuque \u2014 pars du ventre", "Pas d'\xE9lan avec les bras", "\xC9paules qui d\xE9collent, lombaires plaqu\xE9es"],
+        avoid: ["Tirer sur la nuque", "Donner de l'\xE9lan avec les bras", "D\xE9coller les lombaires du sol"]
+      },
+      {
+        id: "ab4",
+        name: "Heel touches (crunch c\xF4t\xE9s)",
+        scheme: "3 \xD7 12 / c\xF4t\xE9",
+        cue: "Sur le dos, genoux fl\xE9chis, \xE9paules d\xE9coll\xE9es, touche chaque talon alternativement.",
+        art: "heeltouch",
+        do: ["Sur le dos, genoux fl\xE9chis pieds au sol, \xE9paules d\xE9coll\xE9es, bras le long du corps", "Penche-toi alternativement sur chaque c\xF4t\xE9 pour toucher le talon, droite puis gauche", "Le mouvement vient de la taille (on raccourcit le flanc)", "\xC9paules d\xE9coll\xE9es en permanence", "Nuque rel\xE2ch\xE9e"],
+        avoid: ["D\xE9coller les \xE9paules du sol trop haut", "Nuque tendue", "Mouvement trop rapide"]
+      },
+      {
+        id: "ab5",
+        name: "Planche ventrale",
+        scheme: "3 \xD7 20-40 s",
+        cue: "Avant-bras au sol, corps align\xE9, ventre et fessiers serr\xE9s.",
+        art: "plank",
+        tag: "good",
+        do: ["Appui sur les avant-bras, coudes sous les \xE9paules, corps align\xE9 t\xEAte-talons", "Tiens la position en gainant le ventre et serrant les fessiers", "Respire normalement", "Corps droit : ni fesses en l'air, ni bassin qui tombe", "\xC9paules loin des oreilles"],
+        avoid: ["Fesses en l'air ou bassin qui tombe", "Retenir sa respiration", "\xC9paules remont\xE9es vers les oreilles"]
+      }
+    ] },
+    /* ===== Séance 2 — Dos + Biceps (~35-40 min) ===== */
+    { id: "dos-biceps", group: "Maison", name: "Dos + Biceps", sub: "~35-40 min \xB7 dos d'abord, biceps ensuite", ex: [
+      {
+        id: "db1",
+        name: "Rowing horizontal (tirage debout)",
+        scheme: "3 \xD7 10-12",
+        cue: "Debout face \xE0 la porte, \xE9lastique poitrine, tire vers le ventre, serre les omoplates.",
+        band: "rouge (~7 kg)",
         tag: "good",
         art: "row",
-        do: ["\xC9lastique \xE0 hauteur de poitrine, bras tendus devant", "Tire les coudes vers l'arri\xE8re en serrant les omoplates", "Reviens lentement, en contr\xF4le"],
-        avoid: ["\xC9paules qui montent vers les oreilles", "Dos qui s'arrondit", "Mouvement fait \xE0 la va-vite"]
+        do: ["Accroche-porte au milieu (hauteur poitrine), une poign\xE9e par main, debout face \xE0 la porte, recule pour tendre", "Tire les poign\xE9es vers le ventre, coudes vers l'arri\xE8re le long du corps, serre les omoplates", "Retour lent", "Tire avec les coudes, serre les omoplates", "Buste droit et fixe, pas de balancier", "\xC9paules basses, genoux l\xE9g\xE8rement fl\xE9chis"],
+        avoid: ["Buste qui balance", "\xC9paules qui montent vers les oreilles", "Tirer trop vite"]
       },
       {
-        id: "ma4",
-        name: "Rotation externe \xE9lastique",
-        scheme: "2 \xD7 12 / bras",
-        cue: "Coude au corps, \xE9carte l'avant-bras. L\xE9ger et contr\xF4l\xE9.",
+        id: "db2",
+        name: "Tirage vertical (lat pulldown)",
+        scheme: "3 \xD7 10-12",
+        cue: "\xC0 genoux face \xE0 la porte, \xE9lastique en haut, tire vers les \xE9paules.",
+        band: "vert \u2192 rouge (progressif)",
         tag: "good",
-        art: "extrot",
-        do: ["Coude coll\xE9 au flanc, pli\xE9 \xE0 90\xB0", "\xC9carte lentement l'avant-bras vers l'ext\xE9rieur", "Reste l\xE9ger et lent \u2014 c'est le but"],
-        avoid: ["D\xE9coller le coude du corps", "\xC9lastique trop dur", "Geste rapide ou en force"]
+        art: "latpulldown",
+        do: ["Accroche-porte tout en haut. \xC0 genoux face \xE0 la porte, bras tendus vers le haut vers l'ancrage", "Tire vers le bas jusqu'aux \xE9paules, coudes vers les c\xF4tes (dans les poches arri\xE8re)", "Remont\xE9e lente", "Ce sont les coudes qui descendent ; sens les dorsaux sous les aisselles", "L\xE9ger buste inclin\xE9 en arri\xE8re, gain\xE9", "TOUJOURS devant la nuque, JAMAIS derri\xE8re"],
+        avoid: ["Tirer derri\xE8re la nuque", "Bras qui s'\xE9cartent", "\xC0 surveiller si l'aisselle tire"]
       },
       {
-        id: "ma5",
-        name: "Gainage planche",
-        scheme: "2 \xD7 20-30 s",
-        cue: "Corps align\xE9, abdos et fessiers serr\xE9s.",
-        art: "plank",
-        do: ["Coudes sous les \xE9paules, appui avant-bras + pointes de pieds", "Corps parfaitement align\xE9, abdos et fessiers serr\xE9s", "Respire normalement"],
-        avoid: ["Fesses en l'air ou dos creus\xE9", "T\xEAte qui pend vers le bas", "Tenir affaiss\xE9 : 15 s parfaites valent mieux"]
+        id: "db3",
+        name: "Curl biceps",
+        scheme: "3 \xD7 10-12",
+        cue: "Debout sur l'\xE9lastique, monte les poign\xE9es aux \xE9paules, descente lente.",
+        band: "rouge (~7 kg)",
+        art: "curl",
+        do: ["Debout, pieds au milieu de l'\xE9lastique, une poign\xE9e par main, bras tendus, paumes vers l'avant", "Monte les poign\xE9es vers les \xE9paules en pliant les coudes", "Redescends lentement (2 s)", "Coudes fixes et coll\xE9s au corps", "Amplitude compl\xE8te", "Descente frein\xE9e aussi importante que la mont\xE9e"],
+        avoid: ["Coudes qui s'\xE9cartent du corps", "Balancier du buste", "Descente trop rapide"]
+      },
+      {
+        id: "db4",
+        name: "Curl marteau (prise neutre)",
+        scheme: "3 \xD7 10-12",
+        cue: "M\xEAme installation, pouces vers le haut, poignet ne tourne pas.",
+        band: "rouge (~7 kg)",
+        art: "hammercurl",
+        do: ["M\xEAme installation que le curl", "Monte paumes qui se font face (pouces en haut)", "Coudes fixes, descente lente", "Le poignet ne tourne jamais", "Prise neutre maintenue", "Descente frein\xE9e"],
+        avoid: ["Tourner le poignet", "Coudes qui s'\xE9cartent", "Descente rapide"]
       }
     ] },
-    { id: "maisonB", group: "Maison", name: "Maison B", sub: "Plein le corps \xB7 ~25 min", ex: [
+    /* ===== Séance 3 — Pecs + Triceps (~30-35 min) ===== */
+    { id: "pecs-triceps", group: "Maison", name: "Pecs + Triceps", sub: "~30-35 min \xB7 l\xE9ger c\xF4t\xE9 pecs en attendant kin\xE9", ex: [
       {
-        id: "mb1",
-        name: "Fentes altern\xE9es",
-        scheme: "2 \xD7 10 / jambe",
-        cue: "Grand pas, genou arri\xE8re vers le sol, buste droit.",
-        art: "lunge",
-        do: ["Grand pas en avant, descends les deux genoux", "Genou avant au-dessus de la cheville, buste droit", "Pousse sur le talon avant pour remonter"],
-        avoid: ["Genou avant qui d\xE9passe la pointe du pied", "Buste pench\xE9 en avant", "Pas trop court"]
-      },
-      {
-        id: "mb2",
-        name: "Pont fessier",
-        scheme: "2 \xD7 15",
-        cue: "Pousse les hanches vers le haut, serre les fessiers en haut.",
-        art: "bridge",
-        do: ["Dos au sol, pieds \xE0 plat largeur de bassin", "Pousse dans les talons, monte les hanches", "Serre fort les fessiers en haut, 1 seconde"],
-        avoid: ["Pousser avec le bas du dos", "Cambrer les reins", "Monter trop haut"]
-      },
-      {
-        id: "mb3",
-        name: "Face pull \xE9lastique",
-        scheme: "2 \xD7 15",
-        cue: "Tire vers le visage, coudes hauts. Top pour l'\xE9paule.",
-        tag: "good",
-        art: "facepull",
-        do: ["\xC9lastique \xE0 hauteur du visage, devant toi", "Tire vers le front, coudes hauts et ouverts", "Serre les omoplates en fin de mouvement"],
-        avoid: ["Coudes qui tombent vers le bas", "Hausser les \xE9paules", "\xC9lastique trop dur"]
-      },
-      {
-        id: "mb4",
+        id: "pt1",
         name: "Pompes inclin\xE9es",
-        scheme: "2 \xD7 8-10",
-        cue: "Comme en s\xE9ance A.",
+        scheme: "3 \xD7 8-10 (\u219212)",
+        cue: "Mains sur\xE9lev\xE9es (plan de travail), corps gain\xE9, coudes \xE0 45\xB0.",
         tag: "soft",
         art: "incline",
-        do: ["Mains un peu plus larges que les \xE9paules sur un support stable", "Corps gain\xE9 en planche, descends la poitrine vers le support", "Coudes \xE0 ~45\xB0 du corps \u2014 plus doux pour l'\xE9paule"],
-        avoid: ["Bassin qui s'affaisse ou fesses en l'air", "Descendre trop bas si l'\xE9paule tire", "Coudes \xE9cart\xE9s \xE0 90\xB0"]
+        do: ["Mains sur\xE9lev\xE9es (mur \u2192 plan de travail \u2192 canap\xE9 \u2192 sol). D\xE9marrage : plan de travail", "Corps gain\xE9 et droit", "Descends lentement, coudes \xE0 ~45\xB0 (jamais en croix), jusqu'\xE0 approcher la poitrine", "Puis pousse", "Amplitude que TU contr\xF4les", "Progresse seulement si 12 reps propres et z\xE9ro g\xEAne \xE9paule"],
+        avoid: ["Coudes \xE9cart\xE9s \xE0 90\xB0 (en croix)", "Bassin qui s'affaisse ou fesses en l'air", "Forcer si l'aisselle tire \u2014 monte les mains plus haut"]
       },
       {
-        id: "mb5",
-        name: "Pallof press \xE9lastique",
-        scheme: "2 \xD7 10 / c\xF4t\xE9",
-        cue: "\xC9lastique sur le c\xF4t\xE9, tends les bras devant sans tourner le buste.",
-        art: "pallof",
-        do: ["\xC9lastique fix\xE9 sur le c\xF4t\xE9, \xE0 hauteur de poitrine", "Tends les bras droit devant, puis reviens", "Garde le buste face \xE0 l'avant, sans tourner"],
-        avoid: ["Laisser le buste pivoter vers l'\xE9lastique", "Cambrer le dos", "Bras trop rel\xE2ch\xE9s"]
+        id: "pt2",
+        name: "Extension triceps pushdown",
+        scheme: "3 \xD7 10-12",
+        cue: "Debout face \xE0 la porte, \xE9lastique en haut, pousse vers le bas coudes fixes.",
+        band: "rouge (~7 kg)",
+        art: "pushdown",
+        do: ["Accroche-porte tout en haut, debout face \xE0 la porte, tout pr\xE8s", "Coudes coll\xE9s aux flancs, avant-bras remont\xE9s", "Pousse vers le bas jusqu'\xE0 tendre les bras, serre le triceps en bas", "Remonte lentement", "Les coudes ne bougent PAS \u2014 viss\xE9s aux flancs"],
+        avoid: ["Coudes qui s'\xE9cartent du corps", "Remont\xE9e rapide", "Extension incompl\xE8te"]
+      },
+      {
+        id: "pt3",
+        name: "Kickback triceps",
+        scheme: "3 \xD7 10-12 / bras",
+        cue: "Buste pench\xE9 45\xB0, \xE9lastique sous le pied, tends le bras vers l'arri\xE8re.",
+        band: "jaune (~5 kg)",
+        art: "kickback",
+        do: ["Un bras \xE0 la fois. \xC9lastique sous le pied avant, buste pench\xE9 ~45\xB0 (dos droit, gain\xE9), jambes fl\xE9chies", "Coude remont\xE9 le long du flanc ; tends le bras vers l'arri\xE8re", "Serre le triceps en fin de mouvement", "Retour lent", "Le haut du bras reste FIXE contre le buste ; seul l'avant-bras bouge", "Extension compl\xE8te + pause"],
+        avoid: ["Bouger le haut du bras", "Dos qui s'arrondit dans la position pench\xE9e", "Extension incompl\xE8te"]
       }
     ] },
-    { id: "upperA", group: "Programme salle", name: "Haut A", sub: "Basic Fit \xB7 ~45 min", ex: [
-      { id: "ua1", name: "Tirage vertical poulie (prise neutre)", scheme: "3 \xD7 10", cue: "Machine lat pulldown. Tire vers la poitrine, omoplates basses.", tag: "good" },
-      { id: "ua2", name: "Rowing assis machine", scheme: "3 \xD7 10", cue: "Tire vers le ventre, dos droit.", tag: "good" },
-      { id: "ua3", name: "D\xE9velopp\xE9 pec machine (l\xE9ger)", scheme: "3 \xD7 10", cue: "Chest press. Amplitude contr\xF4l\xE9e, ne force pas en arri\xE8re.", tag: "soft" },
-      { id: "ua4", name: "Face pull poulie", scheme: "3 \xD7 15", cue: "Corde en haut, tire vers le visage.", tag: "good" },
-      { id: "ua5", name: "Rotation externe poulie", scheme: "3 \xD7 12", cue: "Coiffe des rotateurs. L\xE9ger.", tag: "good" },
-      { id: "ua6", name: "Curl biceps halt\xE8res", scheme: "3 \xD7 12", cue: "Coudes coll\xE9s au corps." }
+    /* ===== Séance 4 — Épaules (~20 min) ===== */
+    { id: "epaules", group: "Maison", name: "\xC9paules", sub: "~20 min + exo bonus \xB7 l\xE9ger et contr\xF4l\xE9", ex: [
+      {
+        id: "ep1",
+        name: "Band pull-apart",
+        scheme: "3 \xD7 12-15",
+        cue: "\xC9lastique devant, \xE9carte les bras \xE0 l'horizontale en serrant les omoplates.",
+        band: "bleu ciel/canard (~3-4 kg l\xE9ger)",
+        tag: "good",
+        art: "pullapart",
+        do: ["Debout, \xE9lastique entre les deux mains, bras tendus devant \xE0 hauteur de poitrine, l\xE9g\xE8re tension de d\xE9part", "\xC9carte les bras \xE0 l'horizontale jusqu'\xE0 fr\xF4ler la poitrine", "Serre les omoplates, retour lent", "Reste \xE0 hauteur de poitrine \u2014 jamais au-dessus des \xE9paules", "\xC9paules basses"],
+        avoid: ["Monter au-dessus des \xE9paules", "\xC9paules hauss\xE9es", "Toute g\xEAne \xE0 l'aisselle r\xE9duis l'amplitude"]
+      },
+      {
+        id: "ep2",
+        name: "Rotation externe (coude au corps)",
+        scheme: "3 \xD7 12-15 / c\xF4t\xE9",
+        cue: "Coude coll\xE9 au flanc \xE0 90\xB0, \xE9carte l'avant-bras vers l'ext\xE9rieur.",
+        band: "bleu ciel (~3 kg tr\xE8s l\xE9ger)",
+        tag: "good",
+        art: "extrot",
+        do: ["Accroche-porte \xE0 hauteur de coude. De profil, c\xF4t\xE9 travaill\xE9 le plus \xE9loign\xE9 de la porte", "Coude coll\xE9 au flanc \xE0 90\xB0 (serviette entre coude et c\xF4tes)", "Coude viss\xE9 au flanc, fais pivoter l'avant-bras vers l'ext\xE9rieur", "Retour lent", "Amplitude confortable seulement \u2014 ne force pas la rotation", "Arr\xEAte-toi avant tout tiraillement"],
+        avoid: ["D\xE9coller le coude du corps", "Forcer la rotation", "\xC9lastique trop dur"]
+      },
+      {
+        id: "ep3",
+        name: "\xC9l\xE9vation lat\xE9rale",
+        scheme: "3 \xD7 12-15",
+        cue: "Pieds sur l'\xE9lastique, l\xE8ve les bras sur les c\xF4t\xE9s jusqu'\xE0 l'horizontale, pas plus haut.",
+        band: "bleu ciel (~3 kg l\xE9ger)",
+        tag: "soft",
+        art: "lateralraise",
+        do: ["Debout, pieds au milieu de l'\xE9lastique, une poign\xE9e par main, bras le long du corps", "L\xE8ve les bras sur les c\xF4t\xE9s jusqu'\xE0 hauteur d'\xE9paule (horizontale) et PAS plus haut", "Redescends lentement", "JAMAIS au-dessus de l'\xE9paule", "Prise neutre (pouce vers l'avant), ne \xAB verse \xBB pas", "Coudes l\xE9g\xE8rement fl\xE9chis, lent, z\xE9ro \xE9lan"],
+        avoid: ["Monter au-dessus de l'\xE9paule", "Coudes bloqu\xE9s", "Toute g\xEAne aisselle/avant d'\xE9paule \u2192 stoppe"]
+      },
+      {
+        id: "ep4",
+        name: "Slot bonus (exo au choix)",
+        scheme: "1-2 exos",
+        cue: "Ajoute un exo au choix (curl, marteau, pushdown, kickback, bas des abdos).",
+        band: "au choix",
+        do: ["Choisis 1-2 exercices bonus : curl biceps, curl marteau, pushdown triceps, kickback triceps, ou bas des abdos", "Jamais de pompes/pecs ici"],
+        avoid: ["Pompes ou pecs dans cette s\xE9ance"]
+      }
     ] },
-    { id: "lowerA", group: "Programme salle", name: "Bas A", sub: "Basic Fit \xB7 ~45 min", ex: [
-      { id: "la1", name: "Presse \xE0 cuisses", scheme: "3 \xD7 12", cue: "Pieds largeur bassin, ne verrouille pas les genoux." },
-      { id: "la2", name: "Leg curl (ischios)", scheme: "3 \xD7 12", cue: "Contr\xF4le la descente." },
-      { id: "la3", name: "Fentes ou split squat", scheme: "2 \xD7 10 / jambe", cue: "Halt\xE8res l\xE9gers le long du corps." },
-      { id: "la4", name: "Mollets debout", scheme: "3 \xD7 15", cue: "Talon bien bas pour \xE9tirer." },
-      { id: "la5", name: "Gainage + Pallof", scheme: "3 \xD7 30 s", cue: "Anti-rotation, abdos serr\xE9s." }
-    ] },
-    { id: "upperB", group: "Programme salle", name: "Haut B", sub: "Basic Fit \xB7 ~45 min", ex: [
-      { id: "ub1", name: "D\xE9velopp\xE9 \xE9paules machine (devant, l\xE9ger)", scheme: "3 \xD7 10", cue: "Jamais derri\xE8re la nuque.", tag: "soft" },
-      { id: "ub2", name: "Tirage horizontal poulie", scheme: "3 \xD7 10", cue: "Serre les omoplates.", tag: "good" },
-      { id: "ub3", name: "Pompes", scheme: "3 \xD7 max contr\xF4l\xE9", cue: "Amplitude que tu ma\xEEtrises.", tag: "soft" },
-      { id: "ub4", name: "Oiseau / rear delts", scheme: "3 \xD7 15", cue: "Buste pench\xE9, \xE9carte les bras.", tag: "good" },
-      { id: "ub5", name: "Extensions triceps poulie", scheme: "3 \xD7 12", cue: "Coudes fixes." }
-    ] },
-    { id: "lowerB", group: "Programme salle", name: "Bas B", sub: "Basic Fit \xB7 ~45 min", ex: [
-      { id: "lb1", name: "Hack squat ou goblet squat", scheme: "3 \xD7 12", cue: "Dos cal\xE9, descends bas et contr\xF4l\xE9." },
-      { id: "lb2", name: "Soulev\xE9 de terre roumain l\xE9ger", scheme: "3 \xD7 10", cue: "Charge l\xE9g\xE8re, dos droit, prise sans forcer l'\xE9paule." },
-      { id: "lb3", name: "Extensions quadriceps", scheme: "3 \xD7 12", cue: "Pause en haut." },
-      { id: "lb4", name: "Relev\xE9s de genoux / crunch poulie", scheme: "3 \xD7 12", cue: "Souffle en remontant." },
-      { id: "lb5", name: "Mollets", scheme: "3 \xD7 15", cue: "Amplitude compl\xE8te." }
+    /* ===== Séance 5 — Cardio ===== */
+    { id: "cardio", group: "Maison", name: "Cardio", sub: "Footing 30-40 min ou fractionn\xE9 25-30 min", ex: [
+      {
+        id: "ca1",
+        name: "Footing facile",
+        scheme: "30-40 min",
+        cue: "Allure facile \u2014 test de la parole. ~65-75% FC max. Matin \xE0 jeun ou fin de journ\xE9e.",
+        do: ["Dur\xE9e : 30-40 min", "Allure facile \u2014 test de la parole. ~65-75% FC max", "Quand : matin \xE0 jeun (tranquille) ou fin de journ\xE9e", "Jamais juste avant la muscu du soir", "\xC7a doit rester facile m\xEAme si tu te sens capable de plus"]
+      },
+      {
+        id: "ca2",
+        name: "Fractionn\xE9 (1\xD7/semaine)",
+        scheme: "25-30 min",
+        cue: "10 min \xE9chauffement \u2192 30s vite / 90s lent \xD7 8-10 \u2192 retour au calme.",
+        do: ["10 min \xE9chauffement \u2192 30 s vite / 90 s lent \xD7 8-10 \u2192 retour au calme", "Dur\xE9e : ~25-30 min", "Quand : plut\xF4t le soir ou apr\xE8s avoir mang\xE9 \u2014 pas \xE0 jeun"]
+      }
     ] }
   ];
   var exSlug = (name) => (name || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -280,12 +342,13 @@ var ZTL = (() => {
     const n = (e && e.name || "").toLowerCase();
     if (/(squat|fente|presse|jambe|mollet|quadri|ischio|hack|goblet|pont fessier|souleve|soulevé|leg|split)/.test(n)) return "Jambes";
     if (/(pompe|developpe pec|développé pec|chest|pec)/.test(n)) return "Pecs";
-    if (/(tirage|rowing|row|traction|dos)/.test(n)) return "Dos";
-    if (/(epaule|épaule|oiseau|rear delt|face pull|elevation|élévation|delts)/.test(n)) return "\xC9paules";
+    if (/(tirage|rowing|row|traction|dos|lat pulldown)/.test(n)) return "Dos";
+    if (/(epaule|épaule|oiseau|rear delt|face pull|elevation|élévation|delts|pull.apart)/.test(n)) return "\xC9paules";
     if (/(rotation externe|coiffe|rotateur)/.test(n)) return "Coiffe";
     if (/(curl|biceps)/.test(n)) return "Biceps";
-    if (/(triceps|extension triceps)/.test(n)) return "Triceps";
-    if (/(gainage|planche|pallof|crunch|abdo|genoux|releve|relevé)/.test(n)) return "Gainage";
+    if (/(triceps|extension triceps|kickback|pushdown)/.test(n)) return "Triceps";
+    if (/(gainage|planche|pallof|crunch|abdo|genoux|releve|relevé|dead bug|toe.touch|heel touch|bouteille)/.test(n)) return "Gainage";
+    if (/(footing|fractionné|cardio)/.test(n)) return "Cardio";
     return "Autre";
   }
   function normalizeSession(s) {
@@ -920,7 +983,7 @@ ${lines.join("\n")}`;
     };
     const [loading, setLoading] = (0, import_react.useState)(true);
     const tk = dateKey();
-    const [day, setDay] = (0, import_react.useState)({ macros: { p: 0, c: 0, f: 0 }, sleep: null, weight: null, workout: {}, session: "maisonA" });
+    const [day, setDay] = (0, import_react.useState)({ macros: { p: 0, c: 0, f: 0 }, sleep: null, weight: null, workout: {}, session: "abdos" });
     const [exlast, setExlast] = (0, import_react.useState)({});
     const [sessions, setSessions] = (0, import_react.useState)(null);
     const [checks, setChecks] = (0, import_react.useState)({});
@@ -1282,7 +1345,7 @@ ${lines.join("\n")}`;
           style: { width: 26, height: 26, marginTop: 1, borderRadius: 8, border: `2px solid ${st.done ? C.good : C.line}`, background: st.done ? C.good : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }
         },
         st.done && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1, color: C.bg } }, "\u2705")
-      ), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, fontWeight: 700 } }, e.name), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 8, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: C.coral, fontWeight: 700, whiteSpace: "nowrap" } }, e.scheme), edit && /* @__PURE__ */ React.createElement("button", { onClick: () => removeExercise(e.id), title: "Retirer", style: { background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 0, display: "flex" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2715")))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 4 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, lineHeight: 1 } }, "\u{1F550}"), " ~", e.dur != null ? e.dur : exDur(e), " min"), /* @__PURE__ */ React.createElement("div", { style: { margin: "5px 0 8px" } }, /* @__PURE__ */ React.createElement(TagBadge, { tag: e.tag })), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 12.5, color: C.mut, margin: "0 0 10px", lineHeight: 1.5 } }, e.cue), e.do && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
+      ), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, fontWeight: 700 } }, e.name), /* @__PURE__ */ React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 8, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: C.coral, fontWeight: 700, whiteSpace: "nowrap" } }, e.scheme), edit && /* @__PURE__ */ React.createElement("button", { onClick: () => removeExercise(e.id), title: "Retirer", style: { background: "none", border: "none", color: C.mut, cursor: "pointer", padding: 0, display: "flex" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2715")))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut, marginTop: 2, display: "flex", alignItems: "center", gap: 4 } }, /* @__PURE__ */ React.createElement(import_lucide_react.Clock, { size: 11 }), " ~", e.dur != null ? e.dur : exDur(e), " min"), e.band && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.teal, marginTop: 2, display: "flex", alignItems: "center", gap: 4 } }, "\xC9lastique : ", e.band), /* @__PURE__ */ React.createElement("div", { style: { margin: "5px 0 8px" } }, /* @__PURE__ */ React.createElement(TagBadge, { tag: e.tag })), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 12.5, color: C.mut, margin: "0 0 10px", lineHeight: 1.5 } }, e.cue), e.do && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
         "button",
         {
           onClick: () => setTech((t) => ({ ...t, [e.id]: !t[e.id] })),

@@ -1,5 +1,4 @@
-// ZTL Service Worker — v5
-const CACHE_NAME = "ztl-v7";
+// ZTL Service Worker — v6\nconst CACHE_NAME = "ztl-v8";
 const ASSETS = [
   "/",
   "/index.html",
