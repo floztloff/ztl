@@ -2162,8 +2162,7 @@ ${lines.join("\n")}`;
     }).length;
     return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Courses"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta liste"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "G\xE9n\xE9r\xE9e depuis toutes les recettes planifi\xE9es \xE0 venir, avec les quantit\xE9s additionn\xE9es."), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
       try {
-        await store.syncFromCloud();
-        var u = window._ztlUser && window._ztlUser.id;
+        await window.store.syncFromCloud();
         var raw = "";
         for (var i = 0; i < localStorage.length; i++) {
           var k = localStorage.key(i);
