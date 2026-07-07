@@ -1998,41 +1998,7 @@ ${lines.join("\n")}`;
         var t = dayTotals(pl.meals);
         return /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: C.mut, textTransform: "uppercase", letterSpacing: 1, marginBottom: 9 } }, "Apport des repas / objectif"), miniGauge("Calories", t.kcal, TARGETS.kcal), miniGauge("Prot\xE9ines", Math.round(t.p), TARGETS.protein), miniGauge("Glucides", Math.round(t.c), TARGETS.carbs), miniGauge("Lipides", Math.round(t.f), TARGETS.fat));
       })());
-    }), pickFor && /* @__PURE__ */ React.createElement(RecipePicker, { recipes, dayLabel: (/* @__PURE__ */ new Date(pickFor + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), added: plans[pickFor]?.meals || [], onAdd: (rid) => addMeal(pickFor, rid), onClose: () => setPickFor(null) }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement("button", { onClick: async function() {
-      var u = window._ztlUser && window._ztlUser.id;
-      alert("User ID: " + (u || "NON CONNECT\xC9"));
-    }, style: { fontSize: 10, padding: "4px 8px", background: "#eee", border: "1px solid #999", borderRadius: 6, cursor: "pointer", marginRight: 5 } }, "\u{1F194} User ID"), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
-      var u = window._ztlUser && window._ztlUser.id;
-      if (!u) return alert("Pas connect\xE9");
-      try {
-        var keys = await window.ZTLDb.listUserDataKeys(u, "plan:");
-        alert(keys.length ? keys.join("\n") : "AUCUNE cl\xE9 plan: dans Supabase");
-      } catch (e) {
-        alert("Erreur: " + e.message);
-      }
-    }, style: { fontSize: 10, padding: "4px 8px", background: C.emberSoft, border: "1px solid " + C.ember, borderRadius: 6, cursor: "pointer", marginRight: 5 } }, "\u{1F52C} listUserDataKeys"), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
-      var u = window._ztlUser && window._ztlUser.id;
-      if (!u) return alert("Pas connect\xE9");
-      try {
-        var p = await window.ZTLDb.getUserData(u, "plan:2026-07-08");
-        alert(p ? JSON.stringify(p) : "NULL");
-      } catch (e) {
-        alert("Erreur: " + e.message);
-      }
-    }, style: { fontSize: 10, padding: "4px 8px", background: C.emberSoft, border: "1px solid " + C.ember, borderRadius: 6, cursor: "pointer", marginRight: 5 } }, "\u{1F52C} get plan 08/07"), /* @__PURE__ */ React.createElement("button", { onClick: function() {
-      var dbg = [];
-      for (var i = 0; i < localStorage.length; i++) {
-        var k = localStorage.key(i);
-        if (k.indexOf("plan:") === 0) {
-          try {
-            var v = JSON.parse(localStorage.getItem(k));
-            dbg.push(k.slice(5) + ": meals=" + (v.meals || []).length);
-          } catch (e) {
-          }
-        }
-      }
-      alert(dbg.length ? dbg.join("\n") : "AUCUN localStorage");
-    }, style: { fontSize: 10, padding: "4px 8px", background: C.mint, border: "1px solid " + C.teal, borderRadius: 6, cursor: "pointer" } }, "\u{1F52C} localStorage")), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" } }, "\u{1F5D3}\uFE0F Programme type (exemple)"), !imgErr ? /* @__PURE__ */ React.createElement("img", { src: "programme-type.png", alt: "Programme type", style: { width: "100%", display: "block" }, onError: () => setImgErr(true) }) : /* @__PURE__ */ React.createElement("div", { style: { padding: 20, textAlign: "center", color: C.mut, fontSize: 13 } }, "Image non disponible")), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
+    }), pickFor && /* @__PURE__ */ React.createElement(RecipePicker, { recipes, dayLabel: (/* @__PURE__ */ new Date(pickFor + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), added: plans[pickFor]?.meals || [], onAdd: (rid) => addMeal(pickFor, rid), onClose: () => setPickFor(null) }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" } }, "\u{1F5D3}\uFE0F Programme type (exemple)"), !imgErr ? /* @__PURE__ */ React.createElement("img", { src: "programme-type.png", alt: "Programme type", style: { width: "100%", display: "block" }, onError: () => setImgErr(true) }) : /* @__PURE__ */ React.createElement("div", { style: { padding: 20, textAlign: "center", color: C.mut, fontSize: 13 } }, "Image non disponible")), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
   }
   function CoursesTab() {
     const [recipes, setRecipes] = (0, import_react.useState)(null);
@@ -2057,45 +2023,29 @@ ${lines.join("\n")}`;
     const collectLines = async (recs) => {
       var td = dateKey();
       var lines = [];
-      var dbg = [];
-      var progress = [];
       try {
         var u = window._ztlUser && window._ztlUser.id;
-        if (!u || !window.ZTLDb) {
-          setDebug("Non connect\xE9 \xE0 Supabase");
-          return [];
-        }
+        if (!u || !window.ZTLDb) return [];
         for (var w = 0; w < 2; w++) {
           var days = weekDaysFrom(w);
           for (var d = 0; d < days.length; d++) {
             var dk = days[d];
-            if (dk < td) {
-              progress.push(dk.slice(5) + ":<td");
-              continue;
-            }
-            var raw, rawStr;
+            if (dk < td) continue;
+            var raw;
             try {
               raw = await window.ZTLDb.getUserData(u, "plan:" + dk);
             } catch (e) {
-              progress.push(dk.slice(5) + ":err");
               continue;
             }
-            if (!raw) {
-              progress.push(dk.slice(5) + ":null");
-              continue;
-            }
+            if (!raw) continue;
             if (typeof raw === "string") {
               try {
                 raw = JSON.parse(raw);
               } catch (e) {
+                continue;
               }
             }
             var meals = raw.meals || [];
-            if (!meals.length) {
-              progress.push(dk.slice(5) + ":meals=[] typeof=" + typeof raw + " keys=" + Object.keys(raw).join(","));
-              continue;
-            }
-            dbg.push(dk + "=" + meals.length + "repas");
             for (var j = 0; j < meals.length; j++) {
               var rid = meals[j];
               var r = (recs || []).find(function(x) {
@@ -2112,10 +2062,7 @@ ${lines.join("\n")}`;
           }
         }
       } catch (e) {
-        setDebug("\u274C " + e.message + "\nProgress: " + progress.join(", "));
-        return [];
       }
-      setDebug(lines.length + " ingr\xE9dients, " + dbg.length + " jours avec repas\n" + (dbg.length ? dbg.join(", ") : "AUCUN repas trouv\xE9 dans Supabase\nProgress: " + progress.join(", ")));
       return lines;
     };
     const doGenerate = async (recs) => {
@@ -2202,26 +2149,7 @@ ${lines.join("\n")}`;
     var remaining = items.filter(function(it) {
       return !it.checked;
     }).length;
-    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Courses"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta liste"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "G\xE9n\xE9r\xE9e depuis toutes les recettes planifi\xE9es \xE0 venir, avec les quantit\xE9s additionn\xE9es."), /* @__PURE__ */ React.createElement("button", { onClick: () => doGenerate(), disabled: busy, style: { width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", busy ? "Calcul de la liste\u2026" : "Actualiser depuis le programme"), /* @__PURE__ */ React.createElement("button", { onClick: () => {
-      var days = weekDaysFrom(0);
-      var dbg = [];
-      for (var i = 0; i < days.length; i++) {
-        try {
-          var k = "plan:" + days[i];
-          var v = localStorage.getItem(k);
-          if (v) {
-            var p = JSON.parse(v);
-            var m = p && (p.meals || []);
-            dbg.push(days[i].slice(5) + ": " + (m.length ? m.length + " repas [" + m.join(",") + "]" : "seances seules"));
-          } else {
-            dbg.push(days[i].slice(5) + ": vide");
-          }
-        } catch (e) {
-          dbg.push(days[i].slice(5) + ": err");
-        }
-      }
-      setDebug("\u{1F52C} " + dbg.join(" | "));
-    }, style: { width: "100%", background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "8px", fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 12 } }, "\u{1F52C} Tester lecture plans"), err && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 } }, err), debug && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.teal, background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "10px 13px", marginBottom: 12, fontFamily: FONT_MONO, lineHeight: 1.6 } }, "\u{1F50D} ", debug), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("input", { value: newItem, onChange: function(e) {
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Courses"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta liste"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "G\xE9n\xE9r\xE9e depuis toutes les recettes planifi\xE9es \xE0 venir, avec les quantit\xE9s additionn\xE9es."), /* @__PURE__ */ React.createElement("button", { onClick: () => doGenerate(), disabled: busy, style: { width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", busy ? "Calcul de la liste\u2026" : "Actualiser depuis le programme"), err && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 } }, err), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("input", { value: newItem, onChange: function(e) {
       setNewItem(e.target.value);
     }, onKeyDown: function(e) {
       if (e.key === "Enter") addManual();

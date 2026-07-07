@@ -2276,12 +2276,6 @@ function ProgramTab() {
           </div>);
       })}
       {pickFor && <RecipePicker recipes={recipes} dayLabel={new Date(pickFor + "T00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} added={(plans[pickFor]?.meals) || []} onAdd={(rid) => addMeal(pickFor, rid)} onClose={() => setPickFor(null)} />}
-      <div style={{marginTop:10}}>
-        <button onClick={async function(){var u=window._ztlUser&&window._ztlUser.id;alert("User ID: "+(u||"NON CONNECTÉ"));}} style={{fontSize:10,padding:"4px 8px",background:"#eee",border:"1px solid #999",borderRadius:6,cursor:"pointer",marginRight:5}}>🆔 User ID</button>
-        <button onClick={async function(){var u=window._ztlUser&&window._ztlUser.id;if(!u)return alert("Pas connecté");try{var keys=await window.ZTLDb.listUserDataKeys(u,"plan:");alert(keys.length?keys.join("\n"):"AUCUNE clé plan: dans Supabase");}catch(e){alert("Erreur: "+e.message);}}} style={{fontSize:10,padding:"4px 8px",background:C.emberSoft,border:"1px solid "+C.ember,borderRadius:6,cursor:"pointer",marginRight:5}}>🔬 listUserDataKeys</button>
-        <button onClick={async function(){var u=window._ztlUser&&window._ztlUser.id;if(!u)return alert("Pas connecté");try{var p=await window.ZTLDb.getUserData(u,"plan:2026-07-08");alert(p?JSON.stringify(p):"NULL");}catch(e){alert("Erreur: "+e.message);}}} style={{fontSize:10,padding:"4px 8px",background:C.emberSoft,border:"1px solid "+C.ember,borderRadius:6,cursor:"pointer",marginRight:5}}>🔬 get plan 08/07</button>
-        <button onClick={function(){var dbg=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k.indexOf("plan:")===0){try{var v=JSON.parse(localStorage.getItem(k));dbg.push(k.slice(5)+": meals="+(v.meals||[]).length);}catch(e){}}}alert(dbg.length?dbg.join("\n"):"AUCUN localStorage");}} style={{fontSize:10,padding:"4px 8px",background:C.mint,border:"1px solid "+C.teal,borderRadius:6,cursor:"pointer"}}>🔬 localStorage</button>
-      </div>
       <div style={{ marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" }}>🗓️ Programme type (exemple)</div>
         {!imgErr ? <img src="programme-type.png" alt="Programme type" style={{ width: "100%", display: "block" }} onError={() => setImgErr(true)} /> : <div style={{ padding: 20, textAlign: "center", color: C.mut, fontSize: 13 }}>Image non disponible</div>}
@@ -2314,25 +2308,19 @@ function CoursesTab() {
   const collectLines = async (recs) => {
     var td = dateKey();
     var lines = [];
-    var dbg = [];
-    var progress = [];
     try {
       var u = window._ztlUser && window._ztlUser.id;
-      if (!u || !window.ZTLDb) { setDebug("Non connecté à Supabase"); return []; }
-      // Scanner seulement 2 semaines, avec log de progression
+      if (!u || !window.ZTLDb) return [];
       for (var w = 0; w < 2; w++) {
         var days = weekDaysFrom(w);
         for (var d = 0; d < days.length; d++) {
           var dk = days[d];
-          if (dk < td) { progress.push(dk.slice(5)+":<td"); continue; }
-          var raw, rawStr;
-          try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { progress.push(dk.slice(5)+":err"); continue; }
-          if (!raw) { progress.push(dk.slice(5)+":null"); continue; }
-          // get puede retornar string, parsealo
-          if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch(e) {} }
+          if (dk < td) continue;
+          var raw;
+          try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { continue; }
+          if (!raw) continue;
+          if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch(e) { continue; } }
           var meals = raw.meals || [];
-          if (!meals.length) { progress.push(dk.slice(5)+":meals=[] typeof="+(typeof raw)+" keys="+Object.keys(raw).join(",")); continue; }
-          dbg.push(dk + "=" + meals.length + "repas");
           for (var j = 0; j < meals.length; j++) {
             var rid = meals[j];
             var r = (recs || []).find(function(x) { return x.id === rid; });
@@ -2346,8 +2334,7 @@ function CoursesTab() {
           }
         }
       }
-    } catch (e) { setDebug("❌ " + e.message + "\nProgress: "+progress.join(", ")); return []; }
-    setDebug(lines.length + " ingrédients, " + dbg.length + " jours avec repas\n" + (dbg.length?dbg.join(", "):"AUCUN repas trouvé dans Supabase\nProgress: "+progress.join(", ")));
+    } catch (e) {}
     return lines;
   };
 
@@ -2415,9 +2402,7 @@ function CoursesTab() {
       <h1 style={h1}>Ta liste</h1>
       <p style={{ color: C.mut, margin: "0 0 14px", fontSize: 13.5 }}>Générée depuis toutes les recettes planifiées à venir, avec les quantités additionnées.</p>
       <button onClick={() => doGenerate()} disabled={busy} style={{ width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 }}><span style={{fontSize:16,lineHeight:1}}>✨</span> {busy ? "Calcul de la liste…" : "Actualiser depuis le programme"}</button>
-      <button onClick={() => { var days=weekDaysFrom(0); var dbg=[]; for(var i=0;i<days.length;i++){ try{ var k="plan:"+days[i]; var v=localStorage.getItem(k); if(v){ var p=JSON.parse(v); var m=p&&(p.meals||[]); dbg.push(days[i].slice(5)+": "+(m.length?m.length+" repas ["+m.join(",")+"]":"seances seules")); }else{dbg.push(days[i].slice(5)+": vide");} }catch(e){dbg.push(days[i].slice(5)+": err");} } setDebug("🔬 "+dbg.join(" | ")); }} style={{ width:"100%", background:C.mint, border:"1px solid "+C.teal, borderRadius:10, padding:"8px", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:12 }}>🔬 Tester lecture plans</button>
       {err && <div style={{ fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 }}>{err}</div>}
-      {debug && <div style={{ fontSize: 10.5, color: C.teal, background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "10px 13px", marginBottom: 12, fontFamily: FONT_MONO, lineHeight: 1.6 }}>🔍 {debug}</div>}
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
         <input value={newItem} onChange={function(e) { setNewItem(e.target.value); }} onKeyDown={function(e) { if (e.key === "Enter") addManual(); }} placeholder="Ajouter un article…" style={{ flex: 1, boxSizing: "border-box", background: C.bg, border: "1px solid " + C.line, color: C.text, borderRadius: 10, padding: "11px 12px", fontSize: 14 }} />
         <button onClick={addManual} style={{ background: C.ember, color: "#1b1205", border: "none", borderRadius: 10, padding: "0 16px", fontSize: 18, fontWeight: 800, cursor: "pointer" }}>+</button>
