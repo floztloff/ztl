@@ -2168,9 +2168,9 @@ ${lines.join("\n")}`;
           var k = localStorage.key(i);
           if (k.indexOf("log:") === 0) raw += k + "=" + localStorage.getItem(k).slice(0, 150) + "\n";
         }
-        alert(raw || "AUCUN log dans localStorage");
+        setErr(raw || "AUCUN log dans localStorage");
       } catch (e) {
-        alert("Err: " + e.message);
+        setErr("Err: " + e.message);
       }
     }, style: { marginTop: 4, width: "100%", background: "#eee", border: "1px solid #999", borderRadius: 8, padding: "5px", fontSize: 10, cursor: "pointer" } }, "\u{1F52C} Debug syncFromCloud"), /* @__PURE__ */ React.createElement("button", { onClick: () => doGenerate(), disabled: busy, style: { width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", busy ? "Calcul de la liste\u2026" : "Actualiser depuis le programme"), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
       var u = window._ztlUser && window._ztlUser.id;
