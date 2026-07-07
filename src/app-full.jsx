@@ -515,12 +515,11 @@ const store = {
 const getDeepSeekKey = async () => {
   if (typeof window !== "undefined") {
     if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
-    try { const k = localStorage.getItem("_ztlDeepSeekKey"); if (k) { const clean = k.replace(/^["']|["']$/g, ""); window._ztlDeepSeekKey = clean; return clean; } } catch {}
-    // Tente store.get (avec fallback Supabase)
+    try { const k = localStorage.getItem("_ztlDeepSeekKey"); if (k && k.length > 3) { var c = k; try { var p = JSON.parse(k); if (typeof p === "string") c = p; } catch {} window._ztlDeepSeekKey = c.trim(); return c.trim(); } } catch {}
     for (var retry = 0; retry < 3; retry++) {
       try { 
         var v = await store.get("_ztlDeepSeekKey"); 
-        if (v) { const clean = (typeof v === "string" ? v : String(v)).replace(/^["']|["']$/g, ""); window._ztlDeepSeekKey = clean; localStorage.setItem("_ztlDeepSeekKey", clean); return clean; } 
+        if (v) { var c = (typeof v === "string" ? v : String(v)); window._ztlDeepSeekKey = c.trim(); localStorage.setItem("_ztlDeepSeekKey", c.trim()); return c.trim(); } 
       } catch {}
       if (retry < 2) await new Promise(function(r) { setTimeout(r, 500); });
     }

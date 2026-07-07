@@ -843,10 +843,15 @@ ${lines.join("\n")}`;
       if (window._ztlDeepSeekKey) return window._ztlDeepSeekKey;
       try {
         const k = localStorage.getItem("_ztlDeepSeekKey");
-        if (k) {
-          const clean = k.replace(/^["']|["']$/g, "");
-          window._ztlDeepSeekKey = clean;
-          return clean;
+        if (k && k.length > 3) {
+          var c = k;
+          try {
+            var p = JSON.parse(k);
+            if (typeof p === "string") c = p;
+          } catch {
+          }
+          window._ztlDeepSeekKey = c.trim();
+          return c.trim();
         }
       } catch {
       }
@@ -854,10 +859,10 @@ ${lines.join("\n")}`;
         try {
           var v = await store.get("_ztlDeepSeekKey");
           if (v) {
-            const clean = (typeof v === "string" ? v : String(v)).replace(/^["']|["']$/g, "");
-            window._ztlDeepSeekKey = clean;
-            localStorage.setItem("_ztlDeepSeekKey", clean);
-            return clean;
+            var c = typeof v === "string" ? v : String(v);
+            window._ztlDeepSeekKey = c.trim();
+            localStorage.setItem("_ztlDeepSeekKey", c.trim());
+            return c.trim();
           }
         } catch {
         }
