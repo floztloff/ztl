@@ -2152,15 +2152,16 @@ ${lines.join("\n")}`;
           var v = localStorage.getItem(k);
           if (v) {
             var p = JSON.parse(v);
-            dbg.push(days[i] + ": " + (p && p.meals && p.meals.length ? p.meals.length + " repas" : "0 repas"));
+            var m = p && (p.meals || []);
+            dbg.push(days[i].slice(5) + ": " + (m.length ? m.length + " repas [" + m.join(",") + "]" : "seances seules"));
           } else {
-            dbg.push(days[i] + ": vide");
+            dbg.push(days[i].slice(5) + ": vide");
           }
         } catch (e) {
-          dbg.push(days[i] + ": err");
+          dbg.push(days[i].slice(5) + ": err");
         }
       }
-      setDebug("\u{1F52C} TEST: " + dbg.join(" | "));
+      setDebug("\u{1F52C} " + dbg.join(" | "));
     }, style: { width: "100%", background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "8px", fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 12 } }, "\u{1F52C} Tester lecture plans"), err && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 } }, err), debug && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.teal, background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "10px 13px", marginBottom: 12, fontFamily: FONT_MONO, lineHeight: 1.6 } }, "\u{1F50D} ", debug), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("input", { value: newItem, onChange: function(e) {
       setNewItem(e.target.value);
     }, onKeyDown: function(e) {
