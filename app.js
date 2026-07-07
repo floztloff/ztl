@@ -2028,8 +2028,8 @@ ${lines.join("\n")}`;
             } catch {
               continue;
             }
-            var meals = raw && raw.meals;
-            if (!meals || !meals.length) continue;
+            var meals = raw && (raw.meals || []);
+            if (!meals.length) continue;
             nPlans++;
             dbg.push(dk + ": " + meals.length + " repas");
             for (var j = 0; j < meals.length; j++) {
@@ -2144,13 +2144,21 @@ ${lines.join("\n")}`;
       return !it.checked;
     }).length;
     return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Courses"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta liste"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "G\xE9n\xE9r\xE9e depuis toutes les recettes planifi\xE9es \xE0 venir, avec les quantit\xE9s additionn\xE9es."), /* @__PURE__ */ React.createElement("button", { onClick: () => doGenerate(), disabled: busy, style: { width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", busy ? "Calcul de la liste\u2026" : "Actualiser depuis le programme"), /* @__PURE__ */ React.createElement("button", { onClick: () => {
-      var td = dateKey();
       var days = weekDaysFrom(0);
       var dbg = [];
       for (var i = 0; i < days.length; i++) {
-        var k = "plan:" + days[i];
-        var v = localStorage.getItem(k);
-        dbg.push(days[i] + ": " + (v ? JSON.parse(v).meals.length + " repas" : "vide"));
+        try {
+          var k = "plan:" + days[i];
+          var v = localStorage.getItem(k);
+          if (v) {
+            var p = JSON.parse(v);
+            dbg.push(days[i] + ": " + (p && p.meals && p.meals.length ? p.meals.length + " repas" : "0 repas"));
+          } else {
+            dbg.push(days[i] + ": vide");
+          }
+        } catch (e) {
+          dbg.push(days[i] + ": err");
+        }
       }
       setDebug("\u{1F52C} TEST: " + dbg.join(" | "));
     }, style: { width: "100%", background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "8px", fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 12 } }, "\u{1F52C} Tester lecture plans"), err && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 } }, err), debug && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.teal, background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "10px 13px", marginBottom: 12, fontFamily: FONT_MONO, lineHeight: 1.6 } }, "\u{1F50D} ", debug), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("input", { value: newItem, onChange: function(e) {

@@ -2318,8 +2318,8 @@ function CoursesTab() {
           if (!rawText) { continue; }
           var raw;
           try { raw = JSON.parse(rawText); } catch { continue; }
-          var meals = raw && raw.meals;
-          if (!meals || !meals.length) continue;
+          var meals = raw && (raw.meals || []);
+          if (!meals.length) continue;
           nPlans++;
           dbg.push(dk + ": " + meals.length + " repas");
           for (var j = 0; j < meals.length; j++) {
@@ -2406,7 +2406,7 @@ function CoursesTab() {
       <h1 style={h1}>Ta liste</h1>
       <p style={{ color: C.mut, margin: "0 0 14px", fontSize: 13.5 }}>Générée depuis toutes les recettes planifiées à venir, avec les quantités additionnées.</p>
       <button onClick={() => doGenerate()} disabled={busy} style={{ width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 }}><span style={{fontSize:16,lineHeight:1}}>✨</span> {busy ? "Calcul de la liste…" : "Actualiser depuis le programme"}</button>
-      <button onClick={() => { var td=dateKey(); var days=weekDaysFrom(0); var dbg=[]; for(var i=0;i<days.length;i++){ var k="plan:"+days[i]; var v=localStorage.getItem(k); dbg.push(days[i]+": "+(v?JSON.parse(v).meals.length+" repas":"vide")); } setDebug("🔬 TEST: "+dbg.join(" | ")); }} style={{ width:"100%", background:C.mint, border:"1px solid "+C.teal, borderRadius:10, padding:"8px", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:12 }}>🔬 Tester lecture plans</button>
+      <button onClick={() => { var days=weekDaysFrom(0); var dbg=[]; for(var i=0;i<days.length;i++){ try{ var k="plan:"+days[i]; var v=localStorage.getItem(k); if(v){ var p=JSON.parse(v); dbg.push(days[i]+": "+((p&&p.meals&&p.meals.length)?p.meals.length+" repas":"0 repas")); }else{dbg.push(days[i]+": vide");} }catch(e){dbg.push(days[i]+": err");} } setDebug("🔬 TEST: "+dbg.join(" | ")); }} style={{ width:"100%", background:C.mint, border:"1px solid "+C.teal, borderRadius:10, padding:"8px", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:12 }}>🔬 Tester lecture plans</button>
       {err && <div style={{ fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 }}>{err}</div>}
       {debug && <div style={{ fontSize: 10.5, color: C.teal, background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "10px 13px", marginBottom: 12, fontFamily: FONT_MONO, lineHeight: 1.6 }}>🔍 {debug}</div>}
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
