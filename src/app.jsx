@@ -20,7 +20,7 @@ const C = {
 const FONT_DISPLAY = '"Schibsted Grotesk", system-ui, sans-serif';
 const FONT_BODY = '"Onest", system-ui, sans-serif';
 const FONT_MONO = '"DM Mono", ui-monospace, monospace';
-const TARGETS = { kcal: 2400, protein: 130, carbs: 290, fat: 65 };
+const TARGETS = { kcal: 1950, protein: 120, carbs: 220, fat: 60 };
 /* part des objectifs journaliers visée selon le type de repas */
 const MEAL_SHARE = { "Petit déj": 0.25, "Repas": 0.35, "Collation": 0.10, "Dessert": 0.10 };
 const idealFor = (style) => {

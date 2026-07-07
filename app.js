@@ -121,7 +121,7 @@ var ZTL = (() => {
   var FONT_DISPLAY = '"Schibsted Grotesk", system-ui, sans-serif';
   var FONT_BODY = '"Onest", system-ui, sans-serif';
   var FONT_MONO = '"DM Mono", ui-monospace, monospace';
-  var TARGETS = { kcal: 2400, protein: 130, carbs: 290, fat: 65 };
+  var TARGETS = { kcal: 1950, protein: 120, carbs: 220, fat: 60 };
   var MEAL_SHARE = { "Petit d\xE9j": 0.25, "Repas": 0.35, "Collation": 0.1, "Dessert": 0.1 };
   var idealFor = (style) => {
     const s = MEAL_SHARE[style] ?? 0.35;
