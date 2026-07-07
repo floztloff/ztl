@@ -2155,30 +2155,27 @@ function ProgramTab() {
   const [recipes, setRecipes] = useState(null);
   const [progSessions, setProgSessions] = useState([]);
   const [offset, setOffset] = useState(0);
-  const [plans, setPlans] = useState({});
   const [pickFor, setPickFor] = useState(null);
-  const loadKey = useRef(0);
   const [imgErr, setImgErr] = useState(false);
 
   useEffect(() => { (async () => { let r = await store.get("recipes"); if (!Array.isArray(r) || !r.length) r = RECIPES; setRecipes(r); let ss = await store.get("sessions"); if (!Array.isArray(ss) || !ss.length) ss = SESSIONS.map(normalizeSession); setProgSessions(ss); })(); }, []);
 
   const days = weekDaysFrom(offset);
-  // Chargement synchrone UNE SEULE FOIS — pas de useEffect async qui écrase
-  const initRef = useRef(false);
-  if (!initRef.current) {
-    initRef.current = true;
-    var initMap = {};
-    for (var di = 0; di < days.length; di++) {
-      var dk2 = days[di];
+  // State initializer : exécuté UNE SEULE FOIS, synchrone, avant le 1er render
+  const [plans, setPlans] = useState(function() {
+    var map = {};
+    var d = weekDaysFrom(0);
+    for (var i = 0; i < d.length; i++) {
+      var dk = d[i];
       try {
-        var raw2 = localStorage.getItem("plan:" + dk2);
-        var p2 = raw2 ? JSON.parse(raw2) : null;
-      } catch(e) { p2 = null; }
-      if (p2 && p2.session && !p2.sessions) p2 = { ...p2, sessions: [p2.session] };
-      initMap[dk2] = p2 || { meals: [], sessions: [] };
+        var raw = localStorage.getItem("plan:" + dk);
+        var p = raw ? JSON.parse(raw) : null;
+      } catch(e) { p = null; }
+      if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
+      map[dk] = p || { meals: [], sessions: [] };
     }
-    setTimeout(function() { setPlans(initMap); }, 0);
-  }
+    return map;
+  });
 
   var savePlan = (dk, next) => {
     try { localStorage.setItem("plan:" + dk, JSON.stringify(next)); } catch {}

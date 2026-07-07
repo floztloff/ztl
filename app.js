@@ -1878,9 +1878,7 @@ ${lines.join("\n")}`;
     const [recipes, setRecipes] = (0, import_react.useState)(null);
     const [progSessions, setProgSessions] = (0, import_react.useState)([]);
     const [offset, setOffset] = (0, import_react.useState)(0);
-    const [plans, setPlans] = (0, import_react.useState)({});
     const [pickFor, setPickFor] = (0, import_react.useState)(null);
-    const loadKey = (0, import_react.useRef)(0);
     const [imgErr, setImgErr] = (0, import_react.useState)(false);
     (0, import_react.useEffect)(() => {
       (async () => {
@@ -1893,25 +1891,22 @@ ${lines.join("\n")}`;
       })();
     }, []);
     const days = weekDaysFrom(offset);
-    const initRef = (0, import_react.useRef)(false);
-    if (!initRef.current) {
-      initRef.current = true;
-      var initMap = {};
-      for (var di = 0; di < days.length; di++) {
-        var dk2 = days[di];
+    const [plans, setPlans] = (0, import_react.useState)(function() {
+      var map = {};
+      var d = weekDaysFrom(0);
+      for (var i = 0; i < d.length; i++) {
+        var dk = d[i];
         try {
-          var raw2 = localStorage.getItem("plan:" + dk2);
-          var p2 = raw2 ? JSON.parse(raw2) : null;
+          var raw = localStorage.getItem("plan:" + dk);
+          var p = raw ? JSON.parse(raw) : null;
         } catch (e) {
-          p2 = null;
+          p = null;
         }
-        if (p2 && p2.session && !p2.sessions) p2 = { ...p2, sessions: [p2.session] };
-        initMap[dk2] = p2 || { meals: [], sessions: [] };
+        if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
+        map[dk] = p || { meals: [], sessions: [] };
       }
-      setTimeout(function() {
-        setPlans(initMap);
-      }, 0);
-    }
+      return map;
+    });
     var savePlan = (dk, next) => {
       try {
         localStorage.setItem("plan:" + dk, JSON.stringify(next));
