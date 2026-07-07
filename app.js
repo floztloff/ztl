@@ -1994,6 +1994,7 @@ ${lines.join("\n")}`;
     const [err, setErr] = (0, import_react.useState)("");
     const [editId, setEditId] = (0, import_react.useState)(null);
     const [editText, setEditText] = (0, import_react.useState)("");
+    const [debug, setDebug] = (0, import_react.useState)("");
     const uid = () => "i" + Math.random().toString(36).slice(2, 9);
     const persist = (list) => {
       setItems(list);
@@ -2008,6 +2009,7 @@ ${lines.join("\n")}`;
     const collectLines = async (recs) => {
       var td = dateKey();
       var lines = [];
+      var nPlans = 0, nMeals = 0, nFound = 0, nMiss = 0;
       try {
         for (var i = 0; i < localStorage.length; i++) {
           var key = localStorage.key(i);
@@ -2021,12 +2023,18 @@ ${lines.join("\n")}`;
             continue;
           }
           if (!raw || !(raw.meals && raw.meals.length)) continue;
+          nPlans++;
           for (var j = 0; j < raw.meals.length; j++) {
             var rid = raw.meals[j];
+            nMeals++;
             var r = (recs || []).find(function(x) {
               return x.id === rid;
             });
-            if (!r) continue;
+            if (!r) {
+              nMiss++;
+              continue;
+            }
+            nFound++;
             var factor = raw.juliette && raw.juliette[rid] ? 1.75 : 1;
             var ing = r.ing || [];
             for (var k = 0; k < ing.length; k++) {
@@ -2036,9 +2044,10 @@ ${lines.join("\n")}`;
           }
         }
       } catch (e) {
-        console.warn("collectLines error:", e);
+        setDebug("collectLines error: " + e.message);
+        return [];
       }
-      console.log("collectLines:", lines.length, "lignes d'ingr\xE9dients");
+      setDebug(nPlans + " jours planifi\xE9s, " + nMeals + " repas, " + nFound + " recettes trouv\xE9es, " + nMiss + " manquantes \u2192 " + lines.length + " ingr\xE9dients");
       return lines;
     };
     const doGenerate = async (recs) => {
@@ -2125,7 +2134,7 @@ ${lines.join("\n")}`;
     var remaining = items.filter(function(it) {
       return !it.checked;
     }).length;
-    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Courses"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta liste"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "G\xE9n\xE9r\xE9e depuis toutes les recettes planifi\xE9es \xE0 venir, avec les quantit\xE9s additionn\xE9es."), /* @__PURE__ */ React.createElement("button", { onClick: () => doGenerate(), disabled: busy, style: { width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", busy ? "Calcul de la liste\u2026" : "Actualiser depuis le programme"), err && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 } }, err), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("input", { value: newItem, onChange: function(e) {
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Courses"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta liste"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "G\xE9n\xE9r\xE9e depuis toutes les recettes planifi\xE9es \xE0 venir, avec les quantit\xE9s additionn\xE9es."), /* @__PURE__ */ React.createElement("button", { onClick: () => doGenerate(), disabled: busy, style: { width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16, lineHeight: 1 } }, "\u2728"), " ", busy ? "Calcul de la liste\u2026" : "Actualiser depuis le programme"), err && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 } }, err), debug && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: C.teal, background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "10px 13px", marginBottom: 12, fontFamily: FONT_MONO, lineHeight: 1.6 } }, "\u{1F50D} ", debug), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("input", { value: newItem, onChange: function(e) {
       setNewItem(e.target.value);
     }, onKeyDown: function(e) {
       if (e.key === "Enter") addManual();

@@ -2289,10 +2289,11 @@ function CoursesTab() {
   const [err, setErr] = useState("");
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
+  const [debug, setDebug] = useState("");
   const uid = () => "i" + Math.random().toString(36).slice(2, 9);
   const persist = (list) => { setItems(list); store.set("shopping", list); };
 
-  // Charger les recettes depuis le store (ou utiliser RECIPES par défaut)
+  // Charger les recettes
   const loadRecipes = async () => {
     let r = await store.get("recipes");
     if (!Array.isArray(r) || !r.length) r = RECIPES;
@@ -2303,6 +2304,7 @@ function CoursesTab() {
   const collectLines = async (recs) => {
     var td = dateKey();
     var lines = [];
+    var nPlans = 0, nMeals = 0, nFound = 0, nMiss = 0;
     try {
       for (var i = 0; i < localStorage.length; i++) {
         var key = localStorage.key(i);
@@ -2312,10 +2314,13 @@ function CoursesTab() {
         var raw;
         try { raw = JSON.parse(localStorage.getItem(key)); } catch { continue; }
         if (!raw || !(raw.meals && raw.meals.length)) continue;
+        nPlans++;
         for (var j = 0; j < raw.meals.length; j++) {
           var rid = raw.meals[j];
+          nMeals++;
           var r = (recs || []).find(function(x) { return x.id === rid; });
-          if (!r) continue;
+          if (!r) { nMiss++; continue; }
+          nFound++;
           var factor = (raw.juliette && raw.juliette[rid]) ? 1.75 : 1;
           var ing = r.ing || [];
           for (var k = 0; k < ing.length; k++) {
@@ -2324,8 +2329,8 @@ function CoursesTab() {
           }
         }
       }
-    } catch (e) { console.warn("collectLines error:", e); }
-    console.log("collectLines:", lines.length, "lignes d'ingrédients");
+    } catch (e) { setDebug("collectLines error: " + e.message); return []; }
+    setDebug(nPlans + " jours planifiés, " + nMeals + " repas, " + nFound + " recettes trouvées, " + nMiss + " manquantes → " + lines.length + " ingrédients");
     return lines;
   };
 
@@ -2394,6 +2399,7 @@ function CoursesTab() {
       <p style={{ color: C.mut, margin: "0 0 14px", fontSize: 13.5 }}>Générée depuis toutes les recettes planifiées à venir, avec les quantités additionnées.</p>
       <button onClick={() => doGenerate()} disabled={busy} style={{ width: "100%", background: busy ? C.tealSoft : C.teal, color: busy ? C.teal : C.bg, border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: busy ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 }}><span style={{fontSize:16,lineHeight:1}}>✨</span> {busy ? "Calcul de la liste…" : "Actualiser depuis le programme"}</button>
       {err && <div style={{ fontSize: 11.5, color: C.mut, marginBottom: 12, lineHeight: 1.45 }}>{err}</div>}
+      {debug && <div style={{ fontSize: 10.5, color: C.teal, background: C.mint, border: "1px solid " + C.teal, borderRadius: 10, padding: "10px 13px", marginBottom: 12, fontFamily: FONT_MONO, lineHeight: 1.6 }}>🔍 {debug}</div>}
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
         <input value={newItem} onChange={function(e) { setNewItem(e.target.value); }} onKeyDown={function(e) { if (e.key === "Enter") addManual(); }} placeholder="Ajouter un article…" style={{ flex: 1, boxSizing: "border-box", background: C.bg, border: "1px solid " + C.line, color: C.text, borderRadius: 10, padding: "11px 12px", fontSize: 14 }} />
         <button onClick={addManual} style={{ background: C.ember, color: "#1b1205", border: "none", borderRadius: 10, padding: "0 16px", fontSize: 18, fontWeight: 800, cursor: "pointer" }}>+</button>
