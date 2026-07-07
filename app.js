@@ -1987,7 +1987,21 @@ ${lines.join("\n")}`;
         var t = dayTotals(pl.meals);
         return /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: C.mut, textTransform: "uppercase", letterSpacing: 1, marginBottom: 9 } }, "Apport des repas / objectif"), miniGauge("Calories", t.kcal, TARGETS.kcal), miniGauge("Prot\xE9ines", Math.round(t.p), TARGETS.protein), miniGauge("Glucides", Math.round(t.c), TARGETS.carbs), miniGauge("Lipides", Math.round(t.f), TARGETS.fat));
       })());
-    }), pickFor && /* @__PURE__ */ React.createElement(RecipePicker, { recipes, dayLabel: (/* @__PURE__ */ new Date(pickFor + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), added: plans[pickFor]?.meals || [], onAdd: (rid) => addMeal(pickFor, rid), onClose: () => setPickFor(null) }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" } }, "\u{1F5D3}\uFE0F Programme type (exemple)"), !imgErr ? /* @__PURE__ */ React.createElement("img", { src: "programme-type.png", alt: "Programme type", style: { width: "100%", display: "block" }, onError: () => setImgErr(true) }) : /* @__PURE__ */ React.createElement("div", { style: { padding: 20, textAlign: "center", color: C.mut, fontSize: 13 } }, "Image non disponible")), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
+    }), pickFor && /* @__PURE__ */ React.createElement(RecipePicker, { recipes, dayLabel: (/* @__PURE__ */ new Date(pickFor + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), added: plans[pickFor]?.meals || [], onAdd: (rid) => addMeal(pickFor, rid), onClose: () => setPickFor(null) }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement("button", { onClick: function() {
+      var dbg = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k.indexOf("plan:") === 0) {
+          try {
+            var v = JSON.parse(localStorage.getItem(k));
+            dbg.push(k.slice(5) + ": meals=" + (v.meals || []).length + " sessions=" + (v.sessions || []).length);
+          } catch (e) {
+            dbg.push(k.slice(5) + ": err");
+          }
+        }
+      }
+      alert(dbg.length ? dbg.join("\n") : "AUCUNE cl\xE9 plan: dans localStorage");
+    }, style: { fontSize: 10, padding: "4px 8px", background: C.mint, border: "1px solid " + C.teal, borderRadius: 6, cursor: "pointer" } }, "\u{1F52C} Dump localStorage")), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" } }, "\u{1F5D3}\uFE0F Programme type (exemple)"), !imgErr ? /* @__PURE__ */ React.createElement("img", { src: "programme-type.png", alt: "Programme type", style: { width: "100%", display: "block" }, onError: () => setImgErr(true) }) : /* @__PURE__ */ React.createElement("div", { style: { padding: 20, textAlign: "center", color: C.mut, fontSize: 13 } }, "Image non disponible")), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
   }
   function CoursesTab() {
     const [recipes, setRecipes] = (0, import_react.useState)(null);

@@ -2270,6 +2270,9 @@ function ProgramTab() {
           </div>);
       })}
       {pickFor && <RecipePicker recipes={recipes} dayLabel={new Date(pickFor + "T00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} added={(plans[pickFor]?.meals) || []} onAdd={(rid) => addMeal(pickFor, rid)} onClose={() => setPickFor(null)} />}
+      <div style={{marginTop:10}}>
+        <button onClick={function(){var dbg=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k.indexOf("plan:")===0){try{var v=JSON.parse(localStorage.getItem(k));dbg.push(k.slice(5)+": meals="+(v.meals||[]).length+" sessions="+(v.sessions||[]).length);}catch(e){dbg.push(k.slice(5)+": err");}}}alert(dbg.length?dbg.join("\n"):"AUCUNE clé plan: dans localStorage");}} style={{fontSize:10,padding:"4px 8px",background:C.mint,border:"1px solid "+C.teal,borderRadius:6,cursor:"pointer"}}>🔬 Dump localStorage</button>
+      </div>
       <div style={{ marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" }}>🗓️ Programme type (exemple)</div>
         {!imgErr ? <img src="programme-type.png" alt="Programme type" style={{ width: "100%", display: "block" }} onError={() => setImgErr(true)} /> : <div style={{ padding: 20, textAlign: "center", color: C.mut, fontSize: 13 }}>Image non disponible</div>}
