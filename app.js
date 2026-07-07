@@ -849,15 +849,20 @@ ${lines.join("\n")}`;
         }
       } catch {
       }
-      try {
-        const v = await store.get("_ztlDeepSeekKey");
-        if (v) {
-          const clean = (typeof v === "string" ? v : String(v)).replace(/^["']|["']$/g, "");
-          window._ztlDeepSeekKey = clean;
-          localStorage.setItem("_ztlDeepSeekKey", clean);
-          return clean;
+      for (var retry = 0; retry < 3; retry++) {
+        try {
+          var v = await store.get("_ztlDeepSeekKey");
+          if (v) {
+            const clean = (typeof v === "string" ? v : String(v)).replace(/^["']|["']$/g, "");
+            window._ztlDeepSeekKey = clean;
+            localStorage.setItem("_ztlDeepSeekKey", clean);
+            return clean;
+          }
+        } catch {
         }
-      } catch {
+        if (retry < 2) await new Promise(function(r) {
+          setTimeout(r, 500);
+        });
       }
     }
     return "";
