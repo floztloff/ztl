@@ -2312,29 +2312,27 @@ function CoursesTab() {
   const collectLines = async (recs) => {
     var td = dateKey();
     var lines = [];
-    var nPlans = 0, nMeals = 0, nFound = 0, nMiss = 0;
     var dbg = [];
+    var progress = [];
     try {
       var u = window._ztlUser && window._ztlUser.id;
       if (!u || !window.ZTLDb) { setDebug("Non connecté à Supabase"); return []; }
-      for (var w = 0; w < 4; w++) {
+      // Scanner seulement 2 semaines, avec log de progression
+      for (var w = 0; w < 2; w++) {
         var days = weekDaysFrom(w);
         for (var d = 0; d < days.length; d++) {
           var dk = days[d];
-          if (dk < td) continue;
+          if (dk < td) { progress.push(dk.slice(5)+":<td"); continue; }
           var raw;
-          try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { raw = null; }
-          if (!raw) continue;
+          try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { progress.push(dk.slice(5)+":err"); continue; }
+          if (!raw) { progress.push(dk.slice(5)+":null"); continue; }
           var meals = raw.meals || [];
-          if (!meals.length) continue;
-          nPlans++;
-          dbg.push(dk + ": " + meals.length + " repas");
+          if (!meals.length) { progress.push(dk.slice(5)+":noMeals"); continue; }
+          dbg.push(dk + "=" + meals.length + "repas");
           for (var j = 0; j < meals.length; j++) {
             var rid = meals[j];
-            nMeals++;
             var r = (recs || []).find(function(x) { return x.id === rid; });
-            if (!r) { nMiss++; continue; }
-            nFound++;
+            if (!r) continue;
             var factor = (raw.juliette && raw.juliette[rid]) ? 1.75 : 1;
             var ing = r.ing || [];
             for (var k = 0; k < ing.length; k++) {
@@ -2344,8 +2342,8 @@ function CoursesTab() {
           }
         }
       }
-    } catch (e) { setDebug("collectLines error: " + e.message); return []; }
-    setDebug(nPlans + " jours, " + nMeals + " repas, " + nFound + " recettes trouvées, " + nMiss + " manquantes → " + lines.length + " ingrédients\n" + dbg.slice(0,5).join(", "));
+    } catch (e) { setDebug("❌ " + e.message + "\nProgress: "+progress.join(", ")); return []; }
+    setDebug(lines.length + " ingrédients, " + dbg.length + " jours avec repas\n" + (dbg.length?dbg.join(", "):"AUCUN repas trouvé dans Supabase\nProgress: "+progress.join(", ")));
     return lines;
   };
 
