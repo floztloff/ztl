@@ -843,17 +843,19 @@ ${lines.join("\n")}`;
       try {
         const k = localStorage.getItem("_ztlDeepSeekKey");
         if (k) {
-          window._ztlDeepSeekKey = k;
-          return k;
+          const clean = k.replace(/^["']|["']$/g, "");
+          window._ztlDeepSeekKey = clean;
+          return clean;
         }
       } catch {
       }
       try {
         const v = await store.get("_ztlDeepSeekKey");
         if (v) {
-          window._ztlDeepSeekKey = v;
-          localStorage.setItem("_ztlDeepSeekKey", v);
-          return v;
+          const clean = (typeof v === "string" ? v : String(v)).replace(/^["']|["']$/g, "");
+          window._ztlDeepSeekKey = clean;
+          localStorage.setItem("_ztlDeepSeekKey", clean);
+          return clean;
         }
       } catch {
       }
