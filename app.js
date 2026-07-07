@@ -625,6 +625,7 @@ var ZTL = (() => {
   async function callModel(prompt) {
     let apiKey = await getDeepSeekKey();
     if (!apiKey) throw new Error("Cl\xE9 API DeepSeek requise. Ajoute-la dans \u2699\uFE0F Cl\xE9s API sur l'accueil.");
+    console.log("callModel: apiKey length=" + apiKey.length + " starts=" + apiKey.slice(0, 8));
     const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
@@ -1285,14 +1286,7 @@ ${lines.join("\n")}`;
         style: { background: C.greenVivid, color: "#fff", border: "none", borderRadius: 10, padding: "8px 13px", fontSize: 13, fontWeight: 800, cursor: "pointer" }
       },
       "OK"
-    )), /* @__PURE__ */ React.createElement(ApiKeyButton, null), /* @__PURE__ */ React.createElement("button", { onClick: async function() {
-      try {
-        var v = await window.ZTLDb.getUserData(window._ztlUser.id, "_ztlDeepSeekKey");
-        alert("Supabase: " + (v || "NULL") + " (type=" + typeof v + ")");
-      } catch (e) {
-        alert("Err: " + e.message);
-      }
-    }, style: { marginTop: 4, width: "100%", background: "#eee", border: "1px solid #999", borderRadius: 8, padding: "4px", fontSize: 10, cursor: "pointer" } }, "\u{1F52C} Test Supabase DeepSeek"), /* @__PURE__ */ React.createElement("button", { onClick: addRecipe, style: { width: "100%", marginTop: 14, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 17, lineHeight: 1 } }, "\u{1F468}\u200D\u{1F373}"), " Ajouter une recette"), /* @__PURE__ */ React.createElement(
+    )), /* @__PURE__ */ React.createElement(ApiKeyButton, null), /* @__PURE__ */ React.createElement("button", { onClick: addRecipe, style: { width: "100%", marginTop: 14, background: "none", border: `1px dashed ${C.line}`, color: C.teal, borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 17, lineHeight: 1 } }, "\u{1F468}\u200D\u{1F373}"), " Ajouter une recette"), /* @__PURE__ */ React.createElement(
       "button",
       {
         onClick: () => {
