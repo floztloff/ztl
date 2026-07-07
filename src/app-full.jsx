@@ -2155,41 +2155,47 @@ function ProgramTab() {
   const [recipes, setRecipes] = useState(null);
   const [progSessions, setProgSessions] = useState([]);
   const [offset, setOffset] = useState(0);
+  const [plans, setPlans] = useState({});
   const [pickFor, setPickFor] = useState(null);
   const [imgErr, setImgErr] = useState(false);
 
   useEffect(() => { (async () => { let r = await store.get("recipes"); if (!Array.isArray(r) || !r.length) r = RECIPES; setRecipes(r); let ss = await store.get("sessions"); if (!Array.isArray(ss) || !ss.length) ss = SESSIONS.map(normalizeSession); setProgSessions(ss); })(); }, []);
 
   const days = weekDaysFrom(offset);
-  // State initializer : exécuté UNE SEULE FOIS, synchrone, avant le 1er render
-  const [plans, setPlans] = useState(function() {
-    var map = {};
-    var d = weekDaysFrom(0);
-    for (var i = 0; i < d.length; i++) {
-      var dk = d[i];
-      try {
-        var raw = localStorage.getItem("plan:" + dk);
-        var p = raw ? JSON.parse(raw) : null;
-      } catch(e) { p = null; }
-      if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
-      map[dk] = p || { meals: [], sessions: [] };
-    }
-    return map;
-  });
+  // Charger les plans depuis Supabase (async, une fois)
+  const loadRef = useRef(false);
+  useEffect(() => {
+    if (loadRef.current) return;
+    loadRef.current = true;
+    (async () => {
+      var u = window._ztlUser && window._ztlUser.id;
+      if (!u || !window.ZTLDb) { setPlans({}); return; }
+      var map = {};
+      var d = weekDaysFrom(0);
+      for (var i = 0; i < d.length; i++) {
+        var dk = d[i];
+        try {
+          var p = await window.ZTLDb.getUserData(u, "plan:" + dk);
+        } catch(e) { p = null; }
+        if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
+        map[dk] = p || { meals: [], sessions: [] };
+      }
+      setPlans(map);
+    })();
+  }, []);
 
   var savePlan = (dk, next) => {
-    try { localStorage.setItem("plan:" + dk, JSON.stringify(next)); } catch {}
     store.set("plan:" + dk, next);
     setPlans(function(p) { var n = {}; for (var k in p) n[k]=p[k]; n[dk]=next; return n; });
   };
   var toggleSession = (dk, sid) => {
     var cur = plans[dk] || { meals: [], sessions: [] };
     var arr = cur.sessions || [];
-    var nextSessions = arr.includes(sid) ? arr.filter(x => x !== sid) : [...arr, sid];
+    var nextSessions = arr.includes(sid) ? arr.filter(function(x){return x!==sid;}) : arr.concat([sid]);
     savePlan(dk, { meals: cur.meals || [], sessions: nextSessions, juliette: cur.juliette });
   };
-  var addMeal = (dk, rid) => { var cur = plans[dk] || { meals: [], sessions: [] }; if ((cur.meals || []).includes(rid)) return; savePlan(dk, { ...cur, meals: [...(cur.meals || []), rid] }); };
-  var removeMeal = (dk, rid) => { var cur = plans[dk] || { meals: [], sessions: [] }; var jul = { ...(cur.juliette || {}) }; delete jul[rid]; savePlan(dk, { ...cur, meals: (cur.meals || []).filter(x => x !== rid), juliette: jul }); };
+  var addMeal = (dk, rid) => { var cur = plans[dk] || { meals: [], sessions: [] }; if ((cur.meals || []).indexOf(rid) >= 0) return; savePlan(dk, { meals: (cur.meals||[]).concat([rid]), sessions: cur.sessions||[], juliette: cur.juliette }); };
+  var removeMeal = (dk, rid) => { var cur = plans[dk] || { meals: [], sessions: [] }; var jul = {}; for (var jk in (cur.juliette||{})) jul[jk] = cur.juliette[jk]; delete jul[rid]; savePlan(dk, { meals: (cur.meals||[]).filter(function(x){return x!==rid;}), sessions: cur.sessions||[], juliette: jul }); };
   var recById = (id) => (recipes || []).find(r => r.id === id);
   var dayTotals = (meals) => { var p = 0, c = 0, f = 0; (meals || []).forEach(rid => { var r = recById(rid); if (r) { p += +r.protein || 0; c += +r.carbs || 0; f += +r.fat || 0; } }); return { p, c, f, kcal: Math.round((p + c) * 4 + f * 9) }; };
   var miniGauge = (label, val, target) => { var z = zone(val, target); var pct = Math.min(100, target ? (val / target) * 100 : 0); return (
@@ -2308,17 +2314,15 @@ function CoursesTab() {
     var nPlans = 0, nMeals = 0, nFound = 0, nMiss = 0;
     var dbg = [];
     try {
-      // Lire les plans pour les 4 prochaines semaines explicitement
+      var u = window._ztlUser && window._ztlUser.id;
+      if (!u || !window.ZTLDb) { setDebug("Non connecté à Supabase"); return []; }
       for (var w = 0; w < 4; w++) {
         var days = weekDaysFrom(w);
         for (var d = 0; d < days.length; d++) {
           var dk = days[d];
           if (dk < td) continue;
-          var key = "plan:" + dk;
-          var rawText = localStorage.getItem(key);
-          if (!rawText) { continue; }
           var raw;
-          try { raw = JSON.parse(rawText); } catch { continue; }
+          try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { continue; }
           var meals = raw && (raw.meals || []);
           if (!meals.length) continue;
           nPlans++;
@@ -2339,7 +2343,7 @@ function CoursesTab() {
         }
       }
     } catch (e) { setDebug("collectLines error: " + e.message); return []; }
-    setDebug(nPlans + " jours planifiés, " + nMeals + " repas, " + nFound + " recettes trouvées, " + nMiss + " manquantes → " + lines.length + " ingrédients\n" + dbg.slice(0,5).join(", "));
+    setDebug(nPlans + " jours, " + nMeals + " repas, " + nFound + " recettes trouvées, " + nMiss + " manquantes → " + lines.length + " ingrédients\n" + dbg.slice(0,5).join(", "));
     return lines;
   };
 

@@ -1878,6 +1878,7 @@ ${lines.join("\n")}`;
     const [recipes, setRecipes] = (0, import_react.useState)(null);
     const [progSessions, setProgSessions] = (0, import_react.useState)([]);
     const [offset, setOffset] = (0, import_react.useState)(0);
+    const [plans, setPlans] = (0, import_react.useState)({});
     const [pickFor, setPickFor] = (0, import_react.useState)(null);
     const [imgErr, setImgErr] = (0, import_react.useState)(false);
     (0, import_react.useEffect)(() => {
@@ -1891,27 +1892,32 @@ ${lines.join("\n")}`;
       })();
     }, []);
     const days = weekDaysFrom(offset);
-    const [plans, setPlans] = (0, import_react.useState)(function() {
-      var map = {};
-      var d = weekDaysFrom(0);
-      for (var i = 0; i < d.length; i++) {
-        var dk = d[i];
-        try {
-          var raw = localStorage.getItem("plan:" + dk);
-          var p = raw ? JSON.parse(raw) : null;
-        } catch (e) {
-          p = null;
+    const loadRef = (0, import_react.useRef)(false);
+    (0, import_react.useEffect)(() => {
+      if (loadRef.current) return;
+      loadRef.current = true;
+      (async () => {
+        var u = window._ztlUser && window._ztlUser.id;
+        if (!u || !window.ZTLDb) {
+          setPlans({});
+          return;
         }
-        if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
-        map[dk] = p || { meals: [], sessions: [] };
-      }
-      return map;
-    });
+        var map = {};
+        var d = weekDaysFrom(0);
+        for (var i = 0; i < d.length; i++) {
+          var dk = d[i];
+          try {
+            var p = await window.ZTLDb.getUserData(u, "plan:" + dk);
+          } catch (e) {
+            p = null;
+          }
+          if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
+          map[dk] = p || { meals: [], sessions: [] };
+        }
+        setPlans(map);
+      })();
+    }, []);
     var savePlan = (dk, next) => {
-      try {
-        localStorage.setItem("plan:" + dk, JSON.stringify(next));
-      } catch {
-      }
       store.set("plan:" + dk, next);
       setPlans(function(p) {
         var n = {};
@@ -1923,19 +1929,24 @@ ${lines.join("\n")}`;
     var toggleSession = (dk, sid) => {
       var cur = plans[dk] || { meals: [], sessions: [] };
       var arr = cur.sessions || [];
-      var nextSessions = arr.includes(sid) ? arr.filter((x) => x !== sid) : [...arr, sid];
+      var nextSessions = arr.includes(sid) ? arr.filter(function(x) {
+        return x !== sid;
+      }) : arr.concat([sid]);
       savePlan(dk, { meals: cur.meals || [], sessions: nextSessions, juliette: cur.juliette });
     };
     var addMeal = (dk, rid) => {
       var cur = plans[dk] || { meals: [], sessions: [] };
-      if ((cur.meals || []).includes(rid)) return;
-      savePlan(dk, { ...cur, meals: [...cur.meals || [], rid] });
+      if ((cur.meals || []).indexOf(rid) >= 0) return;
+      savePlan(dk, { meals: (cur.meals || []).concat([rid]), sessions: cur.sessions || [], juliette: cur.juliette });
     };
     var removeMeal = (dk, rid) => {
       var cur = plans[dk] || { meals: [], sessions: [] };
-      var jul = { ...cur.juliette || {} };
+      var jul = {};
+      for (var jk in cur.juliette || {}) jul[jk] = cur.juliette[jk];
       delete jul[rid];
-      savePlan(dk, { ...cur, meals: (cur.meals || []).filter((x) => x !== rid), juliette: jul });
+      savePlan(dk, { meals: (cur.meals || []).filter(function(x) {
+        return x !== rid;
+      }), sessions: cur.sessions || [], juliette: jul });
     };
     var recById = (id) => (recipes || []).find((r) => r.id === id);
     var dayTotals = (meals) => {
@@ -2029,20 +2040,20 @@ ${lines.join("\n")}`;
       var nPlans = 0, nMeals = 0, nFound = 0, nMiss = 0;
       var dbg = [];
       try {
+        var u = window._ztlUser && window._ztlUser.id;
+        if (!u || !window.ZTLDb) {
+          setDebug("Non connect\xE9 \xE0 Supabase");
+          return [];
+        }
         for (var w = 0; w < 4; w++) {
           var days = weekDaysFrom(w);
           for (var d = 0; d < days.length; d++) {
             var dk = days[d];
             if (dk < td) continue;
-            var key = "plan:" + dk;
-            var rawText = localStorage.getItem(key);
-            if (!rawText) {
-              continue;
-            }
             var raw;
             try {
-              raw = JSON.parse(rawText);
-            } catch {
+              raw = await window.ZTLDb.getUserData(u, "plan:" + dk);
+            } catch (e) {
               continue;
             }
             var meals = raw && (raw.meals || []);
@@ -2073,7 +2084,7 @@ ${lines.join("\n")}`;
         setDebug("collectLines error: " + e.message);
         return [];
       }
-      setDebug(nPlans + " jours planifi\xE9s, " + nMeals + " repas, " + nFound + " recettes trouv\xE9es, " + nMiss + " manquantes \u2192 " + lines.length + " ingr\xE9dients\n" + dbg.slice(0, 5).join(", "));
+      setDebug(nPlans + " jours, " + nMeals + " repas, " + nFound + " recettes trouv\xE9es, " + nMiss + " manquantes \u2192 " + lines.length + " ingr\xE9dients\n" + dbg.slice(0, 5).join(", "));
       return lines;
     };
     const doGenerate = async (recs) => {
