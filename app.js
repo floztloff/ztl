@@ -625,7 +625,6 @@ var ZTL = (() => {
   async function callModel(prompt) {
     let apiKey = await getDeepSeekKey();
     if (!apiKey) throw new Error("Cl\xE9 API DeepSeek requise. Ajoute-la dans \u2699\uFE0F Cl\xE9s API sur l'accueil.");
-    console.log("callModel: apiKey length=" + apiKey.length + " starts=" + apiKey.slice(0, 8));
     const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
