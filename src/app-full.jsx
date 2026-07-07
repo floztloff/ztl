@@ -2158,11 +2158,11 @@ function ProgramTab() {
   const [plans, setPlans] = useState({});
   const [pickFor, setPickFor] = useState(null);
   const loadKey = useRef(0);
+  const [imgErr, setImgErr] = useState(false);
 
   useEffect(() => { (async () => { let r = await store.get("recipes"); if (!Array.isArray(r) || !r.length) r = RECIPES; setRecipes(r); let ss = await store.get("sessions"); if (!Array.isArray(ss) || !ss.length) ss = SESSIONS.map(normalizeSession); setProgSessions(ss); })(); }, []);
 
   const days = weekDaysFrom(offset);
-  const reload = () => { loadKey.current++; };
   useEffect(() => {
     (async () => {
       var map = {};
@@ -2171,7 +2171,9 @@ function ProgramTab() {
           var raw = localStorage.getItem("plan:" + dk);
           var p = raw ? JSON.parse(raw) : null;
         } catch { p = null; }
-        map[dk] = p || { meals: [], session: null };
+        // backward compat: old format "session" → new format "sessions"
+        if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
+        map[dk] = p || { meals: [], sessions: [] };
       }
       setPlans(map);
     })();
@@ -2182,12 +2184,14 @@ function ProgramTab() {
     store.set("plan:" + dk, next);
     setPlans(p => ({ ...p, [dk]: next }));
   };
-  var setSession = (dk, sid) => {
-    var cur = (plans[dk] || { meals: [], session: null });
-    savePlan(dk, { meals: cur.meals || [], session: sid || null });
+  var toggleSession = (dk, sid) => {
+    var cur = plans[dk] || { meals: [], sessions: [] };
+    var arr = cur.sessions || [];
+    var nextSessions = arr.includes(sid) ? arr.filter(x => x !== sid) : [...arr, sid];
+    savePlan(dk, { meals: cur.meals || [], sessions: nextSessions, juliette: cur.juliette });
   };
-  var addMeal = (dk, rid) => { var cur = plans[dk] || { meals: [] }; if ((cur.meals || []).includes(rid)) return; savePlan(dk, { ...cur, meals: [...(cur.meals || []), rid] }); };
-  var removeMeal = (dk, rid) => { var cur = plans[dk] || { meals: [] }; var jul = { ...(cur.juliette || {}) }; delete jul[rid]; savePlan(dk, { ...cur, meals: (cur.meals || []).filter(x => x !== rid), juliette: jul }); };
+  var addMeal = (dk, rid) => { var cur = plans[dk] || { meals: [], sessions: [] }; if ((cur.meals || []).includes(rid)) return; savePlan(dk, { ...cur, meals: [...(cur.meals || []), rid] }); };
+  var removeMeal = (dk, rid) => { var cur = plans[dk] || { meals: [], sessions: [] }; var jul = { ...(cur.juliette || {}) }; delete jul[rid]; savePlan(dk, { ...cur, meals: (cur.meals || []).filter(x => x !== rid), juliette: jul }); };
   var recById = (id) => (recipes || []).find(r => r.id === id);
   var dayTotals = (meals) => { var p = 0, c = 0, f = 0; (meals || []).forEach(rid => { var r = recById(rid); if (r) { p += +r.protein || 0; c += +r.carbs || 0; f += +r.fat || 0; } }); return { p, c, f, kcal: Math.round((p + c) * 4 + f * 9) }; };
   var miniGauge = (label, val, target) => { var z = zone(val, target); var pct = Math.min(100, target ? (val / target) * 100 : 0); return (
@@ -2202,7 +2206,6 @@ function ProgramTab() {
     </div>
   ); };
   var rangeLabel = `${new Date(days[0] + "T00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} – ${new Date(days[6] + "T00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}`;
-  var sel = { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 9, padding: "8px 10px", fontSize: 13 };
 
   if (!recipes) return <div style={{ color: C.mut, fontSize: 13, paddingTop: 8 }}>Chargement…</div>;
 
@@ -2220,30 +2223,33 @@ function ProgramTab() {
         <button onClick={() => setOffset(offset + 1)} style={navBtn}><span style={{fontSize:18,lineHeight:1}}>▶</span></button>
       </div>
       {days.map(dk => {
-        var pl = plans[dk] || { meals: [], session: null };
+        var pl = plans[dk] || { meals: [], sessions: [] };
         var isToday = dk === dateKey();
+        var activeSessions = pl.sessions || [];
         return (
           <div key={dk} style={{ background: C.card, border: `1px solid ${isToday ? C.ember : C.line}`, borderRadius: 16, padding: 14, marginBottom: 11 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
               <div style={{ fontSize: 14, fontWeight: 800, textTransform: "capitalize", flex: 1 }}>{new Date(dk + "T00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}{isToday ? " · aujourd'hui" : ""}</div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <span style={{fontSize:15,lineHeight:1,color:C.ember}}>🏋️</span>
-              <select value={pl.session || ""} onChange={e => setSession(dk, e.target.value)} style={sel}>
-                <option value="">Repos / aucune séance</option>
-                {[...new Set(progSessions.map(s => s.group))].map(g => (
-                  <optgroup key={g} label={g}>
-                    {progSessions.filter(s => s.group === g).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                  </optgroup>
-                ))}
-              </select>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}><span style={{fontSize:15,lineHeight:1,color:C.ember}}>🏋️</span><span style={{ fontSize: 12.5, fontWeight: 700, color: C.mut }}>Séances</span></div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+              {activeSessions.length === 0 && <span style={{ fontSize: 12, color: C.mut }}>Aucune séance</span>}
+              {progSessions.map(s => {
+                var on = activeSessions.includes(s.id);
+                return (
+                  <button key={s.id} onClick={() => toggleSession(dk, s.id)}
+                    style={{ padding: "6px 11px", borderRadius: 99, border: `1px solid ${on ? C.coral : C.line}`, background: on ? C.emberSoft : C.bg, color: on ? C.ember : C.mut, fontSize: 11.5, fontWeight: on ? 700 : 500, cursor: "pointer", whiteSpace: "nowrap" }}>
+                    {s.name}
+                  </button>
+                );
+              })}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}><span style={{fontSize:15,lineHeight:1,color:C.teal}}>👨‍🍳</span><span style={{ fontSize: 12.5, fontWeight: 700, color: C.mut }}>Repas</span></div>
             {(pl.meals || []).length === 0 && <div style={{ fontSize: 12, color: C.mut, marginBottom: 8 }}>Aucun repas prévu.</div>}
             {(pl.meals || []).map(rid => {
               var r = recById(rid);
               var jul = (pl.juliette || {})[rid];
-              var toggleJ = () => { var cur = plans[dk] || { meals: [] }; var jul2 = { ...(cur.juliette || {}) }; if (jul) delete jul2[rid]; else jul2[rid] = true; savePlan(dk, { ...cur, juliette: jul2 }); };
+              var toggleJ = () => { var cur = plans[dk] || { meals: [], sessions: [] }; var jul2 = { ...(cur.juliette || {}) }; if (jul) delete jul2[rid]; else jul2[rid] = true; savePlan(dk, { ...cur, juliette: jul2 }); };
               return (
                 <div key={rid} style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, marginBottom: 6 }}>
                   <RecipeThumb recipe={r} size={34} radius={9} />
@@ -2266,6 +2272,10 @@ function ProgramTab() {
           </div>);
       })}
       {pickFor && <RecipePicker recipes={recipes} dayLabel={new Date(pickFor + "T00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} added={(plans[pickFor]?.meals) || []} onAdd={(rid) => addMeal(pickFor, rid)} onClose={() => setPickFor(null)} />}
+      <div style={{ marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" }}>🗓️ Programme type (exemple)</div>
+        {!imgErr ? <img src="programme-type.png" alt="Programme type" style={{ width: "100%", display: "block" }} onError={() => setImgErr(true)} /> : <div style={{ padding: 20, textAlign: "center", color: C.mut, fontSize: 13 }}>Image non disponible</div>}
+      </div>
       <div style={{ height: 12 }} />
     </>
   );

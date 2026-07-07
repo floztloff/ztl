@@ -1881,6 +1881,7 @@ ${lines.join("\n")}`;
     const [plans, setPlans] = (0, import_react.useState)({});
     const [pickFor, setPickFor] = (0, import_react.useState)(null);
     const loadKey = (0, import_react.useRef)(0);
+    const [imgErr, setImgErr] = (0, import_react.useState)(false);
     (0, import_react.useEffect)(() => {
       (async () => {
         let r = await store.get("recipes");
@@ -1892,9 +1893,6 @@ ${lines.join("\n")}`;
       })();
     }, []);
     const days = weekDaysFrom(offset);
-    const reload = () => {
-      loadKey.current++;
-    };
     (0, import_react.useEffect)(() => {
       (async () => {
         var map = {};
@@ -1905,7 +1903,8 @@ ${lines.join("\n")}`;
           } catch {
             p = null;
           }
-          map[dk] = p || { meals: [], session: null };
+          if (p && p.session && !p.sessions) p = { ...p, sessions: [p.session] };
+          map[dk] = p || { meals: [], sessions: [] };
         }
         setPlans(map);
       })();
@@ -1918,17 +1917,19 @@ ${lines.join("\n")}`;
       store.set("plan:" + dk, next);
       setPlans((p) => ({ ...p, [dk]: next }));
     };
-    var setSession = (dk, sid) => {
-      var cur = plans[dk] || { meals: [], session: null };
-      savePlan(dk, { meals: cur.meals || [], session: sid || null });
+    var toggleSession = (dk, sid) => {
+      var cur = plans[dk] || { meals: [], sessions: [] };
+      var arr = cur.sessions || [];
+      var nextSessions = arr.includes(sid) ? arr.filter((x) => x !== sid) : [...arr, sid];
+      savePlan(dk, { meals: cur.meals || [], sessions: nextSessions, juliette: cur.juliette });
     };
     var addMeal = (dk, rid) => {
-      var cur = plans[dk] || { meals: [] };
+      var cur = plans[dk] || { meals: [], sessions: [] };
       if ((cur.meals || []).includes(rid)) return;
       savePlan(dk, { ...cur, meals: [...cur.meals || [], rid] });
     };
     var removeMeal = (dk, rid) => {
-      var cur = plans[dk] || { meals: [] };
+      var cur = plans[dk] || { meals: [], sessions: [] };
       var jul = { ...cur.juliette || {} };
       delete jul[rid];
       savePlan(dk, { ...cur, meals: (cur.meals || []).filter((x) => x !== rid), juliette: jul });
@@ -1952,16 +1953,27 @@ ${lines.join("\n")}`;
       return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 7 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.mut } }, label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: z.color } }, val, " / ", target)), /* @__PURE__ */ React.createElement("div", { style: { height: 6, borderRadius: 99, background: C.line, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${pct}%`, background: z.color, borderRadius: 99 } })));
     };
     var rangeLabel = `${(/* @__PURE__ */ new Date(days[0] + "T00:00")).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} \u2013 ${(/* @__PURE__ */ new Date(days[6] + "T00:00")).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}`;
-    var sel = { width: "100%", boxSizing: "border-box", background: C.bg, border: `1px solid ${C.line}`, color: C.text, borderRadius: 9, padding: "8px 10px", fontSize: 13 };
     if (!recipes) return /* @__PURE__ */ React.createElement("div", { style: { color: C.mut, fontSize: 13, paddingTop: 8 } }, "Chargement\u2026");
     return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Eyebrow, { color: C.ember }, "Programme"), /* @__PURE__ */ React.createElement("h1", { style: h1 }, "Ta semaine"), /* @__PURE__ */ React.createElement("p", { style: { color: C.mut, margin: "0 0 14px", fontSize: 13.5 } }, "Planifie s\xE9ances et repas. Navigue sur autant de semaines que tu veux."), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", background: C.card, border: `1px solid ${C.line}`, borderRadius: 14, padding: "8px 10px", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOffset(offset - 1), style: navBtn }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 18, lineHeight: 1 } }, "\u25C0")), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 800 } }, offset === 0 ? "Cette semaine" : offset === 1 ? "Semaine prochaine" : offset === -1 ? "Semaine derni\xE8re" : rangeLabel), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: C.mut } }, rangeLabel)), /* @__PURE__ */ React.createElement("button", { onClick: () => setOffset(offset + 1), style: navBtn }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 18, lineHeight: 1 } }, "\u25B6"))), days.map((dk) => {
-      var pl = plans[dk] || { meals: [], session: null };
+      var pl = plans[dk] || { meals: [], sessions: [] };
       var isToday = dk === dateKey();
-      return /* @__PURE__ */ React.createElement("div", { key: dk, style: { background: C.card, border: `1px solid ${isToday ? C.ember : C.line}`, borderRadius: 16, padding: 14, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 800, textTransform: "capitalize", flex: 1 } }, (/* @__PURE__ */ new Date(dk + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), isToday ? " \xB7 aujourd'hui" : "")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1, color: C.ember } }, "\u{1F3CB}\uFE0F"), /* @__PURE__ */ React.createElement("select", { value: pl.session || "", onChange: (e) => setSession(dk, e.target.value), style: sel }, /* @__PURE__ */ React.createElement("option", { value: "" }, "Repos / aucune s\xE9ance"), [...new Set(progSessions.map((s) => s.group))].map((g) => /* @__PURE__ */ React.createElement("optgroup", { key: g, label: g }, progSessions.filter((s) => s.group === g).map((s) => /* @__PURE__ */ React.createElement("option", { key: s.id, value: s.id }, s.name)))))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1, color: C.teal } }, "\u{1F468}\u200D\u{1F373}"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, fontWeight: 700, color: C.mut } }, "Repas")), (pl.meals || []).length === 0 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: C.mut, marginBottom: 8 } }, "Aucun repas pr\xE9vu."), (pl.meals || []).map((rid) => {
+      var activeSessions = pl.sessions || [];
+      return /* @__PURE__ */ React.createElement("div", { key: dk, style: { background: C.card, border: `1px solid ${isToday ? C.ember : C.line}`, borderRadius: 16, padding: 14, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 800, textTransform: "capitalize", flex: 1 } }, (/* @__PURE__ */ new Date(dk + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), isToday ? " \xB7 aujourd'hui" : "")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1, color: C.ember } }, "\u{1F3CB}\uFE0F"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, fontWeight: 700, color: C.mut } }, "S\xE9ances")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 } }, activeSessions.length === 0 && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: C.mut } }, "Aucune s\xE9ance"), progSessions.map((s) => {
+        var on = activeSessions.includes(s.id);
+        return /* @__PURE__ */ React.createElement(
+          "button",
+          {
+            key: s.id,
+            onClick: () => toggleSession(dk, s.id),
+            style: { padding: "6px 11px", borderRadius: 99, border: `1px solid ${on ? C.coral : C.line}`, background: on ? C.emberSoft : C.bg, color: on ? C.ember : C.mut, fontSize: 11.5, fontWeight: on ? 700 : 500, cursor: "pointer", whiteSpace: "nowrap" }
+          },
+          s.name
+        );
+      })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, lineHeight: 1, color: C.teal } }, "\u{1F468}\u200D\u{1F373}"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, fontWeight: 700, color: C.mut } }, "Repas")), (pl.meals || []).length === 0 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: C.mut, marginBottom: 8 } }, "Aucun repas pr\xE9vu."), (pl.meals || []).map((rid) => {
         var r = recById(rid);
         var jul = (pl.juliette || {})[rid];
         var toggleJ = () => {
-          var cur = plans[dk] || { meals: [] };
+          var cur = plans[dk] || { meals: [], sessions: [] };
           var jul2 = { ...cur.juliette || {} };
           if (jul) delete jul2[rid];
           else jul2[rid] = true;
@@ -1972,7 +1984,7 @@ ${lines.join("\n")}`;
         var t = dayTotals(pl.meals);
         return /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: C.mut, textTransform: "uppercase", letterSpacing: 1, marginBottom: 9 } }, "Apport des repas / objectif"), miniGauge("Calories", t.kcal, TARGETS.kcal), miniGauge("Prot\xE9ines", Math.round(t.p), TARGETS.protein), miniGauge("Glucides", Math.round(t.c), TARGETS.carbs), miniGauge("Lipides", Math.round(t.f), TARGETS.fat));
       })());
-    }), pickFor && /* @__PURE__ */ React.createElement(RecipePicker, { recipes, dayLabel: (/* @__PURE__ */ new Date(pickFor + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), added: plans[pickFor]?.meals || [], onAdd: (rid) => addMeal(pickFor, rid), onClose: () => setPickFor(null) }), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
+    }), pickFor && /* @__PURE__ */ React.createElement(RecipePicker, { recipes, dayLabel: (/* @__PURE__ */ new Date(pickFor + "T00:00")).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), added: plans[pickFor]?.meals || [], onAdd: (rid) => addMeal(pickFor, rid), onClose: () => setPickFor(null) }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: C.mut, margin: "12px 14px 8px" } }, "\u{1F5D3}\uFE0F Programme type (exemple)"), !imgErr ? /* @__PURE__ */ React.createElement("img", { src: "programme-type.png", alt: "Programme type", style: { width: "100%", display: "block" }, onError: () => setImgErr(true) }) : /* @__PURE__ */ React.createElement("div", { style: { padding: 20, textAlign: "center", color: C.mut, fontSize: 13 } }, "Image non disponible")), /* @__PURE__ */ React.createElement("div", { style: { height: 12 } }));
   }
   function CoursesTab() {
     const [recipes, setRecipes] = (0, import_react.useState)(null);
