@@ -2073,7 +2073,7 @@ ${lines.join("\n")}`;
               progress.push(dk.slice(5) + ":<td");
               continue;
             }
-            var raw;
+            var raw, rawStr;
             try {
               raw = await window.ZTLDb.getUserData(u, "plan:" + dk);
             } catch (e) {
@@ -2084,9 +2084,15 @@ ${lines.join("\n")}`;
               progress.push(dk.slice(5) + ":null");
               continue;
             }
+            if (typeof raw === "string") {
+              try {
+                raw = JSON.parse(raw);
+              } catch (e) {
+              }
+            }
             var meals = raw.meals || [];
             if (!meals.length) {
-              progress.push(dk.slice(5) + ":meals=[] raw=" + JSON.stringify(raw).slice(0, 80));
+              progress.push(dk.slice(5) + ":meals=[] typeof=" + typeof raw + " keys=" + Object.keys(raw).join(","));
               continue;
             }
             dbg.push(dk + "=" + meals.length + "repas");

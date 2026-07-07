@@ -2325,11 +2325,13 @@ function CoursesTab() {
         for (var d = 0; d < days.length; d++) {
           var dk = days[d];
           if (dk < td) { progress.push(dk.slice(5)+":<td"); continue; }
-          var raw;
+          var raw, rawStr;
           try { raw = await window.ZTLDb.getUserData(u, "plan:" + dk); } catch(e) { progress.push(dk.slice(5)+":err"); continue; }
           if (!raw) { progress.push(dk.slice(5)+":null"); continue; }
+          // get puede retornar string, parsealo
+          if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch(e) {} }
           var meals = raw.meals || [];
-          if (!meals.length) { progress.push(dk.slice(5)+":meals=[] raw="+JSON.stringify(raw).slice(0,80)); continue; }
+          if (!meals.length) { progress.push(dk.slice(5)+":meals=[] typeof="+(typeof raw)+" keys="+Object.keys(raw).join(",")); continue; }
           dbg.push(dk + "=" + meals.length + "repas");
           for (var j = 0; j < meals.length; j++) {
             var rid = meals[j];
